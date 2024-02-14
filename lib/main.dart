@@ -59,6 +59,10 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset('assets/images/quiz_app_logo.png', width: 100, height: 100), // Logo
+            const SizedBox(height: 20),
+            const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), // Welcome message
+            const SizedBox(height: 20),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -83,7 +87,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 }
-
 
 
 //########################## Home Page ##########################
