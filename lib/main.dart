@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,10 +17,77 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Quiz App'),
+      // home: const MyHomePage(title: 'Quiz App'),
+      home: const LoginPage(), // Set LoginPage as the initial route
     );
   }
 }
+
+
+//########################## Login Page ##########################
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _takePictureAndLogin() async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    if (photo != null && _nameController.text.trim().isNotEmpty) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => MyHomePage(title: 'Quiz App'),
+      ));
+    } else {
+      // Optionally show an error message if needed
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login / Attendance'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter your name',
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _takePictureAndLogin,
+              child: const Text('Take Picture & Login'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+}
+
+
+
+//########################## Home Page ##########################
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
