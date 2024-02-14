@@ -76,11 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
             destinations: [
               NavigationRailDestination(
                 icon: Icon(Icons.home),
-                label: Text('Home'),
+                label: Text('Questions'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.search),
-                label: Text('Search'),
+                label: Text('BLE'),
               ),
               // Add more NavigationRailDestinations as needed
             ],
