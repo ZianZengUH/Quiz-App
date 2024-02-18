@@ -1,30 +1,59 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/main.dart';
 
-class LoadQuizPage extends StatelessWidget {
+class LoadQuizPage extends StatefulWidget {
+  @override
+  State<LoadQuizPage> createState() => _LoadQuizPageState();
+}
+
+class _LoadQuizPageState extends State<LoadQuizPage> {
+  var _selectedOption = '';
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var dir = Directory.current;
+    List dirContents = dir.listSync();
+    Iterable<File> iterableFiles = dirContents.whereType<File>();
+    List files = iterableFiles.toList();
 
     return Container(
-      height: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget> [
-              // Logic for loading quiz here.
-          
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: BeveledRectangleBorder(),
-                        ),
+      child: Column(
+        children: <Widget> [
+          Expanded(
+              child: ListView.separated(
+              itemCount: files.length,
+              itemBuilder: (context, index) {
+                return RadioListTile(
+                  title: Text(files[index].toString()),
+                  value: files[index].toString(),
+                  groupValue: _selectedOption,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedOption = value!;
+                    });
+                  }
+                );
+              },
+              separatorBuilder: (BuildContext context,int index) {
+                return Divider();
+              },
+            ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: BeveledRectangleBorder(),
+                      ),
                       onPressed: () {
-                        print('You have loaded the quiz.');
+                       print('testing');
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
@@ -37,7 +66,6 @@ class LoadQuizPage extends StatelessWidget {
             ),
           ],
         ),
-      )
     );
   }
 }
