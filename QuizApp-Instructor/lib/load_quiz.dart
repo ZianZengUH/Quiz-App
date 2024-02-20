@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:quiz_app_instructor/main.dart';
 
 class LoadQuizPage extends StatefulWidget {
+  const LoadQuizPage({super.key});
+
   @override
   State<LoadQuizPage> createState() => _LoadQuizPageState();
 }
@@ -13,7 +13,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    //var appState = context.watch<MyAppState>();
     var dir = Directory.current;
     List dirContents = dir.listSync();
     Iterable<File> iterableFiles = dirContents.whereType<File>();

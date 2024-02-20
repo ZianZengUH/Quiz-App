@@ -1,57 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app_instructor/main.dart';
+import 'package:quiz_app_instructor/quiz_data.dart';
 
 class CreateQuizPage extends StatelessWidget {
+  const CreateQuizPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var timeAllowed = 0;
+    //var appState = context.watch<MyAppState>();
 
-    return Container(
+    String name = Provider.of<QuizData>(context).name;
+    int duration = Provider.of<QuizData>(context).duration;
+    String question = Provider.of<QuizData>(context).question;
+
+  // Stores the user's input.
+  TextEditingController nameController = TextEditingController(text: name,);
+  TextEditingController durationController = TextEditingController(text: duration.toString());
+  TextEditingController questionController = TextEditingController(text: question);
+
+
+    return SizedBox(
       height: double.infinity,
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget> [
-              const Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Enter quiz name"
-                  ),
+              const Text(
+                'Quiz Name',
+                style: TextStyle(
+                  fontSize: 20,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(top:5, bottom: 20),
                 child: TextFormField(
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    hintText: "Duration in minutes (Numbers only)"
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
+              const Text(
+                'Duration in Minutes (if left blank, set to 15 min)',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top:5, bottom: 20),
+                child: TextFormField(
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  controller: durationController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const Text('Question',
+                style: TextStyle(
+                    fontSize: 20,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top:5, bottom: 20),
                 child: TextField(
                   maxLines: null,
-                  decoration: InputDecoration(
-                    hintText: "Enter quiz question"
+                  controller: questionController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
                   ),
                 ),
               ),
           
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
+                Row(
                   children: <Widget>[
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          shape: BeveledRectangleBorder(),
+                          shape: const BeveledRectangleBorder(),
                         ),
                       onPressed: () {
-                        print('You have saved the quiz.');
+                        // Check to see if user changed quiz name.
+                        if (name != nameController.text) {
+                          name = nameController.text;
+                        }
+
+                        // Check if user submitted empty duration field or changed duration.
+                        if (durationController.text.isEmpty) {
+                          duration = 15;
+                        } else if (duration != int.parse(durationController.text)){
+                          duration = int.parse(durationController.text);
+                        }
+                        
+                        // Check to see if user changed quiz question.
+                        if (question != questionController.text) {
+                          question = questionController.text;
+                        }
+
+                        Provider.of<QuizData>(context, listen: false).changeQuizData(name, duration, question);
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
@@ -61,7 +109,6 @@ class CreateQuizPage extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
           ],
         ),
       )
