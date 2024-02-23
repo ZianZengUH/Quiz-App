@@ -4,9 +4,7 @@ class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //var appState = context.watch<MyAppState>();
-    
+  Widget build(BuildContext context) {    
     return const SizedBox(
       child: Column(
         children: <Widget>  [

@@ -8,8 +8,6 @@ class CreateQuizPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //var appState = context.watch<MyAppState>();
-
     String name = Provider.of<QuizData>(context).name;
     int duration = Provider.of<QuizData>(context).duration;
     String question = Provider.of<QuizData>(context).question;
@@ -76,42 +74,59 @@ class CreateQuizPage extends StatelessWidget {
           
                 Row(
                   children: <Widget>[
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: const BeveledRectangleBorder(),
-                        ),
-                      onPressed: () {
-                        // Check to see if user changed quiz name.
-                        if (name != nameController.text) {
-                          name = nameController.text;
-                        }
-
-                        // Check if user submitted empty duration field or changed duration.
-                        if (durationController.text.isEmpty) {
-                          duration = 15;
-                        } else if (duration != int.parse(durationController.text)){
-                          duration = int.parse(durationController.text);
-                        }
-                        
-                        // Check to see if user changed quiz question.
-                        if (question != questionController.text) {
-                          question = questionController.text;
-                        }
-
-                        Provider.of<QuizData>(context, listen: false).changeQuizData(name, duration, question);
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text('Save Quiz'),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: const BeveledRectangleBorder(),
                       ),
+                    onPressed: () {
+                      updateQuiz(context, name, duration, question, nameController, durationController, questionController);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text('Save Quiz to Memory Only'),
                     ),
                   ),
-                ],
-              ),
+                  const Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const BeveledRectangleBorder(),
+                    ),
+                  onPressed: () {
+                    updateQuiz(context, name, duration, question, nameController, durationController, questionController);
+                    // Write to disk logic goes here
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text('Save Quiz to Memory and Disk'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       )
     );
+  }
+
+  void updateQuiz(context, name, duration, question, nameController, durationController, questionController) {
+    // Check to see if user changed quiz name.
+    if (name != nameController.text) {
+      name = nameController.text;
+    }
+
+    // Check if user submitted empty duration field or changed duration.
+    if (durationController.text.isEmpty) {
+      duration = 15;
+    } else if (duration != int.parse(durationController.text)){
+      duration = int.parse(durationController.text);
+    }
+                        
+    // Check to see if user changed quiz question.
+    if (question != questionController.text) {
+      question = questionController.text;
+    }
+
+    // Updates QuizData values.
+    Provider.of<QuizData>(context, listen: false).changeQuizData(name, duration, question);
   }
 }

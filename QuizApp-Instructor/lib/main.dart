@@ -4,8 +4,7 @@ import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/create_quiz.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
-
-
+import 'package:quiz_app_instructor/display_quiz.dart';
 
 void main() => runApp(const MyApp());
 
@@ -53,16 +52,16 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = InfoPage();
+        page = const InfoPage();
         break;
       case 1:
-        page = CreateQuizPage();
+        page = const CreateQuizPage();
         break;
       case 2:
-        page = LoadQuizPage();
+        page = const LoadQuizPage();
         break;
       case 3:
-        page = const Placeholder();
+        page = const ShowQuiz();
         break;
       case 4:
         page = const Placeholder();
@@ -81,24 +80,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   extended: constraints.maxWidth >= 600,
                   destinations: const [
                     NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Main Menu'),
+                      icon: Icon(Icons.question_mark),
+                      label: Text('How To Use This Program'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Create Quiz'),
+                      icon: Icon(Icons.new_label),
+                      label: Text('Create/Modify Quiz'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.home),
+                      icon: Icon(Icons.file_open),
                       label: Text('Load Quiz'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Open Quiz Waiting Room'),
+                      icon: Icon(Icons.screen_share),
+                      label: Text('Display Quiz'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Export Quiz'),
+                      icon: Icon(Icons.save_as),
+                      label: Text('Export Quiz Answers'),
                     ),
                   ],
                   selectedIndex: selectedIndex,

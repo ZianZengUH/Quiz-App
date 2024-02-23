@@ -13,13 +13,12 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    //var appState = context.watch<MyAppState>();
     var dir = Directory.current;
     List dirContents = dir.listSync();
     Iterable<File> iterableFiles = dirContents.whereType<File>();
     List files = iterableFiles.toList();
 
-    return Container(
+    return SizedBox(
       child: Column(
         children: <Widget> [
           Expanded(
@@ -38,7 +37,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                 );
               },
               separatorBuilder: (BuildContext context,int index) {
-                return Divider();
+                return const Divider();
               },
             ),
             ),
@@ -50,7 +49,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        shape: BeveledRectangleBorder(),
+                        shape: const BeveledRectangleBorder(),
                       ),
                       onPressed: () {
                        print('testing');
