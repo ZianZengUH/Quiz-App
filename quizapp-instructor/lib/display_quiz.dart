@@ -1,18 +1,30 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
-import 'package:timer_count_down/timer_count_down.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 
-class ShowQuiz extends StatelessWidget {
+// Countdown implemented with help from:
+//    https://pub.dev/packages/slide_countdown
+//    https://github.com/farhanfadila1717/slide_countdown/blob/master/example/example.dart#L111
+//    https://github.com/farhanfadila1717/slide_countdown/blob/master/example/example_raw_slide_countdown.dart
+// By Farhan Fadila
+
+class ShowQuiz extends StatefulWidget {
   const ShowQuiz({super.key});
+
+  @override
+  State<ShowQuiz> createState() => _ShowQuizState();
+}
+
+class _ShowQuizState extends State<ShowQuiz> {
+  double textSize = 20;
+  //int duration2 = Provider.of<QuizData>(context).duration;
 
   @override
   Widget build(BuildContext context) {    
     int duration = Provider.of<QuizData>(context).duration;
     String question = Provider.of<QuizData>(context).question;
-    StreamDuration astreamDuration = StreamDuration(
+    StreamDuration quizDuration = StreamDuration(
       config: StreamDurationConfig(
         autoPlay: false,
         countDownConfig: CountDownConfig(
@@ -22,7 +34,6 @@ class ShowQuiz extends StatelessWidget {
         ),
       ),
     );
-
 
     return SizedBox(
       child: Padding(
@@ -34,7 +45,7 @@ class ShowQuiz extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   SlideCountdown(
-                    streamDuration: astreamDuration,
+                    streamDuration: quizDuration,
                     
                     style: const TextStyle(
                       fontSize: 100,
@@ -53,15 +64,37 @@ class ShowQuiz extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: ElevatedButton(
-                            onPressed: () => astreamDuration.play(),
+                            onPressed: () {
+                              quizDuration.play();
+                            },
                             child: const Text('Play'),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 5),
+                          padding: const EdgeInsets.only(left: 5, right: 5),
                           child: ElevatedButton(
-                            onPressed: () => astreamDuration.pause(),
+                            onPressed: () {
+                              quizDuration.pause();
+                            },
                             child: const Text('Pause'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5, right: 5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {textSize++;});
+                            },
+                            child: const Text('Increase Text Size'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5, right: 5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {textSize--;});
+                            },
+                            child: const Text('Reduce Text Size'),
                           ),
                         ),
                       ],
@@ -70,14 +103,17 @@ class ShowQuiz extends StatelessWidget {
                 ],
               ),
             ),
-            Text(question),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  question,
+                  style: TextStyle(fontSize: textSize),
+                ),
+              )
+            )
           ],
         )
       )
     );
-  }
-
-  void handleTimeout() {
-
   }
 }

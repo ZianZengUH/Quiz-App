@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -93,7 +95,7 @@ class CreateQuizPage extends StatelessWidget {
                     ),
                   onPressed: () {
                     updateQuiz(context, name, duration, question, nameController, durationController, questionController);
-                    // Write to disk logic goes here
+                    _write(context, name, duration, question, nameController, durationController, questionController);
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(10.0),
@@ -128,5 +130,32 @@ class CreateQuizPage extends StatelessWidget {
 
     // Updates QuizData values.
     Provider.of<QuizData>(context, listen: false).changeQuizData(name, duration, question);
+  }
+
+  _write(context, name, duration, question, nameController, durationController, questionController) async {
+    // Check to see if user changed quiz name.
+    if (name != nameController.text) {
+      name = nameController.text;
+    }
+
+    // Check if user submitted empty duration field or changed duration.
+    if (durationController.text.isEmpty) {
+      duration = 15;
+    } else if (duration != int.parse(durationController.text)){
+      duration = int.parse(durationController.text);
+    }
+                        
+    // Check to see if user changed quiz question.
+    if (question != questionController.text) {
+      question = questionController.text;
+    }
+
+    final Directory directory = await getApplicationDocumentsDirectory();
+
+    // Windows - C:\Users\<user>\Documents\<quiz name>.txt
+    // Mac - unknown
+    print('${directory.path}/$name');
+    final File file = File('${directory.path}/$name.txt');
+    await file.writeAsString('$name, $duration, $question');
   }
 }
