@@ -17,13 +17,12 @@ class ShowQuiz extends StatefulWidget {
 }
 
 class _ShowQuizState extends State<ShowQuiz> {
-  double textSize = 20;
-  //int duration2 = Provider.of<QuizData>(context).duration;
-
   @override
   Widget build(BuildContext context) {    
     int duration = Provider.of<QuizData>(context).duration;
     String question = Provider.of<QuizData>(context).question;
+    double fontSize = Provider.of<QuizData>(context).fontSize.toDouble();
+
     StreamDuration quizDuration = StreamDuration(
       config: StreamDurationConfig(
         autoPlay: false,
@@ -48,7 +47,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                     streamDuration: quizDuration,
                     
                     style: const TextStyle(
-                      fontSize: 100,
+                      fontSize: 75,
                       color: Colors.white
                     ),
                     decoration: const BoxDecoration(
@@ -67,7 +66,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                             onPressed: () {
                               quizDuration.play();
                             },
-                            child: const Text('Play'),
+                            child: const Text('Start'),
                           ),
                         ),
                         Padding(
@@ -77,24 +76,6 @@ class _ShowQuizState extends State<ShowQuiz> {
                               quizDuration.pause();
                             },
                             child: const Text('Pause'),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {textSize++;});
-                            },
-                            child: const Text('Increase Text Size'),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {textSize--;});
-                            },
-                            child: const Text('Reduce Text Size'),
                           ),
                         ),
                       ],
@@ -107,7 +88,7 @@ class _ShowQuizState extends State<ShowQuiz> {
               child: SingleChildScrollView(
                 child: Text(
                   question,
-                  style: TextStyle(fontSize: textSize),
+                  style: TextStyle(fontSize: fontSize),
                 ),
               )
             )
