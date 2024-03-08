@@ -107,8 +107,27 @@ class _MyHomePageState extends State<MyHomePage> {
   final String _defaultQuestion = 'What is the most efficient algorithm for finding a chosen number within 100?';
 
   void _submitAnswer() {
-    // The submit logic here
+    // Validate if the answer is not empty before showing the dialog
+    if (_answerController.text.trim().isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Thank you for your submission 😊'), 
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
