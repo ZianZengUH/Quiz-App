@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/info_page.dart';
-import 'package:quiz_app_instructor/create_quiz.dart';
+import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
@@ -45,10 +46,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
-  QuizData quizData = QuizData();
+  //QuizData quizData = QuizData();
 
   @override
   Widget build(BuildContext context) {
+    _checkQuizDirExists();
+
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -119,5 +122,13 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }
     );
+  }
+
+  // Checks if the "Saved Quizzes" directory exists.
+  // If not, create it.
+  _checkQuizDirExists() async {
+    if (!await Directory('Saved Quizzes').exists()) {
+      Directory('Saved Quizzes').create();
+    }
   }
 }
