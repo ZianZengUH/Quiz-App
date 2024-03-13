@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -156,7 +155,7 @@ class CreateQuizPage extends StatelessWidget {
     }
 
     // Updates QuizData values.
-    Provider.of<QuizData>(context, listen: false).changeQuizData(name, duration, question, fontSize);
+    Provider.of<QuizData>(context, listen: false).changeQuizData(name, duration, fontSize, question);
   }
 
   _write(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController) async {
@@ -184,12 +183,14 @@ class CreateQuizPage extends StatelessWidget {
       fontSize = int.parse(fontSizeController.text);
     }
 
-    Directory quizDirectory = await getApplicationDocumentsDirectory();
-
+    Directory quizDirectory = Directory('Saved Quizzes');
+    
     // Windows - C:\Users\<user>\Documents\<quiz name>.txt
     // Mac - unknown
-    print('${quizDirectory.path}/$name');
-    File file = File('${quizDirectory.path}/$name.txt');
-    file.writeAsString('$name, $duration, $question, $fontSize');
+    // print('${quizDirectory.path}/$name');
+
+    // Write quizzes to .quiz file (can view in any text editor)
+    File file = File('${quizDirectory.path}/$name.quiz');
+    file.writeAsString('$name,,$duration,,$fontSize,,$question');
   }
 }

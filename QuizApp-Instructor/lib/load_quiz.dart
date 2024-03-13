@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app_instructor/quiz_data.dart';
 
 class LoadQuizPage extends StatefulWidget {
   const LoadQuizPage({super.key});
@@ -13,8 +15,8 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    var dir = Directory.current;
-    List dirContents = dir.listSync();
+    Directory quizDirectory = Directory('Saved Quizzes');
+    List dirContents = quizDirectory.listSync();
     Iterable<File> iterableFiles = dirContents.whereType<File>();
     List files = iterableFiles.toList();
 
@@ -52,7 +54,17 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                         shape: const BeveledRectangleBorder(),
                       ),
                       onPressed: () {
-                       print('testing');
+                        List<String> testing = _selectedOption.split('\'');
+                        //Future<List> quizData = _read(testing[1]);
+                        //List quizList = _convertToList(quizData);
+
+                        _read(testing[1]).then((List quizList) =>
+                        Provider.of<QuizData>(context, listen: false).changeQuizData(
+                          quizList[0],
+                          int.parse(quizList[1]),
+                          int.parse(quizList[2]),
+                          quizList[3]));
+                        // Provider.of<QuizData>(context, listen: false).changeQuizData(quizList[0], quizList[1], quizList[2], quizList[3]);
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
@@ -66,5 +78,33 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
           ],
         ),
     );
+  }
+
+  Future<List> _read(String quizFile) async {
+    String quizAsString = '';
+    List quizData = [];
+    File quiz = File('${Directory.current.path}/$quizFile');
+
+    try {
+      quizAsString = await quiz.readAsString();
+      quizData = quizAsString.split(',,');
+    } catch (e) {
+      print("Couldn't read file");
+    }
+    // name
+    print(quizData[0]);
+    // duration
+    print(quizData[1]);
+    // font size
+    print(quizData[2]);
+    // question
+    print(quizData[3]);
+
+    return quizData;
+  }
+
+  _convertToList(Future<List> data) async {
+    List list = await data;
+    return list;
   }
 }

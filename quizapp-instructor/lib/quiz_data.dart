@@ -9,15 +9,15 @@ class QuizData extends ChangeNotifier {
   QuizData(
     {this.name = '',
     this.duration = 15,
-    this.question = '',
-    this.fontSize = 20}
+    this.fontSize = 20,
+    this.question = ''}
   );
 
-  void changeQuizData(String name, int duration, String question, int fontSize) {
+  void changeQuizData(String name, int duration, int fontSize, String question) {
     this.name = name;
     this.duration = duration;
-    this.question = question;
     this.fontSize = fontSize;
+    this.question = question;
 
     notifyListeners();
   }
