@@ -41,6 +41,7 @@ dependencies:
   auto_size_text: ^3.0.0
   slide_countdown: ^1.5.2
   path_provider: ^2.1.2
+  flutter_blue_plus: ^1.31.16
 
 dev_dependencies:
   flutter_test:
