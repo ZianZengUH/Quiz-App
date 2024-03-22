@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,11 +36,33 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String name = prefs.getString('userName') ?? '';
+    String email = prefs.getString('userEmail') ?? '';
+    _nameController.text = name;
+    _emailController.text = email;
+  }
+
+  Future<void> _saveUserInfo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userName', _nameController.text);
+    await prefs.setString('userEmail', _emailController.text);
+  }
 
   Future<void> _takePictureAndLogin() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    if (photo != null && _nameController.text.trim().isNotEmpty) {
+    if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty) {
+      await _saveUserInfo();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => MyHomePage(title: 'Quiz App'),
       ));
@@ -71,6 +94,15 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter your email',
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _takePictureAndLogin,
               child: const Text('Take Picture & Login'),
@@ -84,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 }
