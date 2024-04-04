@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:path_provider/path_provider.dart'; // For file operations
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
@@ -19,12 +20,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => MyAppState()
-        ),
-        ChangeNotifierProvider(
-          create: (context) => QuizData()
-        ),
+        ChangeNotifierProvider(create: (context) => MyAppState()),
+        ChangeNotifierProvider(create: (context) => QuizData()),
       ],
       child: MaterialApp(
         title: 'Quiz App - Instructor Version',
@@ -39,47 +36,94 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  final List<BluetoothDevice> _connectedDevices = [];
+  List<BluetoothDevice> _connectedDevices = [];
+  Map<String, BluetoothDevice> _deviceMap = {};
 
   List<BluetoothDevice> get connectedDevices => _connectedDevices;
 
   void connectToDevice(BluetoothDevice device) {
-    // Connect to the selected device
-    device.connectAndUpdateStream().then((_) {
+    device.connect().then((_) {
       _connectedDevices.add(device);
+      _deviceMap[device.id.toString()] = device;
       notifyListeners();
+      setupDataReception(device); // Set up to receive data
+    }).catchError((error) {
+      print('Error connecting to device: $error');
     });
   }
 
   void disconnectFromDevice(BluetoothDevice device) {
-    // Disconnect from the selected device
-    device.disconnectAndUpdateStream().then((_) {
+    device.disconnect().then((_) {
       _connectedDevices.remove(device);
+      _deviceMap.remove(device.id.toString());
       notifyListeners();
+    }).catchError((error) {
+      print('Error disconnecting from device: $error');
     });
   }
 
-  void sendData(String data) {
-    // Send data to all connected devices
-    for (var device in _connectedDevices) {
-      device.discoverServices().then((services) {
-        for (var service in services) {
-          for (var characteristic in service.characteristics) {
-            if (characteristic.properties.write) {
-              characteristic.write(data.codeUnits).then((_) {
-                print('Data sent to device: ${device.id}');
-              }).catchError((error) {
-                print('Failed to send data to device ${device.id}: $error');
-              });
-            }
-          }
-        }
-      }).catchError((error) {
-        print('Failed to discover services for device ${device.id}: $error');
-      });
+  void sendData(String data, {String? targetDeviceId}) {
+    if (targetDeviceId != null) {
+      _sendDataToDevice(_deviceMap[targetDeviceId]!, data);
+    } else {
+      for (var device in _connectedDevices) {
+        _sendDataToDevice(device, data);
+      }
     }
   }
+
+  void _sendDataToDevice(BluetoothDevice device, String data) {
+    device.discoverServices().then((services) {
+      for (var service in services) {
+        for (var characteristic in service.characteristics) {
+          if (characteristic.properties.write) {
+            characteristic.write(utf8.encode(data)).then((_) {
+              print('Data sent to device: ${device.id}');
+            }).catchError((error) {
+              print('Failed to send data to device ${device.id}: $error');
+            });
+          }
+        }
+      }
+    }).catchError((error) {
+      print('Failed to discover services for device ${device.id}: $error');
+    });
+  }
+
+  Future<void> setupDataReception(BluetoothDevice device) async {
+    var services = await device.discoverServices();
+    for (var service in services) {
+      for (var characteristic in service.characteristics) {
+        if (characteristic.properties.notify) {
+          characteristic.setNotifyValue(true).catchError((error) {
+            print('Failed to subscribe to notifications: $error');
+          });
+
+          characteristic.value.listen((data) {
+            onReceivedData(data);
+          });
+        }
+      }
+    }
+  }
+
+  void onReceivedData(List<int> dataChunk) async {
+    String receivedData = utf8.decode(dataChunk);
+    await saveReceivedFile(receivedData);
+  }
+
+  Future<void> saveReceivedFile(String content) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/received_file.txt');
+
+    file.writeAsString(content).then((_) {
+      print('File saved successfully');
+    }).catchError((error) {
+      print('Failed to save the file: $error');
+    });
+  }
 }
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
