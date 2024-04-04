@@ -12,7 +12,7 @@ class ScanScreen extends StatefulWidget {
   final Function(BluetoothDevice) onConnect;
   final Function(BluetoothDevice) onDisconnect;
 
-  const ScanScreen({Key? key, required this.onConnect, required this.onDisconnect}) : super(key: key);
+  const ScanScreen({super.key, required this.onConnect, required this.onDisconnect});
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -92,18 +92,18 @@ class _ScanScreenState extends State<ScanScreen> {
     if (mounted) {
       setState(() {});
     }
-    return Future.delayed(Duration(milliseconds: 500));
+    return Future.delayed(const Duration(milliseconds: 500));
   }
 
   Widget buildScanButton(BuildContext context) {
     if (FlutterBluePlus.isScanningNow) {
       return FloatingActionButton(
-        child: const Icon(Icons.stop),
         onPressed: onStopPressed,
         backgroundColor: Colors.red,
+        child: const Icon(Icons.stop),
       );
     } else {
-      return FloatingActionButton(child: const Text("SCAN"), onPressed: onScanPressed);
+      return FloatingActionButton(onPressed: onScanPressed, child: const Text("SCAN"));
     }
   }
 
@@ -115,7 +115,7 @@ class _ScanScreenState extends State<ScanScreen> {
             onOpen: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DeviceScreen(device: d),
-                settings: RouteSettings(name: '/DeviceScreen'),
+                settings: const RouteSettings(name: '/DeviceScreen'),
               ),
             ),
             onConnect: () => onConnectPressed(d),

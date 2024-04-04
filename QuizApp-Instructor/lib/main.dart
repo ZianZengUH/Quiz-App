@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  List<BluetoothDevice> _connectedDevices = [];
+  final List<BluetoothDevice> _connectedDevices = [];
 
   List<BluetoothDevice> get connectedDevices => _connectedDevices;
 
@@ -64,7 +64,7 @@ class MyAppState extends ChangeNotifier {
     for (var device in _connectedDevices) {
       device.discoverServices().then((services) {
         for (var service in services) {
-          service.characteristics.forEach((characteristic) {
+          for (var characteristic in service.characteristics) {
             if (characteristic.properties.write) {
               characteristic.write(data.codeUnits).then((_) {
                 print('Data sent to device: ${device.id}');
@@ -72,7 +72,7 @@ class MyAppState extends ChangeNotifier {
                 print('Failed to send data to device ${device.id}: $error');
               });
             }
-          });
+          }
         }
       }).catchError((error) {
         print('Failed to discover services for device ${device.id}: $error');

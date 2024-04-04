@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: Text(
                   _defaultQuestion,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               const SizedBox(height: 20),

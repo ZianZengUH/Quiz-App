@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
       final widgetPosition = focusNode.context?.findRenderObject()?.paintBounds.top;
       _scrollController.animateTo(
         widgetPosition ?? 0,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
       );
     }
@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MyHomePage(title: 'Quiz App'),
+        builder: (context) => const MyHomePage(title: 'Quiz App'),
       ));
     } else {
       // Optionally show an error message if needed
@@ -187,13 +187,13 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Thank you for your submission 😊'), 
+            title: const Text('Thank you for your submission 😊'), 
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -205,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = TextStyle(
+    TextStyle textStyle = const TextStyle(
       fontSize: 18, 
       fontWeight: FontWeight.bold, // Use FontWeight.bold for bold text
     );
@@ -223,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               // Display the question inside a container with padding and a border
               Container(
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 child:Text(
                   'Question',
                   style: textStyle,
@@ -237,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: Text(
                   _defaultQuestion,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               const SizedBox(height: 20),

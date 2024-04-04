@@ -14,8 +14,8 @@ class SystemDeviceTile extends StatefulWidget {
     required this.onOpen,
     required this.onConnect,
     required this.onDisconnect,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<SystemDeviceTile> createState() => _SystemDeviceTileState();
@@ -57,13 +57,13 @@ class _SystemDeviceTileState extends State<SystemDeviceTile> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ElevatedButton(
-            child: isConnected ? const Text('OPEN') : const Text('CONNECT'),
             onPressed: isConnected ? widget.onOpen : widget.onConnect,
+            child: isConnected ? const Text('OPEN') : const Text('CONNECT'),
           ),
           if (isConnected)
             ElevatedButton(
-              child: const Text('DISCONNECT'),
               onPressed: widget.onDisconnect,
+              child: const Text('DISCONNECT'),
             ),
         ],
       ),
