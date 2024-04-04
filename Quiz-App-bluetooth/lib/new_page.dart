@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title});
+  const MyHomePage({Key? key, required this.title, required void Function(String data) onSendData, required List<BluetoothDevice> connectedDevices});
 
   final String title;
 

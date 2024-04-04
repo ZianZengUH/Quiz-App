@@ -18,6 +18,22 @@ class InfoPage extends StatelessWidget {
           Text('WARNING - Saving to disk will overwrite whatever file is named <quiz name>.quiz!  Please be careful you don\'t overwrite something by accident!'),
           Text('Windows - C:\\Users\\<your username>\\Documents\\<quiz name>.txt'),
           Text('Mac - TODO\n'),
+
+          Text('Bluetooth Connectivity'),
+          Text('This app supports hop connect functionality using Bluetooth.'),
+          Text('To connect to devices:'),
+          Text('1. Navigate to the Bluetooth page.'),
+          Text('2. Scan for available devices.'),
+          Text('3. Select the devices you want to connect to.'),
+          Text('4. Once connected, you can send quiz data to the connected devices.'),
+          Text('5. To disconnect from a device, tap the "Disconnect" button next to the device.\n'),
+
+          Text('Sending Quiz Data'),
+          Text('When you have devices connected via Bluetooth:'),
+          Text('1. Load or create a quiz.'),
+          Text('2. Navigate to the "Display Quiz" page.'),
+          Text('3. Tap the "Send Quiz" button to send the quiz data to all connected devices.'),
+          Text('4. The quiz data will be sent to the devices, and they can start answering the quiz.\n'),
           
           Text('Load Quiz'),
           Text('Searches in "<Quiz App directory>/Saved Quizzes" folder for your saved quiz files.'),
@@ -34,6 +50,7 @@ class InfoPage extends StatelessWidget {
           Text('By default, creates a folder named after the quiz name in a specific directory.'),
           Text('Windows - C:\\Users\\<your username>\\Documents\\<quiz name>.txt'),
           Text('Mac - TODO'),
+          
 
         ]
       )

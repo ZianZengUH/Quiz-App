@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue_plus_example/utils/extra.dart';
 
-import 'new_page.dart'; // Import the new page widget
+import 'new_page.dart';
 import 'screens/bluetooth_off_screen.dart';
 import 'screens/scan_screen.dart';
 
@@ -21,7 +22,8 @@ class FlutterBlueApp extends StatefulWidget {
 
 class _FlutterBlueAppState extends State<FlutterBlueApp> {
   BluetoothAdapterState _adapterState = BluetoothAdapterState.unknown;
-  int _selectedIndex = 0; // Index for navigation rail items
+  int _selectedIndex = 0;
+  List<BluetoothDevice> _connectedDevices = [];
 
   late StreamSubscription<BluetoothAdapterState> _adapterStateStateSubscription;
 
@@ -39,6 +41,7 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   @override
   void dispose() {
     _adapterStateStateSubscription.cancel();
+    _disconnectFromAllDevices();
     super.dispose();
   }
 
@@ -48,20 +51,78 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
     });
   }
 
+  void _connectToDevice(BluetoothDevice device) {
+    device.connectAndUpdateStream().then((_) {
+      setState(() {
+        _connectedDevices.add(device);
+      });
+    }).catchError((error) {
+      print('Failed to connect to device: $error');
+    });
+  }
+
+  void _disconnectFromDevice(BluetoothDevice device) {
+    device.disconnectAndUpdateStream().then((_) {
+      setState(() {
+        _connectedDevices.remove(device);
+      });
+    }).catchError((error) {
+      print('Failed to disconnect from device: $error');
+    });
+  }
+
+  void _disconnectFromAllDevices() {
+    for (var device in _connectedDevices) {
+      device.disconnectAndUpdateStream().catchError((error) {
+        print('Failed to disconnect from device: $error');
+      });
+    }
+    setState(() {
+      _connectedDevices.clear();
+    });
+  }
+
+void _sendData(String data) {
+  for (var device in _connectedDevices) {
+    device.discoverServices().then((services) {
+      for (var service in services) {
+        service.characteristics.forEach((characteristic) {
+          if (characteristic.properties.write) {
+            characteristic.write(data.codeUnits).then((_) {
+              print('Data sent to device: ${device.id}');
+            }).catchError((error) {
+              print('Failed to send data to device ${device.id}: $error');
+            });
+          }
+        });
+      }
+    }).catchError((error) {
+      print('Failed to discover services for device ${device.id}: $error');
+    });
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     Widget currentScreen;
     switch (_selectedIndex) {
       case 0:
         currentScreen = _adapterState == BluetoothAdapterState.on
-            ? const ScanScreen()
+            ? ScanScreen(
+                onConnect: _connectToDevice,
+                onDisconnect: _disconnectFromDevice,
+              )
             : BluetoothOffScreen(adapterState: _adapterState);
         break;
       case 1:
-        currentScreen = MyHomePage(title: '',); // New page widget
+        currentScreen = MyHomePage(
+          title: '',
+          connectedDevices: _connectedDevices,
+          onSendData: _sendData,
+        );
         break;
       default:
-        currentScreen = Container(); // Placeholder, you can handle this case based on your requirements
+        currentScreen = Container();
     }
 
     return MaterialApp(

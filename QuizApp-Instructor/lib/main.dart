@@ -1,11 +1,14 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
+import 'package:quiz_app_instructor/display_quiz.dart';
+import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
-import 'package:quiz_app_instructor/display_quiz.dart';
+import 'package:quiz_app_instructor/utils/extra.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,7 +38,48 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {}
+class MyAppState extends ChangeNotifier {
+  List<BluetoothDevice> _connectedDevices = [];
+
+  List<BluetoothDevice> get connectedDevices => _connectedDevices;
+
+  void connectToDevice(BluetoothDevice device) {
+    // Connect to the selected device
+    device.connectAndUpdateStream().then((_) {
+      _connectedDevices.add(device);
+      notifyListeners();
+    });
+  }
+
+  void disconnectFromDevice(BluetoothDevice device) {
+    // Disconnect from the selected device
+    device.disconnectAndUpdateStream().then((_) {
+      _connectedDevices.remove(device);
+      notifyListeners();
+    });
+  }
+
+  void sendData(String data) {
+    // Send data to all connected devices
+    for (var device in _connectedDevices) {
+      device.discoverServices().then((services) {
+        for (var service in services) {
+          service.characteristics.forEach((characteristic) {
+            if (characteristic.properties.write) {
+              characteristic.write(data.codeUnits).then((_) {
+                print('Data sent to device: ${device.id}');
+              }).catchError((error) {
+                print('Failed to send data to device ${device.id}: $error');
+              });
+            }
+          });
+        }
+      }).catchError((error) {
+        print('Failed to discover services for device ${device.id}: $error');
+      });
+    }
+  }
+}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -46,7 +90,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
-  //QuizData quizData = QuizData();
 
   @override
   Widget build(BuildContext context) {

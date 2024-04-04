@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_app_instructor/main.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 
@@ -91,7 +92,14 @@ class _ShowQuizState extends State<ShowQuiz> {
                   style: TextStyle(fontSize: fontSize),
                 ),
               )
-            )
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Send quiz data to connected devices
+                Provider.of<MyAppState>(context, listen: false).sendData(question);
+              },
+              child: const Text('Send Quiz'),
+            ),
           ],
         )
       )
