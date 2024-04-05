@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'ble_manager.dart'; 
 import 'ble_connection_screen.dart';
-
+import 'ble_manager.dart';
 import 'login_page.dart'; 
-import 'home_page.dart'; 
 
 void main() {
   runApp(

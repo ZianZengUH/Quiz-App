@@ -1,9 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -40,7 +36,7 @@ void startScan() {
   FlutterBluePlus.startScan(oneByOne: true);
 
   // Optional: Stop scan after a certain time
-  Future.delayed(Duration(seconds: 10)).then((_) => stopScan());
+  // Future.delayed(Duration(seconds: 10)).then((_) => stopScan());
 }
 
 
