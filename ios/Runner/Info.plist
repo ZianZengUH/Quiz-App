@@ -37,6 +37,10 @@
 	<string>This app always needs location to function</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs location when in use to function</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Access camera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Library</string>
 
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
