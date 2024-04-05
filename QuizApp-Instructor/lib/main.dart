@@ -36,8 +36,22 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  List<BluetoothDevice> _connectedDevices = [];
-  Map<String, BluetoothDevice> _deviceMap = {};
+  final List<BluetoothDevice> _connectedDevices = [];
+  final Map<String, BluetoothDevice> _deviceMap = {};
+
+  MyAppState() {
+    checkBluetoothStatus();
+  }
+
+  // Simulated Bluetooth status check
+  Future<void> checkBluetoothStatus() async {
+    // Placeholder for actual Bluetooth status check
+    bool isBluetoothEnabled = true; // This should be replaced with actual check
+    if (!isBluetoothEnabled) {
+      // Show an alert or handle accordingly
+      print("Bluetooth is off. Please turn it on.");
+    }
+  }
 
   List<BluetoothDevice> get connectedDevices => _connectedDevices;
 

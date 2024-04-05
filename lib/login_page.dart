@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       final widgetPosition = focusNode.context?.findRenderObject()?.paintBounds.top;
       _scrollController.animateTo(
         widgetPosition ?? 0,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
       );
     }
@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MyHomePage(title: 'Quiz App'),
+        builder: (context) => const MyHomePage(title: 'Quiz App'),
       ));
     } else {
       // Optionally show an error message if needed

@@ -23,13 +23,13 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Thank you for your submission 😊'), 
+            title: const Text('Thank you for your submission 😊'), 
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = TextStyle(
+    TextStyle textStyle = const TextStyle(
       fontSize: 18, 
       fontWeight: FontWeight.bold, // Use FontWeight.bold for bold text
     );
@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               // Display the question inside a container with padding and a border
               Container(
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 child:Text(
                   'Question',
                   style: textStyle,
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: Text(
                   _defaultQuestion,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               const SizedBox(height: 20),

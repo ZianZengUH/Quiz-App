@@ -11,12 +11,14 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => BLEManager()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,12 +32,12 @@ class MyApp extends StatelessWidget {
         future: Provider.of<BLEManager>(context, listen: false).isConnected,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
           } else {
             if (snapshot.data == true) {
               return const LoginPage();
             } else {
-              return BLEConnectionScreen();
+              return const BLEConnectionScreen();
             }
           }
         },

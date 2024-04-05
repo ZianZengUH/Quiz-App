@@ -5,10 +5,12 @@ import 'ble_manager.dart';
 import 'login_page.dart';
 
 class BLEConnectionScreen extends StatelessWidget {
+  const BLEConnectionScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Connect to BLE Device")),
+      appBar: AppBar(title: const Text("Connect to BLE Device")),
       body: Consumer<BLEManager>(
         builder: (context, manager, child) {
           return Column(
@@ -22,7 +24,7 @@ class BLEConnectionScreen extends StatelessWidget {
                       title: Text(device.name.isNotEmpty ? device.name : 'Unknown Device'),
                       subtitle: Text(device.id.toString()),
                       onTap: () async {
-                        await manager.connectToDevice(device);
+                        await manager.connectToDevice(device, context);
                         // Await the future value of isConnected
                         bool isConnected = await manager.isConnected;
                         if (isConnected) {
@@ -33,9 +35,9 @@ class BLEConnectionScreen extends StatelessWidget {
                   },
                 ),
               ),
-              ElevatedButton(
-                onPressed: () => manager.startScan(),
-                child: Text("Scan for Devices"),
+             ElevatedButton(
+                onPressed: () => Provider.of<BLEManager>(context, listen: false).ensureBluetoothIsOn(context),
+                child: const Text("Scan for Devices"),
               ),
             ],
           );
