@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -77,6 +79,18 @@ void startScan() {
       await device.connect();
       connectedDevice = device;
       notifyListeners();
+
+      // Send the mobile device ID to the desktop app
+      await device.discoverServices();
+      for (var service in device.servicesList) {
+        for (var characteristic in service.characteristics) {
+          if (characteristic.properties.write) {
+            await characteristic.write(utf8.encode(device.id.toString()));
+            break;
+          }
+        }
+      }
+
       // Show success dialog
       showDialog(
         context: context,
