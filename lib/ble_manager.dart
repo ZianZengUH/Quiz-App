@@ -1,25 +1,52 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+class PermissionsService {
+  Future<bool> requestBluetoothPermissions() async {
+    final status = await Permission.bluetooth.request();
+    return status.isGranted;
+  }
 
+  Future<bool> requestLocationPermissions() async {
+    final status = await Permission.locationWhenInUse.request();
+    return status.isGranted;
+  }
+}
 
 class BLEManager with ChangeNotifier {
   List<ScanResult> scanResults = [];
   BluetoothDevice? connectedDevice;
   StreamSubscription? scanSubscription;
-
+  final PermissionsService _permissionsService = PermissionsService();
+  
   BLEManager() {
     checkBLEStatusAndStartScan();
   }
 
   void checkBLEStatusAndStartScan() async {
+    final isBluetoothPermissionGranted =
+        await _permissionsService.requestBluetoothPermissions();
+    final isLocationPermissionGranted =
+        await _permissionsService.requestLocationPermissions();
+
+    if (!isBluetoothPermissionGranted || !isLocationPermissionGranted) {
+      // Handle the case where permissions are not granted
+      print('Required permissions not granted');
+      return;
+    }
+
+    // Continue with BLE operations since permissions are granted
     final isOn = await FlutterBluePlus.isOn;
     if (isOn) {
       startScan();
+    } else {
+      // Handle the case where Bluetooth is not turned on
+      print('Bluetooth is not turned on');
     }
   }
-
+  
   Future<void> ensureBluetoothIsOn(BuildContext context) async {
     final isOn = await FlutterBluePlus.isOn;
     if (!isOn) {
