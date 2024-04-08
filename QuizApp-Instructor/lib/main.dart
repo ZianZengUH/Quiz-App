@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:path_provider/path_provider.dart'; // For file operations
 import 'package:provider/provider.dart';
+import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
@@ -38,9 +40,11 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   final List<BluetoothDevice> _connectedDevices = [];
   final Map<String, BluetoothDevice> _deviceMap = {};
+  
 
   MyAppState() {
     checkBluetoothStatus();
+    startListeningForConnectionChanges();
   }
 
   // Simulated Bluetooth status check
@@ -55,15 +59,41 @@ class MyAppState extends ChangeNotifier {
 
   List<BluetoothDevice> get connectedDevices => _connectedDevices;
 
-  void connectToDevice(BluetoothDevice device) {
-    device.connect().then((_) {
-      _connectedDevices.add(device);
-      _deviceMap[device.id.toString()] = device;
-      notifyListeners();
-      setupDataReception(device); // Set up to receive data
-    }).catchError((error) {
-      print('Error connecting to device: $error');
-    });
+    void connectToDevice(BluetoothDevice device) {
+      device.connect().then((_) {
+        _connectedDevices.add(device);
+        _deviceMap[device.id.toString()] = device;
+        notifyListeners();
+        setupDataReception(device);
+        
+        // Check if the device is connected
+        if (device.isConnected) {
+          print('Mobile app is connected');
+        } else {
+          print('Mobile app is not connected');
+        }
+      }).catchError((error) {
+        print('Error connecting to device: $error');
+      });
+    }
+
+  void handleDeviceConnection(BluetoothDevice device) {
+    if (device.isConnected) {
+      if (!_connectedDevices.contains(device)) {
+        _connectedDevices.add(device);
+        _deviceMap[device.id.toString()] = device;
+        notifyListeners();
+        setupDataReception(device);
+        print('Mobile app is connected: ${device.id}');
+      }
+    } else {
+      if (_connectedDevices.contains(device)) {
+        _connectedDevices.remove(device);
+        _deviceMap.remove(device.id.toString());
+        notifyListeners();
+        print('Mobile app is disconnected: ${device.id}');
+      }
+    }
   }
 
   void disconnectFromDevice(BluetoothDevice device) {
@@ -74,6 +104,26 @@ class MyAppState extends ChangeNotifier {
     }).catchError((error) {
       print('Error disconnecting from device: $error');
     });
+  }
+
+  StreamSubscription<List<ScanResult>>? _scanSubscription;
+  void startListeningForConnectionChanges() {
+    _scanSubscription = FlutterBluePlus.scanResults.listen(
+      (List<ScanResult> scanResults) {
+        for (var scanResult in scanResults) {
+          if (scanResult.advertisementData.connectable) {
+            handleDeviceConnection(scanResult.device);
+          }
+        }
+      },
+      onError: (error) {
+        print('Error listening for device connection changes: $error');
+      },
+    );
+  }
+
+  void stopListeningForConnectionChanges() {
+    _scanSubscription?.cancel();
   }
 
   void sendData(String data, {String? targetDeviceId}) {
@@ -114,7 +164,9 @@ class MyAppState extends ChangeNotifier {
           });
 
           characteristic.value.listen((data) {
-            onReceivedData(data);
+            String receivedData = utf8.decode(data);
+            print('Received mobile device ID: $receivedData');
+            // Store the mobile device ID or perform any desired action
           });
         }
       }
@@ -152,6 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     _checkQuizDirExists();
+    var appState = Provider.of<MyAppState>(context);
 
     Widget page;
     switch (selectedIndex) {
@@ -169,6 +222,9 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       case 4:
         page = const Placeholder();
+        break;
+      case 5:
+        page = const ConnectedDevicesPage();        
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -202,6 +258,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     NavigationRailDestination(
                       icon: Icon(Icons.save_as),
                       label: Text('Export Quiz Answers'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.bluetooth),
+                      label: Text('Connected Devices'),
                     ),
                   ],
                   selectedIndex: selectedIndex,
