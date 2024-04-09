@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:path_provider/path_provider.dart'; // For file operations
@@ -40,11 +41,14 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   final List<BluetoothDevice> _connectedDevices = [];
   final Map<String, BluetoothDevice> _deviceMap = {};
+  Timer? _deviceRefreshTimer;
+
   
 
   MyAppState() {
     checkBluetoothStatus();
     startListeningForConnectionChanges();
+    _startPeriodicDeviceRefresh();
   }
 
   // Simulated Bluetooth status check
@@ -68,14 +72,47 @@ class MyAppState extends ChangeNotifier {
         
         // Check if the device is connected
         if (device.isConnected) {
-          print('Mobile app is connected');
+          if (kDebugMode) {
+            print('Mobile app is connected');
+          }
         } else {
-          print('Mobile app is not connected');
+          if (kDebugMode) {
+            print('Mobile app is not connected');
+          }
         }
       }).catchError((error) {
-        print('Error connecting to device: $error');
+        if (kDebugMode) {
+          print('Error connecting to device: $error');
+        }
       });
     }
+
+  void _startPeriodicDeviceRefresh() {
+    // Set up a periodic timer to refresh the list of connected devices every minute.
+    _deviceRefreshTimer = Timer.periodic(Duration(seconds: 1), (Timer t) => _refreshConnectedDevices());
+    print("***********************************************");
+  }
+
+  Future<void> _refreshConnectedDevices() async {
+    try {
+      List<BluetoothDevice> devs = FlutterBluePlus.connectedDevices;
+      // _connectedDevices.clear();
+      _connectedDevices.addAll(devs);
+      print("----------------------------------------");
+      for (var d in devs) {
+        print(d);
+      }
+      print("----------------------------------------");
+
+
+      notifyListeners(); // Notify listeners to rebuild UI based on the new list.
+    } catch (e) {
+      print("Error fetching connected devices: $e");
+    }
+  }
+
+
+
 
   void handleDeviceConnection(BluetoothDevice device) {
     if (device.isConnected) {

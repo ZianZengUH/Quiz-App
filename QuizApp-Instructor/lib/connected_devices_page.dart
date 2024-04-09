@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app_instructor/main.dart';
+
+import 'main.dart';
 
 class ConnectedDevicesPage extends StatelessWidget {
-  const ConnectedDevicesPage({Key? key}) : super(key: key);
+  const ConnectedDevicesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +22,11 @@ class ConnectedDevicesPage extends StatelessWidget {
           return ListTile(
             title: Text(device.name),
             subtitle: Text(device.id.toString()),
-            trailing: ElevatedButton(
+            trailing: IconButton(
+              icon: const Icon(Icons.close),
               onPressed: () {
                 appState.disconnectFromDevice(device);
               },
-              child: const Text('Disconnect'),
             ),
           );
         },

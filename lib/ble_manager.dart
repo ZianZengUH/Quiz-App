@@ -77,19 +77,25 @@ void startScan() {
   Future<void> connectToDevice(BluetoothDevice device, BuildContext context) async {
     try {
       await device.connect();
+
+
       connectedDevice = device;
       notifyListeners();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("device0"),
+          content: Text(connectedDevice.toString()),
+          actions: <Widget>[
 
-      // Send the mobile device ID to the desktop app
-      await device.discoverServices();
-      for (var service in device.servicesList) {
-        for (var characteristic in service.characteristics) {
-          if (characteristic.properties.write) {
-            await characteristic.write(utf8.encode(device.id.toString()));
-            break;
-          }
-        }
-      }
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+
 
       // Show success dialog
       showDialog(
@@ -105,8 +111,34 @@ void startScan() {
           ],
         ),
       );
+
+      // Send the mobile device ID to the desktop app
+      await device.discoverServices();
+      for (var service in device.servicesList) {
+        for (var characteristic in service.characteristics) {
+          if (characteristic.properties.write) {
+            await characteristic.write(utf8.encode(device.id.toString()));
+            break;
+          }
+        }
+      }
+      
     } catch (e) {
       print("Failed to connect to the device: $e");
+            // Show success dialog
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Failed to connect to the device"),
+          content: const Text("BLE connection has been established."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
       // Consider showing an error dialog here as well
     }
   }

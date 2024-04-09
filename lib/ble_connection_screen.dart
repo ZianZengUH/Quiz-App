@@ -35,7 +35,7 @@ class BLEConnectionScreen extends StatelessWidget {
                   },
                 ),
               ),
-             ElevatedButton(
+            ElevatedButton(
                 onPressed: () => Provider.of<BLEManager>(context, listen: false).ensureBluetoothIsOn(context),
                 child: const Text("Scan for Devices"),
               ),
