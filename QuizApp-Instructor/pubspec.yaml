@@ -44,6 +44,8 @@ dependencies:
   flutter_blue_plus: ^1.32.1
 
   shared_preferences: ^2.2.2
+  window_manager: ^0.3.8
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:
