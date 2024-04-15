@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:quick_blue/quick_blue.dart';
 import 'package:path_provider/path_provider.dart'; // For file operations
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/connected_devices_page.dart';
@@ -38,155 +39,59 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  final List<BluetoothDevice> _connectedDevices = [];
-  final Map<String, BluetoothDevice> _deviceMap = {};
+  final List<String> _connectedDeviceIds = [];
+  final Map<String, Map<String, List<String>>> _servicesAndCharacteristics = {};
   
+  List<String> get connectedDeviceIds => _connectedDeviceIds;
+  Map<String, Map<String, List<String>>> get servicesAndCharacteristics => _servicesAndCharacteristics;
 
   MyAppState() {
-    checkBluetoothStatus();
-    startListeningForConnectionChanges();
-  }
-
-  // Simulated Bluetooth status check
-  Future<void> checkBluetoothStatus() async {
-    // Placeholder for actual Bluetooth status check
-    bool isBluetoothEnabled = true; // This should be replaced with actual check
-    if (!isBluetoothEnabled) {
-      // Show an alert or handle accordingly
-      print("Bluetooth is off. Please turn it on.");
-    }
-  }
-
-  List<BluetoothDevice> get connectedDevices => _connectedDevices;
-
-    void connectToDevice(BluetoothDevice device) {
-      device.connect().then((_) {
-        _connectedDevices.add(device);
-        _deviceMap[device.id.toString()] = device;
+    QuickBlue.setConnectionHandler((id, state) {
+      if (state == BlueConnectionState.connected) {
+        if (!_connectedDeviceIds.contains(id)) {
+          _connectedDeviceIds.add(id);
+          QuickBlue.discoverServices(id); // Begin service discovery
+          notifyListeners();
+        }
+      } else if (state == BlueConnectionState.disconnected) {
+        _servicesAndCharacteristics.remove(id); // Cleanup if disconnected
+        _connectedDeviceIds.remove(id);
         notifyListeners();
-        setupDataReception(device);
-        
-        // Check if the device is connected
-        if (device.isConnected) {
-          print('Mobile app is connected');
-        } else {
-          print('Mobile app is not connected');
-        }
-      }).catchError((error) {
-        print('Error connecting to device: $error');
-      });
-    }
-
-  void handleDeviceConnection(BluetoothDevice device) {
-    if (device.isConnected) {
-      if (!_connectedDevices.contains(device)) {
-        _connectedDevices.add(device);
-        _deviceMap[device.id.toString()] = device;
-        notifyListeners();
-        setupDataReception(device);
-        print('Mobile app is connected: ${device.id}');
       }
-    } else {
-      if (_connectedDevices.contains(device)) {
-        _connectedDevices.remove(device);
-        _deviceMap.remove(device.id.toString());
-        notifyListeners();
-        print('Mobile app is disconnected: ${device.id}');
-      }
-    }
-  }
-
-  void disconnectFromDevice(BluetoothDevice device) {
-    device.disconnect().then((_) {
-      _connectedDevices.remove(device);
-      _deviceMap.remove(device.id.toString());
-      notifyListeners();
-    }).catchError((error) {
-      print('Error disconnecting from device: $error');
     });
+
+    QuickBlue.setValueHandler(_handleValueChange);
   }
 
-  StreamSubscription<List<ScanResult>>? _scanSubscription;
-  void startListeningForConnectionChanges() {
-    _scanSubscription = FlutterBluePlus.scanResults.listen(
-      (List<ScanResult> scanResults) {
-        for (var scanResult in scanResults) {
-          if (scanResult.advertisementData.connectable) {
-            handleDeviceConnection(scanResult.device);
-          }
-        }
-      },
-      onError: (error) {
-        print('Error listening for device connection changes: $error');
-      },
-    );
+  void _handleValueChange(String deviceId, String characteristicUuid, Uint8List value) {
+    String receivedData = utf8.decode(value);
+    print("Received data from $deviceId on $characteristicUuid: $receivedData");
+    // Process the received data as needed
   }
 
-  void stopListeningForConnectionChanges() {
-    _scanSubscription?.cancel();
-  }
-
-  void sendData(String data, {String? targetDeviceId}) {
-    if (targetDeviceId != null) {
-      _sendDataToDevice(_deviceMap[targetDeviceId]!, data);
-    } else {
-      for (var device in _connectedDevices) {
-        _sendDataToDevice(device, data);
-      }
+  void onServiceDiscovered(String deviceId, String serviceId, List<String> characteristicIds) {
+    _servicesAndCharacteristics[deviceId] = {serviceId: characteristicIds};
+    for (var characteristicId in characteristicIds) {
+      QuickBlue.setNotifiable(deviceId, serviceId, characteristicId, true as BleInputProperty);
+      // Here to read or write to the characteristic
+      QuickBlue.readValue(deviceId, serviceId, characteristicId); 
+      // QuickBlue.writeValue(deviceId, serviceId, characteristicId, data); // If we want to write
     }
+    notifyListeners();
   }
 
-  void _sendDataToDevice(BluetoothDevice device, String data) {
-    device.discoverServices().then((services) {
-      for (var service in services) {
-        for (var characteristic in service.characteristics) {
-          if (characteristic.properties.write) {
-            characteristic.write(utf8.encode(data)).then((_) {
-              print('Data sent to device: ${device.id}');
-            }).catchError((error) {
-              print('Failed to send data to device ${device.id}: $error');
-            });
-          }
-        }
-      }
-    }).catchError((error) {
-      print('Failed to discover services for device ${device.id}: $error');
-    });
+  void disconnectFromDevice(String deviceId) {
+    QuickBlue.disconnect(deviceId);
+    _connectedDeviceIds.remove(deviceId);
+    notifyListeners();
   }
 
-  Future<void> setupDataReception(BluetoothDevice device) async {
-    var services = await device.discoverServices();
-    for (var service in services) {
-      for (var characteristic in service.characteristics) {
-        if (characteristic.properties.notify) {
-          characteristic.setNotifyValue(true).catchError((error) {
-            print('Failed to subscribe to notifications: $error');
-          });
-
-          characteristic.value.listen((data) {
-            String receivedData = utf8.decode(data);
-            print('Received mobile device ID: $receivedData');
-            // Store the mobile device ID or perform any desired action
-          });
-        }
-      }
+  @override
+  void dispose() {
+    for (var deviceId in _connectedDeviceIds) {
+      QuickBlue.disconnect(deviceId);
     }
-  }
-
-  void onReceivedData(List<int> dataChunk) async {
-    String receivedData = utf8.decode(dataChunk);
-    await saveReceivedFile(receivedData);
-  }
-
-  Future<void> saveReceivedFile(String content) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/received_file.txt');
-
-    file.writeAsString(content).then((_) {
-      print('File saved successfully');
-    }).catchError((error) {
-      print('Failed to save the file: $error');
-    });
+    super.dispose();
   }
 }
 
@@ -199,36 +104,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     _checkQuizDirExists();
     var appState = Provider.of<MyAppState>(context);
 
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = const InfoPage();
-        break;
-      case 1:
-        page = const CreateQuizPage();
-        break;
-      case 2:
-        page = const LoadQuizPage();
-        break;
-      case 3:
-        page = const ShowQuiz();
-        break;
-      case 4:
-        page = const Placeholder();
-        break;
-      case 5:
-        page = const ConnectedDevicesPage();        
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
+    List<Widget> pages = [
+      const InfoPage(),
+      const CreateQuizPage(),
+      const LoadQuizPage(),
+      const ShowQuiz(),
+      // Placeholder for Export Quiz Answers - you'll need to implement this widget
+      const Placeholder(),
+      const ConnectedDevicesPage(),
+    ];
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -265,9 +156,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                   selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
+                  onDestinationSelected: (index) {
                     setState(() {
-                     selectedIndex = value; 
+                      selectedIndex = index;
                     });
                   },
                 ),
@@ -275,21 +166,23 @@ class _MyHomePageState extends State<MyHomePage> {
               Expanded(
                 child: Container(
                   color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,
-                )
+                  child: pages[selectedIndex],
+                ),
               )
             ],
           ),
         );
-      }
+      },
     );
   }
 
-  // Checks if the "Saved Quizzes" directory exists.
-  // If not, create it.
-  _checkQuizDirExists() async {
-    if (!await Directory('Saved Quizzes').exists()) {
-      Directory('Saved Quizzes').create();
+  // Checks if the "Saved Quizzes" directory exists. If not, create it.
+  void _checkQuizDirExists() async {
+    final quizDir = Directory('Saved Quizzes');
+    if (!await quizDir.exists()) {
+      await quizDir.create();
     }
   }
 }
+
+

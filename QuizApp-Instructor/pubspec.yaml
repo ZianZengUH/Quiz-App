@@ -40,10 +40,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   auto_size_text: ^3.0.0
   slide_countdown: ^1.5.2
-  path_provider: ^2.1.2
+  path_provider: ^2.0.0
   flutter_blue_plus: ^1.32.1
 
   shared_preferences: ^2.2.2
+  quick_blue: ^0.5.0-dev.2
 
 dev_dependencies:
   flutter_test:

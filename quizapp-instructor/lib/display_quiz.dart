@@ -96,7 +96,7 @@ class _ShowQuizState extends State<ShowQuiz> {
             ElevatedButton(
               onPressed: () {
                 // Send quiz data to connected devices
-                Provider.of<MyAppState>(context, listen: false).sendData(question);
+                // Provider.of<MyAppState>(context, listen: false).sendData(question);
               },
               child: const Text('Send Quiz'),
             ),

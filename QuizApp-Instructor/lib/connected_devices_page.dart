@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app_instructor/main.dart';
+import 'main.dart';
 
 class ConnectedDevicesPage extends StatelessWidget {
   const ConnectedDevicesPage({Key? key}) : super(key: key);
@@ -15,15 +14,14 @@ class ConnectedDevicesPage extends StatelessWidget {
         title: const Text('Connected Devices'),
       ),
       body: ListView.builder(
-        itemCount: appState.connectedDevices.length,
+        itemCount: appState.connectedDeviceIds.length, // Updated this line
         itemBuilder: (context, index) {
-          BluetoothDevice device = appState.connectedDevices[index];
+          String deviceId = appState.connectedDeviceIds[index]; // Updated this line
           return ListTile(
-            title: Text(device.name),
-            subtitle: Text(device.id.toString()),
+            title: Text(deviceId), // Display device identifier
             trailing: ElevatedButton(
               onPressed: () {
-                appState.disconnectFromDevice(device);
+                appState.disconnectFromDevice(deviceId);
               },
               child: const Text('Disconnect'),
             ),
