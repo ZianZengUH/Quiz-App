@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         title: 'Quiz App - Instructor Version',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         ),
         home: const MyHomePage(),
       ),
@@ -165,7 +165,14 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  //color: Theme.of(context).colorScheme.primaryContainer,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("images/UH_Manoa_ICS_Logo.jpg"),
+                      opacity: 0.1,
+                      fit: BoxFit.cover,
+                      )
+                  ),
                   child: pages[selectedIndex],
                 ),
               )
