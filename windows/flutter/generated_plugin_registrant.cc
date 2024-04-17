@@ -8,16 +8,13 @@
 
 #include <file_selector_windows/file_selector_windows.h>
 #include <permission_handler_windows/permission_handler_windows_plugin.h>
-#include <screen_retriever/screen_retriever_plugin.h>
-#include <window_manager/window_manager_plugin.h>
+#include <quick_blue_windows/quick_blue_windows_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   FileSelectorWindowsRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FileSelectorWindows"));
   PermissionHandlerWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PermissionHandlerWindowsPlugin"));
-  ScreenRetrieverPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("ScreenRetrieverPlugin"));
-  WindowManagerPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("WindowManagerPlugin"));
+  QuickBlueWindowsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("QuickBlueWindowsPlugin"));
 }

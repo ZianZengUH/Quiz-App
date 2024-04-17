@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'ble_manager.dart';
 import 'login_page.dart';
 
@@ -17,17 +16,15 @@ class BLEConnectionScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: manager.scanResults.length,
+                  itemCount: manager.devices.length,
                   itemBuilder: (context, index) {
-                    final device = manager.scanResults[index].device;
+                    final device = manager.devices[index];
                     return ListTile(
                       title: Text(device.name.isNotEmpty ? device.name : 'Unknown Device'),
-                      subtitle: Text(device.id.toString()),
+                      subtitle: Text(device.id),
                       onTap: () async {
-                        await manager.connectToDevice(device, context);
-                        // Await the future value of isConnected
-                        bool isConnected = await manager.isConnected;
-                        if (isConnected) {
+                        await manager.connectToDevice(device.id, context);
+                        if (await manager.isConnected) {
                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginPage()));
                         }
                       },
@@ -35,8 +32,8 @@ class BLEConnectionScreen extends StatelessWidget {
                   },
                 ),
               ),
-            ElevatedButton(
-                onPressed: () => Provider.of<BLEManager>(context, listen: false).ensureBluetoothIsOn(context),
+              ElevatedButton(
+                onPressed: () => manager.startScan(),
                 child: const Text("Scan for Devices"),
               ),
             ],
