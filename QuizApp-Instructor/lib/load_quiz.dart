@@ -44,7 +44,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
             padding: const EdgeInsets.all(5.0),
             color: const Color.fromARGB(50, 6, 86, 6),
             child: Text(
-              'Searching for Quizzes in:\n$currentDirectoryString',
+              'Searching for quizzes in:\n$currentDirectoryString\\Saved Quizzes',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,

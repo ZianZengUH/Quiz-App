@@ -10,6 +10,7 @@ class InfoPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
           Container(
+            padding: const EdgeInsets.all(5.0),
             color: const Color.fromARGB(50, 6, 86, 6),
             child: const Text(
               'HOW TO USE THIS APPLICATION',

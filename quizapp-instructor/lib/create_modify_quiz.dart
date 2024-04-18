@@ -9,6 +9,8 @@ class CreateQuizPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Directory currentDirectory = Directory.current;
+    String currentDirectoryString = currentDirectory.path;
     String name = Provider.of<QuizData>(context).name;
     int duration = Provider.of<QuizData>(context).duration;
     String question = Provider.of<QuizData>(context).question;
@@ -21,111 +23,125 @@ class CreateQuizPage extends StatelessWidget {
     TextEditingController fontSizeController = TextEditingController(text: fontSize.toString());
 
     return SizedBox(
-      height: double.infinity,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget> [
-            const Text(
-              'Quiz Name',
-              style: TextStyle(
-                fontSize: 20,
-              ),
+        children: <Widget> [
+          Container(
+            padding: const EdgeInsets.all(5.0),
+            color: const Color.fromARGB(50, 6, 86, 6),
+            child: Text(
+              'Quizzes will be saved in:\n$currentDirectoryString\\Saved Quizzes',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),  
             ),
-            Padding(
-              padding: const EdgeInsets.only(top:5, bottom: 20),
-              child: TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            
-            const Text(
-              'Duration in Minutes (if left blank, set to 15 min)',
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top:5, bottom: 20),
-              child: TextFormField(
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                controller: durationController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            
-            const Text(
-              'Font Size (if left blank, set to 20)',
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top:5, bottom: 20),
-              child: TextFormField(
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                controller: fontSizeController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            
-            const Text('Question',
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top:5, bottom: 20),
-              child: TextField(
-                maxLines: null,
-                controller: questionController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-
-            Row(
-              children: <Widget>[
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const BeveledRectangleBorder(),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Quiz Name',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
                   ),
-                  onPressed: () {
-                    updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text('Save Quiz to Memory Only'),
+                  Padding(
+                    padding: const EdgeInsets.only(top:5, bottom: 20),
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      'Duration in Minutes (if left blank, set to 15 min)',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top:5, bottom: 20),
+                      child: TextFormField(
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        controller: durationController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      'Font Size (if left blank, set to 20)',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top:5, bottom: 20),
+                      child: TextFormField(
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        controller: fontSizeController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),    
+                    const Text('Question',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top:5, bottom: 20),
+                      child: TextField(
+                        maxLines: null,
+                        controller: questionController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const BeveledRectangleBorder(),
+                          ),
+                          onPressed: () {
+                            updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text('Save Quiz to Memory Only'),
+                          ),
+                        ),
+                      const Spacer(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: const BeveledRectangleBorder(),
+                        ),
+                        onPressed: () {
+                          updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
+                          _write(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text('Save Quiz to Memory and Disk'),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const BeveledRectangleBorder(),
-                  ),
-                  onPressed: () {
-                    updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
-                    _write(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text('Save Quiz to Memory and Disk'),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
+          )
+        ]
+      )
     );
   }
 
