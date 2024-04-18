@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         title: 'Quiz App - Instructor Version',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
         home: const MyHomePage(),
       ),
@@ -124,10 +124,21 @@ class _MyHomePageState extends State<MyHomePage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
-          body: Row(
+          body: Row (
             children: [
+              //Text("TESTING"),
               SafeArea(
                 child: NavigationRail(
+                  backgroundColor: Color.fromARGB(255, 6, 86, 6),
+                  unselectedLabelTextStyle: const TextStyle(
+                    color: Colors.white70),
+                  unselectedIconTheme: const IconThemeData(
+                    color: Colors.white70),
+                  selectedLabelTextStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+                  selectedIconTheme: const IconThemeData(
+                    color: Colors.black),
                   extended: constraints.maxWidth >= 600,
                   destinations: const [
                     NavigationRailDestination(
@@ -169,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("images/UH_Manoa_ICS_Logo.jpg"),
-                      opacity: 0.1,
+                      opacity: 0.075,
                       fit: BoxFit.cover,
                       )
                   ),
