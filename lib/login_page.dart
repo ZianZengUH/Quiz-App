@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import 'home_page.dart'; 
 
@@ -23,6 +27,10 @@ class _LoginPageState extends State<LoginPage> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
 
+  final NetworkInfo _networkInfo = NetworkInfo();
+  String? _serverIP;
+  int serverPort = 3000;  // Default port, configure as needed
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +38,14 @@ class _LoginPageState extends State<LoginPage> {
     _nameFocusNode.addListener(() => _scrollToFocusedField(_nameFocusNode));
     _emailFocusNode.addListener(() => _scrollToFocusedField(_emailFocusNode));
     _classSectionFocusNode.addListener(() => _scrollToFocusedField(_classSectionFocusNode));
+    _fetchNetworkDetails();
   }
+
+  Future<void> _fetchNetworkDetails() async {
+    _serverIP = await _networkInfo.getWifiIP();
+    setState(() {});
+  }
+
 
   Future<void> _loadUserInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -60,18 +75,82 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // Future<void> _takePictureAndLogin() async {
+  //   final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+  //   if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
+  //     await _saveUserInfo();
+  //     Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //       builder: (context) => const MyHomePage(title: 'Quiz App'),
+  //     ));
+  //   } else {
+  //     // Optionally show an error message if needed
+  //   }
+  // }
   Future<void> _takePictureAndLogin() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const MyHomePage(title: 'Quiz App'),
-      ));
+
+      if (await _checkConnection()) {
+        await _sendDataToServer(photo);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const MyHomePage(title: 'Quiz App'),
+        ));
+      } else {
+        _showConnectionError();
+      }
     } else {
       // Optionally show an error message if needed
+      _showError('Please ensure all fields are filled and a photo is taken.');
     }
   }
 
+  Future<bool> _checkConnection() async {
+    try {
+      final socket = await Socket.connect(_serverIP, serverPort, timeout: Duration(seconds: 5));
+      socket.close();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> _sendDataToServer(XFile photo) async {
+    try {
+      final socket = await Socket.connect(_serverIP!, serverPort);
+      Map<String, dynamic> userData = {
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'classSection': _classSectionController.text,
+        'photo': base64Encode(await photo.readAsBytes())
+      };
+      socket.add(utf8.encode(json.encode(userData)));
+      await socket.close();
+    } catch (e) {
+      _showError('Failed to send data to the server.');
+    }
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConnectionError() {
+    _showError('Cannot connect to the server. Please check your network settings.');
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

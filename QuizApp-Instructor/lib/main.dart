@@ -1,25 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quick_blue/quick_blue.dart';
-import 'package:ble_peripheral/ble_peripheral.dart';
 
 // Pages
-import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
-import 'package:quiz_app_instructor/quiz_data.dart';
 
 // void main() => runApp(const MyApp());
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await BlePeripheral.initialize();
-
   runApp(const MyApp());
 }
 
@@ -28,11 +21,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => MyAppState()),
-        ChangeNotifierProvider(create: (context) => QuizData()),
-      ],
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Quiz App - Instructor Version',
         theme: ThemeData(
@@ -46,97 +36,49 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  List<String> connectedDeviceIds = [];  // List to store connected device identifiers
+  ServerSocket? server;
 
   MyAppState() {
-    _setUpPeripheral();
-  }
-  
-  void disconnectFromDevice(String deviceId) {
-    // Logic to disconnect from a device
-    // BlePeripheral.disconnect(deviceId);  
-    connectedDeviceIds.remove(deviceId);  // Remove the device from the list
-    notifyListeners();  // Notify UI of the change
+    startServer(); // Automatically start the server upon instantiation
   }
 
-  Future<void> _setUpPeripheral() async {
-    String serviceUUID = "25AE1441-05D3-4C5B-8281-93D4E07420CF";
-    String answerCharacteristicUUID = "25AE1443-05D3-4C5B-8281-93D4E07420CF";
-
-    await BlePeripheral.addService(
-      BleService(
-        uuid: serviceUUID,
-        primary: true,
-        characteristics: [
-          BleCharacteristic(
-            uuid: answerCharacteristicUUID,
-            properties: [
-              CharacteristicProperties.read.index,
-              CharacteristicProperties.notify.index,
-              CharacteristicProperties.write.index
-            ],
-            permissions: [
-              AttributePermissions.readable.index,
-              AttributePermissions.writeable.index
-            ],
-          ),
-        ],
-      )  
-    );
-
-    // Handle write requests and return a WriteRequestResult
-    BlePeripheral.setWriteRequestCallback((String deviceId, String characteristicId, int offset, Uint8List? value) {
-      try {
-        if (value == null) {
-          // If value is null, we assume the write operation cannot proceed
-          return WriteRequestResult(
-            value: null,
-            offset: null,
-            status: 1  // Error code indicating null value received
-          );
-        }
-
-        if (characteristicId == answerCharacteristicUUID) {
-          String receivedAnswer = utf8.decode(value);
-          print("Received answer from $deviceId: $receivedAnswer");
-          
-          // Process the answer here
-          // processStudentAnswer(deviceId, receivedAnswer);
-
-          // Update any state or notify listeners about the new data
-          notifyListeners();
-
-          return WriteRequestResult(
-            value: value,
-            offset: offset,
-            status: 0  // 0  for successful operation
-          );
-        }
-
-        return WriteRequestResult(
-          value: null,
-          offset: null,
-          status: 2  // Error code for unmatched characteristic ID
+  void startServer() async {
+    try {
+      server = await ServerSocket.bind(InternetAddress.anyIPv4, 3000);
+      print('Server running on IP: ${server!.address.address}, Port: ${server!.port}');
+      await for (var client in server!) {
+        print('Connection from ${client.remoteAddress.address}:${client.remotePort}');
+        client.listen(
+          (data) {
+            final message = utf8.decode(data);
+            print('Data from ${client.remoteAddress.address}: $message');
+            // Here you might process the received data or store it
+          },
+          onError: (error) {
+            print('Error on data stream: $error');
+          },
+          onDone: () {
+            print('Connection closed by the client');
+            client.close();
+          },
+          cancelOnError: true
         );
-      }catch (e) {
-        print('Exception handling write request: $e');
       }
-    });
-
-    await BlePeripheral.startAdvertising(
-      services: [serviceUUID],
-      localName: "QuizApp-Instructor",
-    );
+    } on SocketException catch (e) {
+      print('Failed to create server: $e');
+    }
   }
-
-  // Add processStudentAnswer implementation here if necessary
 
   @override
   void dispose() {
-    // BlePeripheral.stopAdvertising();
+    if (server != null) {
+      server!.close();
+      print('Server closed');
+    }
     super.dispose();
   }
 }
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -158,9 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      // Placeholder for Export Quiz Answers - you'll need to implement this widget
-      const Placeholder(),
-      const ConnectedDevicesPage(),
+      // const ConnectedDevicesPage(),
     ];
 
     return LayoutBuilder(
