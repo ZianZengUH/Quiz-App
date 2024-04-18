@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:quick_blue/quick_blue.dart';
 import 'package:path_provider/path_provider.dart'; // For file operations
@@ -13,8 +12,30 @@ import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  // Sets minimum window size.  Prevents crashing.
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(900, 600),
+    minimumSize: Size(900, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+    windowButtonVisibility: false,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -129,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //Text("TESTING"),
               SafeArea(
                 child: NavigationRail(
-                  backgroundColor: Color.fromARGB(255, 6, 86, 6),
+                  backgroundColor: const Color.fromARGB(255, 6, 86, 6),
                   unselectedLabelTextStyle: const TextStyle(
                     color: Colors.white70),
                   unselectedIconTheme: const IconThemeData(

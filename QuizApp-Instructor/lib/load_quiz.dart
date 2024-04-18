@@ -15,14 +15,54 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    Directory currentDirectory = Directory.current;
+    String currentDirectoryString = currentDirectory.path;
     Directory quizDirectory = Directory('Saved Quizzes');
     List dirContents = quizDirectory.listSync();
     Iterable<File> iterableFiles = dirContents.whereType<File>();
-    List files = iterableFiles.toList();
+    List<File> filesAsFile = iterableFiles.toList();
+    List<String> filesAsString = [];
+    List<String> filePostSplitSlash;
+    List<String> filePostSplitApostrophe;
+    List<String> files = [];
+
+    for (File file in filesAsFile) {
+      filesAsString.add(file.toString());
+    }
+
+    for (String file in filesAsString) {
+      filePostSplitSlash = file.split('\\');
+      filePostSplitApostrophe = filePostSplitSlash[1].split('\'');
+      files.add(filePostSplitApostrophe[0]);
+    }
 
     return SizedBox(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
+          Container(
+            padding: const EdgeInsets.all(5.0),
+            color: const Color.fromARGB(50, 6, 86, 6),
+            child: Text(
+              'Searching for Quizzes in:\n$currentDirectoryString',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),  
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 10, left: 15),
+              child: Text(
+              "Select the quiz you would like to load:",
+              textAlign: TextAlign.start,
+                style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              ),  
+            ),
+          ),
           Expanded(
               child: ListView.separated(
               itemCount: files.length,
@@ -54,7 +94,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                         shape: const BeveledRectangleBorder(),
                       ),
                       onPressed: () {
-                        List<String> testing = _selectedOption.split('\'');
+                        List<String> testing = _selectedOption.split('\\');
                         //Future<List> quizData = _read(testing[1]);
                         //List quizList = _convertToList(quizData);
 
