@@ -36,21 +36,20 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  HttpServer? _server;
-  List<WebSocket> clients = [];
+  ServerSocket? server;
 
   MyAppState() {
-    startServer();
+    startServer(); // Automatically start the server upon instantiation
   }
 
   void startServer() async {
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, 3000);
-    print('WebSocket server is running on ws://${_server!.address.address}:${_server!.port}');
-    print("@@@@@@@@");
-    print('Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
-    print("@@@@@@@@@\n");
+    try {
+      server = await ServerSocket.bind(InternetAddress.anyIPv4, 3000);
+      print("@@@@@@@@");
+      print('Server running on IP: ${server!.address.address}, Port: ${server!.port}');
+      print("@@@@@@@@@\n");
 
-     for (var interface in await NetworkInterface.list()) {
+       for (var interface in await NetworkInterface.list()) {
         for (var addr in interface.addresses) {
           if (addr.type == InternetAddressType.IPv4) {
             print("______________");
@@ -59,66 +58,66 @@ class MyAppState extends ChangeNotifier {
           }
         }
       }
-    
-    await for (HttpRequest request in _server!) {
-      if (WebSocketTransformer.isUpgradeRequest(request)) {
-        // Handle WebSocket connection.
-        WebSocket socket = await WebSocketTransformer.upgrade(request);
-        handleWebSocket(socket);
-      } else {
-        request.response
-          ..statusCode = HttpStatus.forbidden
-          ..write('This server only supports WebSocket connections.')
-          ..close();
+ 
+      await for (var client in server!) {
+        print('Connection from ${client.remoteAddress.address}:${client.remotePort}');
+
+        final List<int> buffer = []; // Buffer to accumulate data.
+        client.listen(
+          (data) async {
+            buffer.addAll(data); // Accumulate each chunk of data received.
+          },
+          onError: (error) {
+            print('Error on data stream: $error');
+          },
+          onDone: () async {
+            // Data processing
+            // Decode the complete data received.
+            final completeData = utf8.decode(buffer);
+            try {
+              final userData = jsonDecode(completeData);
+              String studentName = userData['name'];
+              await manageStudentData(studentName);
+            } catch (e) {
+              print('Error parsing JSON data: $e');
+            }
+            print('Connection closed by the client');
+            client.close();
+          },
+          cancelOnError: true
+        );
       }
+    } on SocketException catch (e) {
+      print('Failed to create server: $e');
     }
   }
 
-  void handleWebSocket(WebSocket socket) {
-    print('Client connected!');
-    clients.add(socket);
-    socket.listen(
-      (data) {
-        onMessageReceived(data, socket);
-      },
-      onDone: () {
-        onClientDisconnected(socket);
-      },
-      onError: (error) {
-        print('WebSocket error: $error');
-        socket.close();
-      }
-    );
-  }
+  Future<void> manageStudentData(String studentName) async {
+    Directory studentDir = Directory('students/$studentName');
+    File infoFile = File('${studentDir.path}/student info.txt');
 
-  void onMessageReceived(dynamic data, WebSocket client) {
-    print('Message received: $data');
-    // Here, you might parse the data and act accordingly.
-  }
-
-  void onClientDisconnected(WebSocket socket) {
-    print('Client disconnected.');
-    clients.remove(socket);
-    socket.close();
-  }
-
-  // To send a message to all connected clients,
-  void broadcastMessage(String message) {
-    for (WebSocket client in clients) {
-      client.add(message);
+    if (!await studentDir.exists()) {
+      await studentDir.create(recursive: true);
     }
-  }
 
+    if (!await infoFile.exists()) {
+      await infoFile.create();
+    }
+
+    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    await infoFile.writeAsString('$currentDate\n', mode: FileMode.append);
+  }
   @override
   void dispose() {
-    clients.forEach((client) => client.close());
-    _server?.close();
+    if (server != null) {
+      server!.close();
+      print('Server closed');
+    }
     super.dispose();
   }
 }
 
 
-// ---------------------MyHomePage--------------------
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 

@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
 
-      if (await _connectWebSocket()) {
+      if (await _checkConnection()) {
         await _sendDataToServer(photo);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const MyHomePage(title: 'Quiz App'),
@@ -129,48 +129,30 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-
-  Future<bool> _connectWebSocket() async {
+  Future<bool> _checkConnection() async {
     try {
-      _socket = await WebSocket.connect('ws://${_serverIPController.text}:3000');
-      _socket!.listen(
-        (data) {
-          print('Received from server: $data');
-        },
-        onDone: () {
-          print('WebSocket connection has been closed.');
-          _socket = null;  // Reset the socket to null on connection close
-        },
-        onError: (error) {
-          print('WebSocket error: $error');
-          _showError('WebSocket connection failed: $error');
-          _socket = null;  // Reset the socket to null on error
-        }
-      );
+      final socket = await Socket.connect(_serverIPController.text, serverPort, timeout: Duration(seconds: 5));
+      socket.close();
       return true;
     } catch (e) {
-      print('Failed to connect: $e');
-      _showConnectionError();
+      print('Could not connect to the server at IP ${_serverIPController.text}: $e');
       return false;
     }
   }
 
   Future<void> _sendDataToServer(XFile photo) async {
-    if (_socket != null) {
-      try {
-        final Map<String, dynamic> userData = {
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'classSection': _classSectionController.text,
-          'photo': base64Encode(await photo.readAsBytes())
-        };
-        _socket!.add(json.encode(userData)); // Send data as JSON string
-        print('Data sent to the server');
-      } catch (e) {
-        _showError('Failed to send data to the server: $e');
-      }
-    } else {
-      _showConnectionError();
+    try {
+      final socket = await Socket.connect(_serverIPController.text, serverPort);
+      Map<String, dynamic> userData = {
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'classSection': _classSectionController.text,
+        'photo': base64Encode(await photo.readAsBytes())
+      };
+      socket.add(utf8.encode(json.encode(userData) + '~')); // Append a delimiter
+      await socket.close();
+    } catch (e) {
+      _showError('Failed to send data to the server.');
     }
   }
 
