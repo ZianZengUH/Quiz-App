@@ -41,6 +41,8 @@ dependencies:
   permission_handler: ^11.3.1
   flutter_isolate: ^2.0.4
   quick_blue: ^0.5.0-dev.2
+  ble_peripheral: ^2.2.3
+  flutter_ble_peripheral_central: ^0.0.5
 
 dev_dependencies:
   flutter_test:

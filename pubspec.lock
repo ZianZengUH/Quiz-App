@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  ble_peripheral:
+    dependency: "direct main"
+    description:
+      name: ble_peripheral
+      sha256: "941009c7fcc61f6203e26c2fc5110d76f2bcd576345a1c101b0a68eb6d3e8e11"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   bluez:
     dependency: transitive
     description:
@@ -158,6 +166,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_ble_peripheral_central:
+    dependency: "direct main"
+    description:
+      name: flutter_ble_peripheral_central
+      sha256: db208bc4c53faa072f6ab25f1380fd3a770c1fcc686e38ed3942cfb3fedbc844
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   flutter_blue_plus:
     dependency: "direct main"
     description:

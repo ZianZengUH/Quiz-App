@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'main.dart';
 
 class ConnectedDevicesPage extends StatelessWidget {
-  const ConnectedDevicesPage({Key? key}) : super(key: key);
+  const ConnectedDevicesPage({super.key});
 
   @override
   Widget build(BuildContext context) {

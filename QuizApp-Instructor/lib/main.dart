@@ -1,12 +1,13 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:quick_blue/quick_blue.dart';
-import 'package:path_provider/path_provider.dart'; // For file operations
 import 'package:provider/provider.dart';
+import 'package:quick_blue/quick_blue.dart';
+import 'package:ble_peripheral/ble_peripheral.dart';
+
+// Pages
 import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
@@ -14,7 +15,13 @@ import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
 
-void main() => runApp(const MyApp());
+// void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await BlePeripheral.initialize();
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -39,62 +46,97 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  final List<String> _connectedDeviceIds = [];
-  final Map<String, Map<String, List<String>>> _servicesAndCharacteristics = {};
-  
-  List<String> get connectedDeviceIds => _connectedDeviceIds;
-  Map<String, Map<String, List<String>>> get servicesAndCharacteristics => _servicesAndCharacteristics;
+  List<String> connectedDeviceIds = [];  // List to store connected device identifiers
 
   MyAppState() {
-    QuickBlue.setConnectionHandler((id, state) {
-      if (state == BlueConnectionState.connected) {
-        if (!_connectedDeviceIds.contains(id)) {
-          _connectedDeviceIds.add(id);
-          QuickBlue.discoverServices(id); // Begin service discovery
-          notifyListeners();
+    _setUpPeripheral();
+  }
+  
+  void disconnectFromDevice(String deviceId) {
+    // Logic to disconnect from a device
+    // BlePeripheral.disconnect(deviceId);  
+    connectedDeviceIds.remove(deviceId);  // Remove the device from the list
+    notifyListeners();  // Notify UI of the change
+  }
+
+  Future<void> _setUpPeripheral() async {
+    String serviceUUID = "25AE1441-05D3-4C5B-8281-93D4E07420CF";
+    String answerCharacteristicUUID = "25AE1443-05D3-4C5B-8281-93D4E07420CF";
+
+    await BlePeripheral.addService(
+      BleService(
+        uuid: serviceUUID,
+        primary: true,
+        characteristics: [
+          BleCharacteristic(
+            uuid: answerCharacteristicUUID,
+            properties: [
+              CharacteristicProperties.read.index,
+              CharacteristicProperties.notify.index,
+              CharacteristicProperties.write.index
+            ],
+            permissions: [
+              AttributePermissions.readable.index,
+              AttributePermissions.writeable.index
+            ],
+          ),
+        ],
+      )  
+    );
+
+    // Handle write requests and return a WriteRequestResult
+    BlePeripheral.setWriteRequestCallback((String deviceId, String characteristicId, int offset, Uint8List? value) {
+      try {
+        if (value == null) {
+          // If value is null, we assume the write operation cannot proceed
+          return WriteRequestResult(
+            value: null,
+            offset: null,
+            status: 1  // Error code indicating null value received
+          );
         }
-      } else if (state == BlueConnectionState.disconnected) {
-        _servicesAndCharacteristics.remove(id); // Cleanup if disconnected
-        _connectedDeviceIds.remove(id);
-        notifyListeners();
+
+        if (characteristicId == answerCharacteristicUUID) {
+          String receivedAnswer = utf8.decode(value);
+          print("Received answer from $deviceId: $receivedAnswer");
+          
+          // Process the answer here
+          // processStudentAnswer(deviceId, receivedAnswer);
+
+          // Update any state or notify listeners about the new data
+          notifyListeners();
+
+          return WriteRequestResult(
+            value: value,
+            offset: offset,
+            status: 0  // 0  for successful operation
+          );
+        }
+
+        return WriteRequestResult(
+          value: null,
+          offset: null,
+          status: 2  // Error code for unmatched characteristic ID
+        );
+      }catch (e) {
+        print('Exception handling write request: $e');
       }
     });
 
-    QuickBlue.setValueHandler(_handleValueChange);
+    await BlePeripheral.startAdvertising(
+      services: [serviceUUID],
+      localName: "QuizApp-Instructor",
+    );
   }
 
-  void _handleValueChange(String deviceId, String characteristicUuid, Uint8List value) {
-    String receivedData = utf8.decode(value);
-    print("Received data from $deviceId on $characteristicUuid: $receivedData");
-    // Process the received data as needed
-  }
-
-  void onServiceDiscovered(String deviceId, String serviceId, List<String> characteristicIds) {
-    _servicesAndCharacteristics[deviceId] = {serviceId: characteristicIds};
-    for (var characteristicId in characteristicIds) {
-      QuickBlue.setNotifiable(deviceId, serviceId, characteristicId, true as BleInputProperty);
-      // Here to read or write to the characteristic
-      QuickBlue.readValue(deviceId, serviceId, characteristicId); 
-      // QuickBlue.writeValue(deviceId, serviceId, characteristicId, data); // If we want to write
-    }
-    notifyListeners();
-  }
-
-  void disconnectFromDevice(String deviceId) {
-    QuickBlue.disconnect(deviceId);
-    _connectedDeviceIds.remove(deviceId);
-    notifyListeners();
-  }
+  // Add processStudentAnswer implementation here if necessary
 
   @override
   void dispose() {
-    for (var deviceId in _connectedDeviceIds) {
-      QuickBlue.disconnect(deviceId);
-    }
+    // BlePeripheral.stopAdvertising();
     super.dispose();
   }
 }
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

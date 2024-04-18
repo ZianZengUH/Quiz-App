@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:quick_blue/quick_blue.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:quick_blue_platform_interface/quick_blue_platform_interface.dart';
 
  // !!! Super Important for Andorid Bluetooth to work !!!
 class PermissionsService {
@@ -76,12 +75,8 @@ class BLEManager with ChangeNotifier {
       return;
     }
     
-    if (QuickBlue.isBluetoothAvailable != null) {
-      startScan();
-    } else {
-      print('Bluetooth is not turned on');
+    startScan();
     }
-  }
 
   void startScan() {
     deviceIds.clear();
@@ -126,7 +121,7 @@ class BLEManager with ChangeNotifier {
       // QuickBlue.writeValue(deviceId, serviceId, charUuid, data);
 
       QuickBlue.writeValue(deviceId, serviceId, charUuid, utf8.encode(deviceId), true as BleOutputProperty);
-      print("*****\nQuickBlue.writeValue: deviceId: " + deviceId + "; serviceId: " + serviceId + "; charUuid: " + charUuid);
+      print("*****\nQuickBlue.writeValue: deviceId: $deviceId; serviceId: $serviceId; charUuid: $charUuid");
       
     }
 
