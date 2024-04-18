@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'home_page.dart'; 
 
@@ -21,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _classSectionController = TextEditingController();
+  final TextEditingController _serverIPController = TextEditingController();
+
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _classSectionFocusNode = FocusNode();
@@ -30,15 +33,45 @@ class _LoginPageState extends State<LoginPage> {
   final NetworkInfo _networkInfo = NetworkInfo();
   String? _serverIP;
   int serverPort = 3000;  // Default port, configure as needed
-
+  
   @override
   void initState() {
     super.initState();
+    requestLocationPermission(); // Request permission at startup
     _loadUserInfo();
     _nameFocusNode.addListener(() => _scrollToFocusedField(_nameFocusNode));
     _emailFocusNode.addListener(() => _scrollToFocusedField(_emailFocusNode));
     _classSectionFocusNode.addListener(() => _scrollToFocusedField(_classSectionFocusNode));
     _fetchNetworkDetails();
+  }
+
+  Future<void> requestLocationPermission() async {
+    var status = await Permission.location.status;
+    if (!status.isGranted) {
+      await Permission.location.request();
+    }
+
+    // After requesting, check again
+    if (await Permission.location.isGranted) {
+      // Permission is granted; you can fetch network info here or set a flag
+    } else {
+      // Handle the scenario where permission is denied
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Permission Denied"),
+          content: Text("This app needs location permission to function correctly."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Close"),
+            )
+          ],
+        ),
+      );
+    }
   }
 
   Future<void> _fetchNetworkDetails() async {
@@ -75,17 +108,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // Future<void> _takePictureAndLogin() async {
-  //   final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-  //   if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
-  //     await _saveUserInfo();
-  //     Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //       builder: (context) => const MyHomePage(title: 'Quiz App'),
-  //     ));
-  //   } else {
-  //     // Optionally show an error message if needed
-  //   }
-  // }
   Future<void> _takePictureAndLogin() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
@@ -107,17 +129,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> _checkConnection() async {
     try {
-      final socket = await Socket.connect(_serverIP, serverPort, timeout: Duration(seconds: 5));
+      final socket = await Socket.connect(_serverIPController.text, serverPort, timeout: Duration(seconds: 5));
       socket.close();
       return true;
     } catch (e) {
+      print('Could not connect to the server at IP ${_serverIPController.text}: $e');
       return false;
     }
   }
 
   Future<void> _sendDataToServer(XFile photo) async {
     try {
-      final socket = await Socket.connect(_serverIP!, serverPort);
+      final socket = await Socket.connect(_serverIPController.text, serverPort);
       Map<String, dynamic> userData = {
         'name': _nameController.text,
         'email': _emailController.text,
@@ -169,6 +192,16 @@ class _LoginPageState extends State<LoginPage> {
               const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               TextField(
+                controller: _serverIPController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Server IP',
+                  hintText: 'e.g., 192.168.0.100',
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: false),
+              ),
+            const SizedBox(height: 20),
+              TextField(
                 focusNode: _nameFocusNode,
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -196,6 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 20),
+              // if (_serverIP != null) Text('Server IP: $_serverIP'),
               ElevatedButton(
                 onPressed: _takePictureAndLogin,
                 child: const Text('Take Picture & Login'),
@@ -209,6 +243,7 @@ class _LoginPageState extends State<LoginPage> {
 
  @override
   void dispose() {
+    _serverIPController.dispose();
     _nameController.dispose();
     _emailController.dispose();
     _classSectionController.dispose();

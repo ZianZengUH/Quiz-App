@@ -45,7 +45,20 @@ class MyAppState extends ChangeNotifier {
   void startServer() async {
     try {
       server = await ServerSocket.bind(InternetAddress.anyIPv4, 3000);
+      print("@@@@@@@@");
       print('Server running on IP: ${server!.address.address}, Port: ${server!.port}');
+      print("@@@@@@@@@\n");
+
+       for (var interface in await NetworkInterface.list()) {
+        for (var addr in interface.addresses) {
+          if (addr.type == InternetAddressType.IPv4) {
+            print("______________");
+            print('Using interface: ${interface.name}, with IP: ${addr.address}');
+            print("______________\n");
+          }
+        }
+      }
+ 
       await for (var client in server!) {
         print('Connection from ${client.remoteAddress.address}:${client.remotePort}');
         client.listen(
