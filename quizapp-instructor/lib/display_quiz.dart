@@ -47,12 +47,16 @@ class _ShowQuizState extends State<ShowQuiz> {
                   SlideCountdown(
                     streamDuration: quizDuration,
                     
+                    separatorStyle: const TextStyle(
+                      fontSize: 75,
+                      color: Colors.white
+                    ),
                     style: const TextStyle(
                       fontSize: 75,
                       color: Colors.white
                     ),
                     decoration: const BoxDecoration(
-                      color: Colors.purple,
+                      color: Color.fromARGB(255, 6, 86, 6),
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                   ),

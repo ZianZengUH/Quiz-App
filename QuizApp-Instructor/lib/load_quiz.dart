@@ -58,14 +58,18 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                         //Future<List> quizData = _read(testing[1]);
                         //List quizList = _convertToList(quizData);
 
-                        _read(testing[1]).then((List quizList) =>
-                        Provider.of<QuizData>(context, listen: false).changeQuizData(
-                          quizList[0],
-                          int.parse(quizList[1]),
-                          int.parse(quizList[2]),
-                          quizList[3]));
-                        // Provider.of<QuizData>(context, listen: false).changeQuizData(quizList[0], quizList[1], quizList[2], quizList[3]);
-                      },
+                        if (testing.length <= 1) {
+                          print("Nothing selected");
+                        } else {
+                          _read(testing[1]).then((List quizList) =>
+                          Provider.of<QuizData>(context, listen: false).changeQuizData(
+                            quizList[0],
+                            int.parse(quizList[1]),
+                            int.parse(quizList[2]),
+                            quizList[3]));
+                          // Provider.of<QuizData>(context, listen: false).changeQuizData(quizList[0], quizList[1], quizList[2], quizList[3]);
+                          }
+                        },
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text('Load Quiz'),
@@ -92,13 +96,13 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
       print("Couldn't read file");
     }
     // name
-    print(quizData[0]);
+    //print(quizData[0]);
     // duration
-    print(quizData[1]);
+    //print(quizData[1]);
     // font size
-    print(quizData[2]);
+    //print(quizData[2]);
     // question
-    print(quizData[3]);
+    //print(quizData[3]);
 
     return quizData;
   }
