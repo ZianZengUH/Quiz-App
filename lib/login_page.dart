@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app/ble_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'home_page.dart'; 
+import 'home_page.dart';
 
 //########################## Login Page ##########################
 
@@ -29,7 +33,8 @@ class _LoginPageState extends State<LoginPage> {
     _loadUserInfo();
     _nameFocusNode.addListener(() => _scrollToFocusedField(_nameFocusNode));
     _emailFocusNode.addListener(() => _scrollToFocusedField(_emailFocusNode));
-    _classSectionFocusNode.addListener(() => _scrollToFocusedField(_classSectionFocusNode));
+    _classSectionFocusNode
+        .addListener(() => _scrollToFocusedField(_classSectionFocusNode));
   }
 
   Future<void> _loadUserInfo() async {
@@ -51,7 +56,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void _scrollToFocusedField(FocusNode focusNode) {
     if (focusNode.hasFocus) {
-      final widgetPosition = focusNode.context?.findRenderObject()?.paintBounds.top;
+      final widgetPosition =
+          focusNode.context?.findRenderObject()?.paintBounds.top;
       _scrollController.animateTo(
         widgetPosition ?? 0,
         duration: const Duration(milliseconds: 300),
@@ -62,8 +68,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _takePictureAndLogin() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
+    if (photo != null &&
+        _nameController.text.trim().isNotEmpty &&
+        _emailController.text.trim().isNotEmpty &&
+        _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
+      String userInfo = jsonEncode({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'classSection': _classSectionController.text,
+      });
+      Provider.of<BLEManager>(context, listen: false)
+          .writeCharacteristic(userInfo);
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const MyHomePage(title: 'Quiz App'),
       ));
@@ -85,9 +101,11 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/quiz_app_logo.png', width: 100, height: 100),
+              Image.asset('assets/images/quiz_app_logo.png',
+                  width: 100, height: 100),
               const SizedBox(height: 20),
-              const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text('Welcome to Quiz App',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               TextField(
                 focusNode: _nameFocusNode,
@@ -128,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
- @override
+  @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();

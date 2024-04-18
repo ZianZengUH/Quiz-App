@@ -1,15 +1,33 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> 
-
-    <!-- If targeting Android 10 (API level 29) or higher, consider the ACCESS_BACKGROUND_LOCATION permission for background scanning -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-
-    <!-- For Android 12 (API level 31) and higher, specify BLUETOOTH_SCAN and BLUETOOTH_CONNECT instead of the broad location permissions -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <service android:name="com.novice.flutter_ble_peripheral_central.ble.BleCentralService"
+        android:exported="true"
+        android:enabled="true"
+        android:permission="android.permission.BLUETOOTH_ADMIN">
+        <intent-filter>
+            <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+        </intent-filter>
+    </service>
+
+    <service android:name="com.novice.flutter_ble_peripheral_central.ble.BleCentralService"
+        android:exported="true"
+        android:enabled="true"
+        android:permission="android.permission.BLUETOOTH_ADMIN">
+        <intent-filter>
+            <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+        </intent-filter>
+    </service>
 
     <application
         android:label="quiz_app"
@@ -28,12 +46,12 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+            />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -28,9 +28,9 @@
 	<true/>
 	
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>This app always needs Bluetooth to function</string>
+	<string>We use Bluetooth to show basic communication between Central and Peripheral</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>This app needs Bluetooth Peripheral to function</string>
+	<string>We use Bluetooth to show basic communication between Central and Peripheral</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app always needs location and when in use to function</string>
 	<key>NSLocationAlwaysUsageDescription</key>

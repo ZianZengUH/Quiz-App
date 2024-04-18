@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_ble_peripheral_central (0.0.1):
+    - Flutter
   - flutter_blue_plus (0.0.1):
     - Flutter
   - flutter_isolate (0.0.1):
@@ -14,6 +16,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_ble_peripheral_central (from `.symlinks/plugins/flutter_ble_peripheral_central/ios`)
   - flutter_blue_plus (from `.symlinks/plugins/flutter_blue_plus/ios`)
   - flutter_isolate (from `.symlinks/plugins/flutter_isolate/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -23,6 +26,8 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_ble_peripheral_central:
+    :path: ".symlinks/plugins/flutter_ble_peripheral_central/ios"
   flutter_blue_plus:
     :path: ".symlinks/plugins/flutter_blue_plus/ios"
   flutter_isolate:
@@ -36,6 +41,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_ble_peripheral_central: 02ae8bd587ed84065f5a115c667f1dc365fd8773
   flutter_blue_plus: 4837da7d00cf5d441fdd6635b3a57f936778ea96
   flutter_isolate: 0edf5081826d071adf21759d1eb10ff5c24503b5
   image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18

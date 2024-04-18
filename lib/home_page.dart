@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app/ble_connection_screen.dart';
+import 'package:quiz_app/ble_manager.dart';
 
 //########################## Home Page ##########################
 
@@ -14,20 +17,25 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _answerController = TextEditingController();
   // Define the default question as a state variable
-  final String _defaultQuestion = 'What is the most efficient algorithm for finding a chosen number within 100?';
+  final String _defaultQuestion =
+      'What is the most efficient algorithm for finding a chosen number within 100?';
 
   void _submitAnswer() {
     // Validate if the answer is not empty before showing the dialog
     if (_answerController.text.trim().isNotEmpty) {
+      Provider.of<BLEManager>(context, listen: false)
+          .writeCharacteristic(_answerController.text);
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Thank you for your submission 😊'), 
+            title: const Text('Thank you for your submission 😊'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  _answerController.clear();
                 },
                 child: const Text('OK'),
               ),
@@ -38,11 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = const TextStyle(
-      fontSize: 18, 
+      fontSize: 18,
       fontWeight: FontWeight.bold, // Use FontWeight.bold for bold text
     );
 
@@ -51,7 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: SingleChildScrollView(
-        reverse: true, // Ensures that the view scrolls to the bottom when the keyboard is opened
+        reverse:
+            true, // Ensures that the view scrolls to the bottom when the keyboard is opened
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -60,21 +68,26 @@ class _MyHomePageState extends State<MyHomePage> {
               // Display the question inside a container with padding and a border
               Container(
                 margin: const EdgeInsets.only(bottom: 10),
-                child:Text(
+                child: Text(
                   'Question',
                   style: textStyle,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.primary),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  _defaultQuestion,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+              Consumer<BLEManager>(
+                builder: (context, manager, child) {
+                  return Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.primary),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      manager.question ?? _defaultQuestion,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
               // Answer TextField
@@ -93,8 +106,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: _submitAnswer,
-                    child: const Text('Submit'),
+                    onPressed: () {
+                      Provider.of<BLEManager>(context, listen: false)
+                          .disconnect();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BLEConnectionScreen()),
+                      );
+                    },
+                    child: Text('Disconnect'),
                   ),
                 ],
               ),
