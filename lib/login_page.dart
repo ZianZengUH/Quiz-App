@@ -8,6 +8,7 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'home_page.dart'; 
+import 'websocket_manager.dart';
 
 //########################## Login Page ##########################
 
@@ -17,7 +18,6 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
-
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -129,48 +129,28 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-
   Future<bool> _connectWebSocket() async {
-    try {
-      _socket = await WebSocket.connect('ws://${_serverIPController.text}:3000');
-      _socket!.listen(
-        (data) {
-          print('Received from server: $data');
-        },
-        onDone: () {
-          print('WebSocket connection has been closed.');
-          _socket = null;  // Reset the socket to null on connection close
-        },
-        onError: (error) {
-          print('WebSocket error: $error');
-          _showError('WebSocket connection failed: $error');
-          _socket = null;  // Reset the socket to null on error
-        }
-      );
-      return true;
-    } catch (e) {
-      print('Failed to connect: $e');
-      _showConnectionError();
-      return false;
-    }
+    String serverUri = 'ws://${_serverIPController.text}:3000';
+    print("##########################");
+    print("serverUri" + serverUri);
+    print("##########################");
+    return await WebSocketManager().connect(serverUri);
   }
 
-  Future<void> _sendDataToServer(XFile photo) async {
-    if (_socket != null) {
-      try {
-        final Map<String, dynamic> userData = {
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'classSection': _classSectionController.text,
-          'photo': base64Encode(await photo.readAsBytes())
-        };
-        _socket!.add(json.encode(userData)); // Send data as JSON string
-        print('Data sent to the server');
-      } catch (e) {
-        _showError('Failed to send data to the server: $e');
-      }
+  Future<void> _sendDataToServer(XFile? photo) async {
+    if (photo != null && WebSocketManager().isConnected) {
+      final Map<String, dynamic> userData = {
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'classSection': _classSectionController.text,
+        'photo': base64Encode(await photo.readAsBytes())
+      };
+      WebSocketManager().sendMessage(json.encode(userData));
+      print('Data sent to the server');
+    } else if (photo == null) {
+      _showError('No photo was taken.');
     } else {
-      _showConnectionError();
+      _showError('Not connected to the server.');
     }
   }
 

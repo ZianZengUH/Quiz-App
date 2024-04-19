@@ -114,7 +114,6 @@ class _LoginPageState extends State<LoginPage> {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
-
       if (await _checkConnection()) {
         await _sendDataToServer(photo);
         Navigator.of(context).pushReplacement(MaterialPageRoute(

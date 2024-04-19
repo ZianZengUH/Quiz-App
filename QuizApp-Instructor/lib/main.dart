@@ -78,7 +78,7 @@ class MyAppState extends ChangeNotifier {
     print('Client connected!');
     clients.add(socket);
     socket.listen(
-      (data) {
+      (data) async {
         onMessageReceived(data, socket);
       },
       onDone: () {
@@ -92,8 +92,33 @@ class MyAppState extends ChangeNotifier {
   }
 
   void onMessageReceived(dynamic data, WebSocket client) {
-    print('Message received: $data');
-    // Here, you might parse the data and act accordingly.
+      print('Message received: $data');
+      try {
+        final userData = jsonDecode(data);
+        if (userData is Map<String, dynamic> && userData.containsKey('name')) {
+          manageStudentData(userData['name'].toString());
+        } else {
+          print("Error: Received data is not as expected.");
+        }
+      } catch (e) {
+        print('Error parsing JSON data: $e');
+      }
+  }
+
+  Future<void> manageStudentData(String studentName) async {
+    Directory studentDir = Directory('students/$studentName');
+    File infoFile = File('${studentDir.path}/student info.txt');
+
+    if (!await studentDir.exists()) {
+      await studentDir.create(recursive: true);
+    }
+
+    if (!await infoFile.exists()) {
+      await infoFile.create();
+    }
+
+    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    await infoFile.writeAsString('$currentDate\n', mode: FileMode.append);
   }
 
   void onClientDisconnected(WebSocket socket) {
