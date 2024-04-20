@@ -198,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: 'Enter Server IP',
                   hintText: 'e.g., 192.168.0.100',
                 ),
-                keyboardType: TextInputType.numberWithOptions(decimal: false),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
             const SizedBox(height: 20),
               TextField(

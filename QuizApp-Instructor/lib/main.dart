@@ -97,7 +97,11 @@ class MyAppState extends ChangeNotifier {
         String name = userData['name'].toString();
         String email = userData['email'].toString();
         String classSection = userData['classSection'].toString();
-        manageStudentData(name, email, classSection);
+        String? photo = userData['photo'] as String?;
+        manageStudentData(name, email, classSection, photo: photo);
+      } else if (userData.containsKey('type') && userData['type'] == 'answer') {
+        String answerText = userData['content'].toString();
+        manageStudentData('', '', '', answer: answerText);
       } else {
         print("Error: Received data is not as expected.");
       }
@@ -107,7 +111,8 @@ class MyAppState extends ChangeNotifier {
   }
 
   Future<void> manageStudentData(
-    String studentName, String email, String classSection) async {
+      String studentName, String email, String classSection,
+      {String? answer, String? photo}) async {
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory == null) {
       // User canceled the directory selection
@@ -116,6 +121,7 @@ class MyAppState extends ChangeNotifier {
 
     Directory studentDir = Directory('$selectedDirectory/$studentName');
     File infoFile = File('${studentDir.path}/student info.txt');
+    File answerFile = File('${studentDir.path}/answer.txt');
 
     if (!await studentDir.exists()) {
       await studentDir.create(recursive: true);
@@ -130,6 +136,16 @@ class MyAppState extends ChangeNotifier {
     String studentInfo =
         'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
     await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+
+    if (answer != null) {
+      await answerFile.writeAsString(answer);
+    }
+
+    if (photo != null) {
+      File photoFile = File('${studentDir.path}/profile picture.png');
+      final photoBytes = base64Decode(photo);
+      await photoFile.writeAsBytes(photoBytes);
+    }
   }
 
   void onClientDisconnected(WebSocket socket) {
