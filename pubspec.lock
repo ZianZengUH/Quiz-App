@@ -17,22 +17,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  ble_peripheral:
-    dependency: "direct main"
-    description:
-      name: ble_peripheral
-      sha256: "941009c7fcc61f6203e26c2fc5110d76f2bcd576345a1c101b0a68eb6d3e8e11"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.3"
-  bluez:
-    dependency: transitive
-    description:
-      name: bluez
-      sha256: b654df6c443e4cce6d4e748b4686ac85ec662d3b5374f2ed7318c5267f9c9355
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.9"
   boolean_selector:
     dependency: transitive
     description:
@@ -65,14 +49,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
-  convert:
-    dependency: transitive
-    description:
-      name: convert
-      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.1"
   cross_file:
     dependency: transitive
     description:
@@ -166,22 +142,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_ble_peripheral_central:
-    dependency: "direct main"
-    description:
-      name: flutter_ble_peripheral_central
-      sha256: db208bc4c53faa072f6ab25f1380fd3a770c1fcc686e38ed3942cfb3fedbc844
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
-  flutter_blue_plus:
-    dependency: "direct main"
-    description:
-      name: flutter_blue_plus
-      sha256: "5851041708b21601bfff50ebf4b05f8bd7b4f1dd7a2a69b82bdf7e5c2c2efb53"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.32.1"
   flutter_isolate:
     dependency: "direct main"
     description:
@@ -304,14 +264,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  logging:
-    dependency: transitive
-    description:
-      name: logging
-      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   matcher:
     dependency: transitive
     description:
@@ -520,46 +472,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
-  quick_blue:
-    dependency: "direct main"
-    description:
-      name: quick_blue
-      sha256: f7a3c0e35494b54b39bd7bf342695eb093f80d1cdfbc81a9a50e973257821e4d
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.0-dev.2"
-  quick_blue_linux:
-    dependency: transitive
-    description:
-      name: quick_blue_linux
-      sha256: c9087b1c953453a595b28d875d67e97a49062961d66d9887ed848e58b972a70b
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0-dev.0"
-  quick_blue_macos:
-    dependency: transitive
-    description:
-      name: quick_blue_macos
-      sha256: f6042ab21766839bd4d4acdd2407ab6898fba4523ad7f5b5ef8562024301297e
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0-dev.0"
-  quick_blue_platform_interface:
-    dependency: transitive
-    description:
-      name: quick_blue_platform_interface
-      sha256: b2064c901791f0670cc15311995eafd87bad2316fe8755b82c4fed736c80155c
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0-dev.0"
-  quick_blue_windows:
-    dependency: transitive
-    description:
-      name: quick_blue_windows
-      sha256: f13386099bd189664720bc3d3320793201121638cb158c328f0b15af87fabdb7
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0-dev.0"
   shared_preferences:
     dependency: "direct main"
     description:

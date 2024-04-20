@@ -1,12 +1,5 @@
 PODS:
-  - ble_peripheral (0.0.1):
-    - Flutter
-    - FlutterMacOS
   - Flutter (1.0.0)
-  - flutter_ble_peripheral_central (0.0.1):
-    - Flutter
-  - flutter_blue_plus (0.0.1):
-    - Flutter
   - flutter_isolate (0.0.1):
     - Flutter
   - image_picker_ios (0.0.1):
@@ -15,33 +8,21 @@ PODS:
     - Flutter
   - permission_handler_apple (9.3.0):
     - Flutter
-  - quick_blue (0.0.1):
-    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
-  - ble_peripheral (from `.symlinks/plugins/ble_peripheral/darwin`)
   - Flutter (from `Flutter`)
-  - flutter_ble_peripheral_central (from `.symlinks/plugins/flutter_ble_peripheral_central/ios`)
-  - flutter_blue_plus (from `.symlinks/plugins/flutter_blue_plus/ios`)
   - flutter_isolate (from `.symlinks/plugins/flutter_isolate/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - quick_blue (from `.symlinks/plugins/quick_blue/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 EXTERNAL SOURCES:
-  ble_peripheral:
-    :path: ".symlinks/plugins/ble_peripheral/darwin"
   Flutter:
     :path: Flutter
-  flutter_ble_peripheral_central:
-    :path: ".symlinks/plugins/flutter_ble_peripheral_central/ios"
-  flutter_blue_plus:
-    :path: ".symlinks/plugins/flutter_blue_plus/ios"
   flutter_isolate:
     :path: ".symlinks/plugins/flutter_isolate/ios"
   image_picker_ios:
@@ -50,21 +31,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/network_info_plus/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
-  quick_blue:
-    :path: ".symlinks/plugins/quick_blue/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  ble_peripheral: e80b0809599f5406e5d321c12a6dbc07ecdab8bd
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_ble_peripheral_central: 02ae8bd587ed84065f5a115c667f1dc365fd8773
-  flutter_blue_plus: 4837da7d00cf5d441fdd6635b3a57f936778ea96
   flutter_isolate: 0edf5081826d071adf21759d1eb10ff5c24503b5
   image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  quick_blue: 3786c0eccb373bf9799ec1b42f495f77199a4e7e
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
 
 PODFILE CHECKSUM: 70ccf0caf824ad88bdeaddd4054d7f5f2705eadb
