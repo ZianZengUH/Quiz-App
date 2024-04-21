@@ -147,8 +147,9 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
     return quizData;
   }
 
-  _convertToList(Future<List> data) async {
-    List list = await data;
-    return list;
-  }
+  // Not used.
+  //_convertToList(Future<List> data) async {
+    //List list = await data;
+    //return list;
+  //}
 }

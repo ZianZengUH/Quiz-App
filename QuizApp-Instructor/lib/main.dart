@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -73,15 +72,16 @@ class MyAppState extends ChangeNotifier {
       print('Server running on IP: ${server!.address.address}, Port: ${server!.port}');
       print("@@@@@@@@@\n");
 
-       for (var interface in await NetworkInterface.list()) {
-        for (var addr in interface.addresses) {
-          if (addr.type == InternetAddressType.IPv4) {
-            print("______________");
-            print('Using interface: ${interface.name}, with IP: ${addr.address}');
-            print("______________\n");
-          }
-        }
-      }
+      // Moved this to _MyHomePageState
+      //for (var interface in await NetworkInterface.list()) {
+        //for (var addr in interface.addresses) {
+          //if (addr.type == InternetAddressType.IPv4) {
+            //print("______________");
+            //print('Using interface: ${interface.name}, with IP: ${addr.address}');
+            //print("______________\n");
+          //}
+        //}
+      //}
  
       await for (var client in server!) {
         print('Connection from ${client.remoteAddress.address}:${client.remotePort}');
@@ -151,11 +151,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0;
+  String ipAddress = "WiFi IP address not found"; 
+  
+  @override 
+  void initState() { 
+    super.initState(); 
+    _getWiFiAddress(); 
+  } 
 
   @override
   Widget build(BuildContext context) {
     _checkQuizDirExists();
-    var appState = Provider.of<MyAppState>(context);
+    // var appState = Provider.of<MyAppState>(context);
 
     List<Widget> pages = [
       const InfoPage(),
@@ -186,6 +193,33 @@ class _MyHomePageState extends State<MyHomePage> {
                   selectedIconTheme: const IconThemeData(
                     color: Colors.black),
                   extended: constraints.maxWidth >= 600,
+
+                  leading: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Connect to",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                      ),
+                      Text(
+                        ipAddress,
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                      ),
+                      const Text(""),
+                      Image.asset("images/quiz_app_logo.png", height: 150, width: 150),
+                      const Text("")
+                    ],
+                  ),
+
                   destinations: const [
                     NavigationRailDestination(
                       icon: Icon(Icons.question_mark),
@@ -238,6 +272,16 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  Future<void> _getWiFiAddress() async {
+    for (var interface in await NetworkInterface.list()) {
+      for (var addr in interface.addresses) {
+        if (addr.type == InternetAddressType.IPv4 && interface.name == 'Wi-Fi') {
+          ipAddress = addr.address.toString();
+        }
+      }
+    }
   }
 
   // Checks if the "Saved Quizzes" directory exists. If not, create it.
