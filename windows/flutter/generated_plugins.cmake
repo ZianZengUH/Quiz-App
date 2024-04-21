@@ -3,7 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  ble_peripheral
   file_selector_windows
+  network_info_plus_windows
   permission_handler_windows
   quick_blue_windows
 )

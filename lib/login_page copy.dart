@@ -8,7 +8,6 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'home_page.dart'; 
-import 'websocket_manager.dart';
 
 //########################## Login Page ##########################
 
@@ -18,6 +17,7 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -114,8 +114,7 @@ class _LoginPageState extends State<LoginPage> {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
-
-      if (await _connectWebSocket()) {
+      if (await _checkConnection()) {
         await _sendDataToServer(photo);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const MyHomePage(title: 'Quiz App'),
@@ -129,28 +128,30 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<bool> _connectWebSocket() async {
-    String serverUri = 'ws://${_serverIPController.text}:3000';
-    print("##########################");
-    print("serverUri" + serverUri);
-    print("##########################");
-    return await WebSocketManager().connect(serverUri);
+  Future<bool> _checkConnection() async {
+    try {
+      final socket = await Socket.connect(_serverIPController.text, serverPort, timeout: Duration(seconds: 5));
+      socket.close();
+      return true;
+    } catch (e) {
+      print('Could not connect to the server at IP ${_serverIPController.text}: $e');
+      return false;
+    }
   }
 
-  Future<void> _sendDataToServer(XFile? photo) async {
-    if (photo != null && WebSocketManager().isConnected) {
-      final Map<String, dynamic> userData = {
+  Future<void> _sendDataToServer(XFile photo) async {
+    try {
+      final socket = await Socket.connect(_serverIPController.text, serverPort);
+      Map<String, dynamic> userData = {
         'name': _nameController.text,
         'email': _emailController.text,
         'classSection': _classSectionController.text,
         'photo': base64Encode(await photo.readAsBytes())
       };
-      WebSocketManager().sendMessage(json.encode(userData));
-      print('Data sent to the server');
-    } else if (photo == null) {
-      _showError('No photo was taken.');
-    } else {
-      _showError('Not connected to the server.');
+      socket.add(utf8.encode(json.encode(userData) + '~')); // Append a delimiter
+      await socket.close();
+    } catch (e) {
+      _showError('Failed to send data to the server.');
     }
   }
 

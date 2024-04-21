@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'main.dart';
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'main.dart';
 
-class ConnectedDevicesPage extends StatelessWidget {
-  const ConnectedDevicesPage({Key? key}) : super(key: key);
+// class ConnectedDevicesPage extends StatelessWidget {
+//   const ConnectedDevicesPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    var appState = Provider.of<MyAppState>(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     var appState = Provider.of<MyAppState>(context);
 
     return SizedBox(
       child: Column(

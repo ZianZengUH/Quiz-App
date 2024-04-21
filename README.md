@@ -1,18 +1,12 @@
 # Quiz-App
 
-A quiz app for ICS classes at the University of Hawaii at Manoa.
+A quiz app is a multi-hop BLE cross-platform app for ICS and other departments at the University of Hawaii at Manoa to track attendance and participate in class activities.
 
 Design and Developed by Zian Zeng, Feiyi Chen, Galen Chang
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+After downloaded the project, make sure in pubspaec.yaml, quick_blue: ^0.5.0-dev.2, instead of being downgradded to 0.3 by VSCode due to the lastest version of other packages conflict with quick_blue
 
-A few resources to get you started if this is your first Flutter project:
+For building Windows app, Nuget.exe is required. If running with VSCode, open VSCode with Admin.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

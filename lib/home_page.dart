@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import 'websocket_manager.dart';
 
 //########################## Home Page ##########################
 
@@ -17,27 +21,31 @@ class _MyHomePageState extends State<MyHomePage> {
   final String _defaultQuestion = 'What is the most efficient algorithm for finding a chosen number within 100?';
 
   void _submitAnswer() {
-    // Validate if the answer is not empty before showing the dialog
-    if (_answerController.text.trim().isNotEmpty) {
+    String answerText = _answerController.text.trim();
+    if (answerText.isNotEmpty) {
+      WebSocketManager().sendMessage(jsonEncode({
+        'type': 'answer',
+        'content': answerText
+      }));
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Thank you for your submission 😊'), 
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Thank you for your submission 😊'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
+    } else {
+      print("Answer is empty, not sending.");
     }
   }
 
+
+  
 
   @override
   Widget build(BuildContext context) {
