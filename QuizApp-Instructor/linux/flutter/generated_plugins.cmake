@@ -5,7 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   screen_retriever
   window_manager
-  ble_peripheral
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

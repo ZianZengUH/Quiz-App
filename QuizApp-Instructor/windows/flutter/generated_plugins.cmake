@@ -3,8 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  ble_peripheral
-  quick_blue_windows
   screen_retriever
   window_manager
 )

@@ -142,22 +142,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_ble_peripheral_central:
-    dependency: "direct main"
-    description:
-      name: flutter_ble_peripheral_central
-      sha256: db208bc4c53faa072f6ab25f1380fd3a770c1fcc686e38ed3942cfb3fedbc844
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
-  flutter_blue_plus:
-    dependency: "direct main"
-    description:
-      name: flutter_blue_plus
-      sha256: "35494cd7b303814a156a57e4ec00a29427c59a62f3d44079b772ef685ae4914f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.32.2"
   flutter_isolate:
     dependency: "direct main"
     description:
@@ -272,6 +256,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.19.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -304,14 +296,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  logging:
-    dependency: transitive
-    description:
-      name: logging
-      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   matcher:
     dependency: transitive
     description:

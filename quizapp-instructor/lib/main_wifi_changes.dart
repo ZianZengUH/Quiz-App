@@ -3,16 +3,37 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
+import 'package:window_manager/window_manager.dart';
 
 // Pages
+//import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
+import 'package:quiz_app_instructor/quiz_data.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(900, 600),
+    minimumSize: Size(900, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+    windowButtonVisibility: false,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(const MyApp());
 }
 
@@ -21,13 +42,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => MyAppState()),
+        ChangeNotifierProvider(create: (context) => QuizData()),
+      ],
       child: MaterialApp(
         title: 'Quiz App - Instructor Version',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
         home: const MyHomePage(),
       ),
@@ -138,7 +162,9 @@ class _MyHomePageState extends State<MyHomePage> {
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      // const ConnectedDevicesPage(),
+      // Placeholder for Export Quiz Answers - you'll need to implement this widget
+      const Placeholder(),
+      //const ConnectedDevicesPage(),
     ];
 
     return LayoutBuilder(
@@ -148,6 +174,17 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               SafeArea(
                 child: NavigationRail(
+                  //backgroundColor: Colors.green,
+                  backgroundColor: const Color.fromARGB(255, 6, 86, 6),
+                  unselectedLabelTextStyle: const TextStyle(
+                    color: Colors.white70),
+                  unselectedIconTheme: const IconThemeData(
+                    color: Colors.white70),
+                  selectedLabelTextStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+                  selectedIconTheme: const IconThemeData(
+                    color: Colors.black),
                   extended: constraints.maxWidth >= 600,
                   destinations: const [
                     NavigationRailDestination(
@@ -185,7 +222,14 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  //color: Theme.of(context).colorScheme.primaryContainer,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("images/UH_Manoa_ICS_Logo.jpg"),
+                      opacity: 0.075,
+                      fit: BoxFit.cover,
+                      )
+                  ),
                   child: pages[selectedIndex],
                 ),
               )

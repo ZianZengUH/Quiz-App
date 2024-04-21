@@ -42,11 +42,11 @@ dependencies:
   auto_size_text: ^3.0.0
   slide_countdown: ^1.5.2
   path_provider: ^2.0.0
-  flutter_blue_plus: ^1.32.1
+  #flutter_blue_plus: ^1.32.1
   shared_preferences: ^2.2.2
-  quick_blue: ^0.5.0-dev.2
+  #quick_blue: ^0.5.0-dev.2
   window_manager: ^0.3.8
-  ble_peripheral: ^2.2.3
+  #ble_peripheral: ^2.2.3
   intl: ^0.19.0
   file_picker: ^8.0.0+1
 
