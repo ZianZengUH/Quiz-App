@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; 
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 // Pages
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
@@ -67,21 +68,23 @@ class MyAppState extends ChangeNotifier {
 
   void startServer() async {
     _server = await HttpServer.bind(InternetAddress.anyIPv4, 3000);
-    print('WebSocket server is running on ws://${_server!.address.address}:${_server!.port}');
+    print(
+        'WebSocket server is running on ws://${_server!.address.address}:${_server!.port}');
     print("@@@@@@@@");
-    print('Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
+    print(
+        'Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
     print("@@@@@@@@@\n");
 
-     for (var interface in await NetworkInterface.list()) {
-        for (var addr in interface.addresses) {
-          if (addr.type == InternetAddressType.IPv4) {
-            print("______________");
-            print('Using interface: ${interface.name}, with IP: ${addr.address}');
-            print("______________\n");
-          }
+    for (var interface in await NetworkInterface.list()) {
+      for (var addr in interface.addresses) {
+        if (addr.type == InternetAddressType.IPv4) {
+          print("______________");
+          print('Using interface: ${interface.name}, with IP: ${addr.address}');
+          print("______________\n");
         }
       }
-    
+    }
+
     await for (HttpRequest request in _server!) {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         // Handle WebSocket connection.
@@ -99,37 +102,49 @@ class MyAppState extends ChangeNotifier {
   void handleWebSocket(WebSocket socket) {
     print('Client connected!');
     clients.add(socket);
-    socket.listen(
-      (data) async {
-        onMessageReceived(data, socket);
-      },
-      onDone: () {
-        onClientDisconnected(socket);
-      },
-      onError: (error) {
-        print('WebSocket error: $error');
-        socket.close();
-      }
-    );
+    socket.listen((data) async {
+      onMessageReceived(data, socket);
+    }, onDone: () {
+      onClientDisconnected(socket);
+    }, onError: (error) {
+      print('WebSocket error: $error');
+      socket.close();
+    });
   }
 
   void onMessageReceived(dynamic data, WebSocket client) {
-      print('Message received: $data');
-      try {
-        final userData = jsonDecode(data);
-        if (userData is Map<String, dynamic> && userData.containsKey('name')) {
-          manageStudentData(userData['name'].toString());
-        } else {
-          print("Error: Received data is not as expected.");
-        }
-      } catch (e) {
-        print('Error parsing JSON data: $e');
+    print('Message received: $data');
+    try {
+      final userData = jsonDecode(data);
+      if (userData is Map<String, dynamic> && userData.containsKey('name')) {
+        String name = userData['name'].toString();
+        String email = userData['email'].toString();
+        String classSection = userData['classSection'].toString();
+        String? photo = userData['photo'] as String?;
+        manageStudentData(name, email, classSection, photo: photo);
+      } else if (userData.containsKey('type') && userData['type'] == 'answer') {
+        String answerText = userData['content'].toString();
+        manageStudentData('', '', '', answer: answerText);
+      } else {
+        print("Error: Received data is not as expected.");
       }
+    } catch (e) {
+      print('Error parsing JSON data: $e');
+    }
   }
 
-  Future<void> manageStudentData(String studentName) async {
-    Directory studentDir = Directory('students/$studentName');
+  Future<void> manageStudentData(
+      String studentName, String email, String classSection,
+      {String? answer, String? photo}) async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (selectedDirectory == null) {
+      // User canceled the directory selection
+      return;
+    }
+
+    Directory studentDir = Directory('$selectedDirectory/$studentName');
     File infoFile = File('${studentDir.path}/student info.txt');
+    File answerFile = File('${studentDir.path}/answer.txt');
 
     if (!await studentDir.exists()) {
       await studentDir.create(recursive: true);
@@ -139,8 +154,21 @@ class MyAppState extends ChangeNotifier {
       await infoFile.create();
     }
 
-    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    await infoFile.writeAsString('$currentDate\n', mode: FileMode.append);
+    String currentDate =
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    String studentInfo =
+        'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+    await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+
+    if (answer != null) {
+      await answerFile.writeAsString(answer);
+    }
+
+    if (photo != null) {
+      File photoFile = File('${studentDir.path}/profile picture.png');
+      final photoBytes = base64Decode(photo);
+      await photoFile.writeAsBytes(photoBytes);
+    }
   }
 
   void onClientDisconnected(WebSocket socket) {
@@ -163,7 +191,6 @@ class MyAppState extends ChangeNotifier {
     super.dispose();
   }
 }
-
 
 // ---------------------MyHomePage--------------------
 class MyHomePage extends StatefulWidget {
@@ -270,5 +297,3 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 }
-
-

@@ -6,12 +6,20 @@
     <string>This app always needs Bluetooth to function</string>
     <key>NSBluetoothPeripheralUsageDescription</key>
     <string>This app needs Bluetooth Peripheral to function</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app always needs location and when in use to function</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app always needs location to function</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs location when in use to function</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Explanation of why you need the location permission</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Explanation of why you need the location permission</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Explanation of why you need the location permission</string>
+	<key>NSAppTransportSecurity</key>
+	<string >network</string>
+	<key>NSAllowsArbitraryLoads</key><true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+	</array>
 	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

@@ -1,10 +1,10 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_blue_plus (0.0.1):
-    - Flutter
   - flutter_isolate (0.0.1):
     - Flutter
   - image_picker_ios (0.0.1):
+    - Flutter
+  - network_info_plus (0.0.1):
     - Flutter
   - permission_handler_apple (9.3.0):
     - Flutter
@@ -14,21 +14,21 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - flutter_blue_plus (from `.symlinks/plugins/flutter_blue_plus/ios`)
   - flutter_isolate (from `.symlinks/plugins/flutter_isolate/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  flutter_blue_plus:
-    :path: ".symlinks/plugins/flutter_blue_plus/ios"
   flutter_isolate:
     :path: ".symlinks/plugins/flutter_isolate/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
+  network_info_plus:
+    :path: ".symlinks/plugins/network_info_plus/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
@@ -36,12 +36,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_blue_plus: 4837da7d00cf5d441fdd6635b3a57f936778ea96
   flutter_isolate: 0edf5081826d071adf21759d1eb10ff5c24503b5
   image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18
+  network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
 
-PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+PODFILE CHECKSUM: 70ccf0caf824ad88bdeaddd4054d7f5f2705eadb
 
 COCOAPODS: 1.15.2
