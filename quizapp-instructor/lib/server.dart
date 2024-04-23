@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 
 class Server extends ChangeNotifier {
@@ -81,16 +81,35 @@ class Server extends ChangeNotifier {
     }
   }
 
-  Future<void> manageStudentData(
-      String studentName, String email, String classSection,
-      {String? answer, String? photo}) async {
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    if (selectedDirectory == null) {
-      // User canceled the directory selection
-      return;
+  Future<void> manageStudentData(String studentName, String email, String classSection, {String? answer, String? photo}) async {
+    //String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    //if (selectedDirectory == null) {
+    // User canceled the directory selection
+    //  return;
+    //}
+
+    // Writes student data to installation directory.
+    // <installation directory>/Student Quizzes
+    Directory studentQuizzesDir = Directory('Student Quizzes');
+    if (!await studentQuizzesDir.exists()) {
+      await studentQuizzesDir.create();
     }
 
-    Directory studentDir = Directory('$selectedDirectory/$studentName');
+    // <installation directory>/Student Quizzes/<today's date>
+    String dateFormat = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    Directory dateDir = Directory('Student Quizzes/$dateFormat');
+    if (!await dateDir.exists()) {
+      await dateDir.create();
+    }
+
+    // <installation directory>/Student Quizzes/<today's date>/Section Numbers
+    Directory sectionDir = Directory('Student Quizzes/$dateFormat/$classSection');
+    if (!await sectionDir.exists()) {
+      await sectionDir.create(recursive: true);
+    }
+
+    // <installation directory>/Student Quizzes/<today's date>/Section Numbers/<Student's Names>
+    Directory studentDir = Directory('Student Quizzes/$dateFormat/$classSection/$studentName');
     File infoFile = File('${studentDir.path}/student info.txt');
     File answerFile = File('${studentDir.path}/answer.txt');
 
@@ -102,16 +121,19 @@ class Server extends ChangeNotifier {
       await infoFile.create();
     }
 
+    // Write student's info file.
     String currentDate =
-        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    String studentInfo =
-        'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+      DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    String studentInfo = 
+      'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
     await infoFile.writeAsString(studentInfo, mode: FileMode.append);
 
+    // Write student's answer.
     if (answer != null) {
       await answerFile.writeAsString(answer);
     }
 
+    // Write student's photo.
     if (photo != null) {
       File photoFile = File('${studentDir.path}/profile picture.png');
       final photoBytes = base64Decode(photo);
