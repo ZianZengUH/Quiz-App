@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:window_manager/window_manager.dart';
 
-// Pages
 //import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
+import 'package:quiz_app_instructor/server.dart';
 
 
 void main() async {
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => MyAppState()),
+        ChangeNotifierProvider(create: (context) => Server()),
         ChangeNotifierProvider(create: (context) => QuizData()),
       ],
       child: MaterialApp(
@@ -53,95 +54,13 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
         home: const MyHomePage(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  ServerSocket? server;
-
-  MyAppState() {
-    startServer(); // Automatically start the server upon instantiation
-  }
-
-  void startServer() async {
-    try {
-      server = await ServerSocket.bind(InternetAddress.anyIPv4, 3000);
-      print("@@@@@@@@");
-      print('Server running on IP: ${server!.address.address}, Port: ${server!.port}');
-      print("@@@@@@@@@\n");
-
-      // Moved this to _MyHomePageState
-      //for (var interface in await NetworkInterface.list()) {
-        //for (var addr in interface.addresses) {
-          //if (addr.type == InternetAddressType.IPv4) {
-            //print("______________");
-            //print('Using interface: ${interface.name}, with IP: ${addr.address}');
-            //print("______________\n");
-          //}
-        //}
-      //}
- 
-      await for (var client in server!) {
-        print('Connection from ${client.remoteAddress.address}:${client.remotePort}');
-
-        final List<int> buffer = []; // Buffer to accumulate data.
-        client.listen(
-          (data) async {
-            buffer.addAll(data); // Accumulate each chunk of data received.
-          },
-          onError: (error) {
-            print('Error on data stream: $error');
-          },
-          onDone: () async {
-            // Data processing
-            // Decode the complete data received.
-            final completeData = utf8.decode(buffer);
-            try {
-              final userData = jsonDecode(completeData);
-              String studentName = userData['name'];
-              await manageStudentData(studentName);
-            } catch (e) {
-              print('Error parsing JSON data: $e');
-            }
-            print('Connection closed by the client');
-            client.close();
-          },
-          cancelOnError: true
-        );
-      }
-    } on SocketException catch (e) {
-      print('Failed to create server: $e');
-    }
-  }
-
-  Future<void> manageStudentData(String studentName) async {
-    Directory studentDir = Directory('students/$studentName');
-    File infoFile = File('${studentDir.path}/student info.txt');
-
-    if (!await studentDir.exists()) {
-      await studentDir.create(recursive: true);
-    }
-
-    if (!await infoFile.exists()) {
-      await infoFile.create();
-    }
-
-    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    await infoFile.writeAsString('$currentDate\n', mode: FileMode.append);
-  }
-  @override
-  void dispose() {
-    if (server != null) {
-      server!.close();
-      print('Server closed');
-    }
-    super.dispose();
-  }
-}
-
-
+// ---------------------MyHomePage--------------------
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -162,14 +81,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     _checkQuizDirExists();
-    // var appState = Provider.of<MyAppState>(context);
 
     List<Widget> pages = [
       const InfoPage(),
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      // Placeholder for Export Quiz Answers - you'll need to implement this widget
+      //Placeholder for Export Quiz Answers - you'll need to implement this widget
       const Placeholder(),
       //const ConnectedDevicesPage(),
     ];
@@ -256,12 +174,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Expanded(
                 child: Container(
-                  //color: Theme.of(context).colorScheme.primaryContainer,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage("images/UH_Manoa_ICS_Logo.jpg"),
-                      opacity: 0.075,
-                      fit: BoxFit.cover,
+                      image: AssetImage("images/UH_Manoa_ICS_Logo.png"),
+                      opacity: 0.060,
+                      fit: BoxFit.contain,
                       )
                   ),
                   child: pages[selectedIndex],
@@ -292,5 +209,3 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 }
-
-

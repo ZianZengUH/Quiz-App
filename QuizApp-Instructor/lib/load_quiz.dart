@@ -94,20 +94,17 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                         shape: const BeveledRectangleBorder(),
                       ),
                       onPressed: () {
-                        List<String> testing = _selectedOption.split('\\');
-                        //Future<List> quizData = _read(testing[1]);
-                        //List quizList = _convertToList(quizData);
+                        List<String> quizName = _selectedOption.split('\\');
 
-                        if (testing.length <= 1) {
+                        if (quizName[0] == '') {
                           print("Nothing selected");
                         } else {
-                          _read(testing[1]).then((List quizList) =>
+                          _read(quizName[0]).then((List quizList) =>
                           Provider.of<QuizData>(context, listen: false).changeQuizData(
                             quizList[0],
                             int.parse(quizList[1]),
                             int.parse(quizList[2]),
                             quizList[3]));
-                          // Provider.of<QuizData>(context, listen: false).changeQuizData(quizList[0], quizList[1], quizList[2], quizList[3]);
                           }
                         },
                       child: const Padding(
@@ -127,7 +124,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
   Future<List> _read(String quizFile) async {
     String quizAsString = '';
     List quizData = [];
-    File quiz = File('${Directory.current.path}/$quizFile');
+    File quiz = File('${Directory.current.path}/Saved Quizzes/$quizFile');
 
     try {
       quizAsString = await quiz.readAsString();
@@ -135,21 +132,6 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
     } catch (e) {
       print("Couldn't read file");
     }
-    // name
-    //print(quizData[0]);
-    // duration
-    //print(quizData[1]);
-    // font size
-    //print(quizData[2]);
-    // question
-    //print(quizData[3]);
-
     return quizData;
   }
-
-  // Not used.
-  //_convertToList(Future<List> data) async {
-    //List list = await data;
-    //return list;
-  //}
 }

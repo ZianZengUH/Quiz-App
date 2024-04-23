@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -114,9 +115,8 @@ class _LoginPageState extends State<LoginPage> {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
-
       if (await _connectWebSocket()) {
-        await _sendDataToServer(photo);
+        //await _sendDataToServer(photo);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const MyHomePage(title: 'Quiz App'),
         ));
@@ -180,61 +180,69 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login / Attendance'),
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/quiz_app_logo.png', width: 100, height: 100),
-              const SizedBox(height: 20),
-              const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _serverIPController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter Server IP',
-                  hintText: 'e.g., 192.168.0.100',
+      body: DecoratedBox( 
+        decoration: const BoxDecoration( 
+          image: DecorationImage( 
+            image: AssetImage("assets/images/UH_Manoa_ICS_logo.png"),
+            opacity: 0.060,
+            fit: BoxFit.contain),
+        ),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/images/quiz_app_logo.png', width: 100, height: 100),
+                const SizedBox(height: 20),
+                const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _serverIPController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter Server IP',
+                    hintText: 'e.g., 192.168.0.100',
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-              ),
-            const SizedBox(height: 20),
-              TextField(
-                focusNode: _nameFocusNode,
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter your name',
+                const SizedBox(height: 20),
+                TextField(
+                  focusNode: _nameFocusNode,
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter your name',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                focusNode: _emailFocusNode,
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter your email',
+                const SizedBox(height: 20),
+                TextField(
+                  focusNode: _emailFocusNode,
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter your email',
+                  ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                focusNode: _classSectionFocusNode,
-                controller: _classSectionController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter your class section',
+                const SizedBox(height: 20),
+                TextField(
+                  focusNode: _classSectionFocusNode,
+                  controller: _classSectionController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter your class section',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // if (_serverIP != null) Text('Server IP: $_serverIP'),
-              ElevatedButton(
-                onPressed: _takePictureAndLogin,
-                child: const Text('Take Picture & Login'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                // if (_serverIP != null) Text('Server IP: $_serverIP'),
+                ElevatedButton(
+                  onPressed: _takePictureAndLogin,
+                  child: const Text('Take Picture & Login'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
