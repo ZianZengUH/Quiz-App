@@ -14,32 +14,29 @@ class Server extends ChangeNotifier {
   }
 
   void startServer() async {
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, 3000);
-    print(
-        'WebSocket server is running on ws://${_server!.address.address}:${_server!.port}');
-    print("@@@@@@@@");
-    print(
-        'Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
-    print("@@@@@@@@@\n");
-
+    //print(
+    //    'WebSocket server is running on ws://${_server!.address.address}:${_server!.port}');
+    //print("@@@@@@@@");
+    //print(
+    //    'Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
+    //print("@@@@@@@@@\n");
+    
     for (var interface in await NetworkInterface.list()) {
       for (var addr in interface.addresses) {
-        if (addr.type == InternetAddressType.IPv4) {
-          print("______________");
-          print('Using interface: ${interface.name}, with IP: ${addr.address}');
-          print("______________\n");
+        if (addr.type == InternetAddressType.IPv4 && interface.name == 'Wi-Fi') {
+          //print("______________");
+          //print('Using interface: ${interface.name}, with IP: ${addr.address}');
+          //print("______________\n");
+          _server = await HttpServer.bind(addr.address, 3000);
         }
       }
     }
 
     await for (HttpRequest request in _server!) {
-      print("awaiting");
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         // Handle WebSocket connection.
         WebSocket socket = await WebSocketTransformer.upgrade(request);
-        print("line 1");
         handleWebSocket(socket);
-        print("line 2");
       } else {
         request.response
           ..statusCode = HttpStatus.forbidden
@@ -128,7 +125,8 @@ class Server extends ChangeNotifier {
     socket.close();
   }
 
-  // To send a message to all connected clients,
+  // NOT NEEDED?
+  // To send a message to all connected clients
   void broadcastMessage(String message) {
     for (WebSocket client in clients) {
       client.add(message);

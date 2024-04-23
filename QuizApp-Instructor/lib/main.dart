@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:window_manager/window_manager.dart';
 
 //import 'package:quiz_app_instructor/connected_devices_page.dart';
@@ -53,22 +50,22 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
-        home: const MyHomePage(),
+        home: const AppLayout(),
         debugShowCheckedModeBanner: false,
       ),
     );
   }
 }
 
-// ---------------------MyHomePage--------------------
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+// ---------------------AppLayout--------------------
+class AppLayout extends StatefulWidget {
+  const AppLayout({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<AppLayout> createState() => _AppLayoutState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _AppLayoutState extends State<AppLayout> {
   int selectedIndex = 0;
   String ipAddress = "WiFi IP address not found"; 
   
