@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   HttpServer? _server;
   List<WebSocket> clients = [];
+  String? studentDirPath;
 
   MyAppState() {
     startServer();
@@ -113,13 +114,17 @@ class MyAppState extends ChangeNotifier {
   Future<void> manageStudentData(
       String studentName, String email, String classSection,
       {String? answer, String? photo}) async {
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    if (selectedDirectory == null) {
-      // User canceled the directory selection
-      return;
+    if (studentDirPath == null) {
+      // Directory not selected yet
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      if (selectedDirectory == null) {
+        // User canceled the directory selection
+        return;
+      }
+      studentDirPath = '$selectedDirectory/$studentName';
     }
 
-    Directory studentDir = Directory('$selectedDirectory/$studentName');
+    Directory studentDir = Directory(studentDirPath!);
     File infoFile = File('${studentDir.path}/student info.txt');
     File answerFile = File('${studentDir.path}/answer.txt');
 
@@ -129,16 +134,21 @@ class MyAppState extends ChangeNotifier {
 
     if (!await infoFile.exists()) {
       await infoFile.create();
+      String currentDate =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      String studentInfo =
+          'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
     }
 
-    String currentDate =
-        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    String studentInfo =
-        'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
-    await infoFile.writeAsString(studentInfo, mode: FileMode.append);
-
     if (answer != null) {
-      await answerFile.writeAsString(answer);
+      if (await answerFile.exists()) {
+        // If the answerFile already exists, append the new answer to it
+        await answerFile.writeAsString('\n$answer', mode: FileMode.append);
+      } else {
+        // If the answerFile doesn't exist, create it and write the answer
+        await answerFile.writeAsString(answer);
+      }
     }
 
     if (photo != null) {
