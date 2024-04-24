@@ -1,8 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 
 class Server extends ChangeNotifier {
@@ -117,20 +116,25 @@ class Server extends ChangeNotifier {
       await studentDir.create(recursive: true);
     }
 
-    if (!await infoFile.exists()) {
-      await infoFile.create();
-    }
-
     // Write student's info file.
-    String currentDate =
-      DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    String studentInfo = 
-      'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
-    await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+     if (!await infoFile.exists()) {
+      await infoFile.create();
+      String currentDate =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      String studentInfo =
+          'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+    }
 
     // Write student's answer.
     if (answer != null) {
-      await answerFile.writeAsString(answer);
+      if (await answerFile.exists()) {
+        // If the answerFile already exists, append the new answer to it
+        await answerFile.writeAsString('\n$answer', mode: FileMode.append);
+      } else {
+        // If the answerFile doesn't exist, create it and write the answer
+        await answerFile.writeAsString(answer);
+      }
     }
 
     // Write student's photo.
