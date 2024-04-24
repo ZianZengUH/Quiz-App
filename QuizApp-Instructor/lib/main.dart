@@ -193,6 +193,8 @@ class _AppLayoutState extends State<AppLayout> {
       for (var addr in interface.addresses) {
         if (addr.type == InternetAddressType.IPv4 && interface.name == 'Wi-Fi') {
           ipAddress = addr.address.toString();
+        } else if (addr.type == InternetAddressType.IPv4 && interface.name == 'en0') {
+          ipAddress = addr.address.toString();
         }
       }
     }
