@@ -15,14 +15,54 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    Directory currentDirectory = Directory.current;
+    String currentDirectoryString = currentDirectory.path;
     Directory quizDirectory = Directory('Saved Quizzes');
     List dirContents = quizDirectory.listSync();
     Iterable<File> iterableFiles = dirContents.whereType<File>();
-    List files = iterableFiles.toList();
+    List<File> filesAsFile = iterableFiles.toList();
+    List<String> filesAsString = [];
+    List<String> filePostSplitSlash;
+    List<String> filePostSplitApostrophe;
+    List<String> files = [];
+
+    for (File file in filesAsFile) {
+      filesAsString.add(file.toString());
+    }
+
+    for (String file in filesAsString) {
+      filePostSplitSlash = file.split('\\');
+      filePostSplitApostrophe = filePostSplitSlash[1].split('\'');
+      files.add(filePostSplitApostrophe[0]);
+    }
 
     return SizedBox(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
+          Container(
+            padding: const EdgeInsets.all(5.0),
+            color: const Color.fromARGB(50, 6, 86, 6),
+            child: Text(
+              'Searching for quizzes in:\n$currentDirectoryString\\Saved Quizzes',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),  
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 10, left: 15),
+              child: Text(
+              "Select the quiz you would like to load:",
+              textAlign: TextAlign.start,
+                style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              ),  
+            ),
+          ),
           Expanded(
               child: ListView.separated(
               itemCount: files.length,
@@ -54,18 +94,19 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                         shape: const BeveledRectangleBorder(),
                       ),
                       onPressed: () {
-                        List<String> testing = _selectedOption.split('\'');
-                        //Future<List> quizData = _read(testing[1]);
-                        //List quizList = _convertToList(quizData);
+                        List<String> quizName = _selectedOption.split('\\');
 
-                        _read(testing[1]).then((List quizList) =>
-                        Provider.of<QuizData>(context, listen: false).changeQuizData(
-                          quizList[0],
-                          int.parse(quizList[1]),
-                          int.parse(quizList[2]),
-                          quizList[3]));
-                        // Provider.of<QuizData>(context, listen: false).changeQuizData(quizList[0], quizList[1], quizList[2], quizList[3]);
-                      },
+                        if (quizName[0] == '') {
+                          print("Nothing selected");
+                        } else {
+                          _read(quizName[0]).then((List quizList) =>
+                          Provider.of<QuizData>(context, listen: false).changeQuizData(
+                            quizList[0],
+                            int.parse(quizList[1]),
+                            int.parse(quizList[2]),
+                            quizList[3]));
+                          }
+                        },
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text('Load Quiz'),
@@ -83,7 +124,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
   Future<List> _read(String quizFile) async {
     String quizAsString = '';
     List quizData = [];
-    File quiz = File('${Directory.current.path}/$quizFile');
+    File quiz = File('${Directory.current.path}/Saved Quizzes/$quizFile');
 
     try {
       quizAsString = await quiz.readAsString();
@@ -91,20 +132,6 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
     } catch (e) {
       print("Couldn't read file");
     }
-    // name
-    print(quizData[0]);
-    // duration
-    print(quizData[1]);
-    // font size
-    print(quizData[2]);
-    // question
-    print(quizData[3]);
-
     return quizData;
-  }
-
-  _convertToList(Future<List> data) async {
-    List list = await data;
-    return list;
   }
 }

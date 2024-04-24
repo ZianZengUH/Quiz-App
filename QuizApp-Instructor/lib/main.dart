@@ -1,18 +1,36 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-// Pages
+import 'package:window_manager/window_manager.dart';
+
+//import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
+import 'package:quiz_app_instructor/quiz_data.dart';
+import 'package:quiz_app_instructor/server.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(900, 600),
+    minimumSize: Size(900, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+    windowButtonVisibility: false,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(const MyApp());
 }
 
@@ -21,186 +39,54 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => Server()),
+        ChangeNotifierProvider(create: (context) => QuizData()),
+      ],
       child: MaterialApp(
         title: 'Quiz App - Instructor Version',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
-        home: const MyHomePage(),
+        home: const AppLayout(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  HttpServer? _server;
-  List<WebSocket> clients = [];
-  String? studentDirPath;
-
-  MyAppState() {
-    startServer();
-  }
-
-  void startServer() async {
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, 3000);
-    print(
-        'WebSocket server is running on ws://${_server!.address.address}:${_server!.port}');
-    print("@@@@@@@@");
-    print(
-        'Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
-    print("@@@@@@@@@\n");
-
-    for (var interface in await NetworkInterface.list()) {
-      for (var addr in interface.addresses) {
-        if (addr.type == InternetAddressType.IPv4) {
-          print("______________");
-          print('Using interface: ${interface.name}, with IP: ${addr.address}');
-          print("______________\n");
-        }
-      }
-    }
-
-    await for (HttpRequest request in _server!) {
-      if (WebSocketTransformer.isUpgradeRequest(request)) {
-        // Handle WebSocket connection.
-        WebSocket socket = await WebSocketTransformer.upgrade(request);
-        handleWebSocket(socket);
-      } else {
-        request.response
-          ..statusCode = HttpStatus.forbidden
-          ..write('This server only supports WebSocket connections.')
-          ..close();
-      }
-    }
-  }
-
-  void handleWebSocket(WebSocket socket) {
-    print('Client connected!');
-    clients.add(socket);
-    socket.listen((data) async {
-      onMessageReceived(data, socket);
-    }, onDone: () {
-      onClientDisconnected(socket);
-    }, onError: (error) {
-      print('WebSocket error: $error');
-      socket.close();
-    });
-  }
-
-  void onMessageReceived(dynamic data, WebSocket client) {
-    print('Message received: $data');
-    try {
-      final userData = jsonDecode(data);
-      if (userData is Map<String, dynamic> && userData.containsKey('name')) {
-        String name = userData['name'].toString();
-        String email = userData['email'].toString();
-        String classSection = userData['classSection'].toString();
-        String? photo = userData['photo'] as String?;
-        manageStudentData(name, email, classSection, photo: photo);
-      } else if (userData.containsKey('type') && userData['type'] == 'answer') {
-        String answerText = userData['content'].toString();
-        manageStudentData('', '', '', answer: answerText);
-      } else {
-        print("Error: Received data is not as expected.");
-      }
-    } catch (e) {
-      print('Error parsing JSON data: $e');
-    }
-  }
-
-  Future<void> manageStudentData(
-      String studentName, String email, String classSection,
-      {String? answer, String? photo}) async {
-    if (studentDirPath == null) {
-      // Directory not selected yet
-      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-      if (selectedDirectory == null) {
-        // User canceled the directory selection
-        return;
-      }
-      studentDirPath = '$selectedDirectory/$studentName';
-    }
-
-    Directory studentDir = Directory(studentDirPath!);
-    File infoFile = File('${studentDir.path}/student info.txt');
-    File answerFile = File('${studentDir.path}/answer.txt');
-
-    if (!await studentDir.exists()) {
-      await studentDir.create(recursive: true);
-    }
-
-    if (!await infoFile.exists()) {
-      await infoFile.create();
-      String currentDate =
-          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-      String studentInfo =
-          'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
-      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
-    }
-
-    if (answer != null) {
-      if (await answerFile.exists()) {
-        // If the answerFile already exists, append the new answer to it
-        await answerFile.writeAsString('\n$answer', mode: FileMode.append);
-      } else {
-        // If the answerFile doesn't exist, create it and write the answer
-        await answerFile.writeAsString(answer);
-      }
-    }
-
-    if (photo != null) {
-      File photoFile = File('${studentDir.path}/profile picture.png');
-      final photoBytes = base64Decode(photo);
-      await photoFile.writeAsBytes(photoBytes);
-    }
-  }
-
-  void onClientDisconnected(WebSocket socket) {
-    print('Client disconnected.');
-    clients.remove(socket);
-    socket.close();
-  }
-
-  // To send a message to all connected clients,
-  void broadcastMessage(String message) {
-    for (WebSocket client in clients) {
-      client.add(message);
-    }
-  }
+// ---------------------AppLayout--------------------
+class AppLayout extends StatefulWidget {
+  const AppLayout({super.key});
 
   @override
-  void dispose() {
-    clients.forEach((client) => client.close());
-    _server?.close();
-    super.dispose();
-  }
+  State<AppLayout> createState() => _AppLayoutState();
 }
 
-// ---------------------MyHomePage--------------------
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _AppLayoutState extends State<AppLayout> {
   int selectedIndex = 0;
+  String ipAddress = "WiFi IP address not found"; 
+  
+  @override 
+  void initState() { 
+    super.initState(); 
+    _getWiFiAddress(); 
+  } 
 
   @override
   Widget build(BuildContext context) {
     _checkQuizDirExists();
-    var appState = Provider.of<MyAppState>(context);
 
     List<Widget> pages = [
       const InfoPage(),
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      // const ConnectedDevicesPage(),
+      //Placeholder for Export Quiz Answers - you'll need to implement this widget
+      const Placeholder(),
+      //const ConnectedDevicesPage(),
     ];
 
     return LayoutBuilder(
@@ -210,7 +96,45 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               SafeArea(
                 child: NavigationRail(
+                  //backgroundColor: Colors.green,
+                  backgroundColor: const Color.fromARGB(255, 6, 86, 6),
+                  unselectedLabelTextStyle: const TextStyle(
+                    color: Colors.white70),
+                  unselectedIconTheme: const IconThemeData(
+                    color: Colors.white70),
+                  selectedLabelTextStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+                  selectedIconTheme: const IconThemeData(
+                    color: Colors.black),
                   extended: constraints.maxWidth >= 600,
+
+                  leading: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Connect to",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                      ),
+                      Text(
+                        ipAddress,
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                      ),
+                      const Text(""),
+                      Image.asset("images/quiz_app_logo.png", height: 150, width: 150),
+                      const Text("")
+                    ],
+                  ),
+
                   destinations: const [
                     NavigationRailDestination(
                       icon: Icon(Icons.question_mark),
@@ -232,10 +156,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: Icon(Icons.save_as),
                       label: Text('Export Quiz Answers'),
                     ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.bluetooth),
-                      label: Text('Connected Devices'),
-                    ),
+                    //NavigationRailDestination(
+                      //icon: Icon(Icons.bluetooth),
+                      //label: Text('Connected Devices'),
+                    //),
                   ],
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (index) {
@@ -247,7 +171,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("images/UH_Manoa_ICS_Logo.png"),
+                      opacity: 0.060,
+                      fit: BoxFit.contain,
+                      )
+                  ),
                   child: pages[selectedIndex],
                 ),
               )
@@ -256,6 +186,16 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  Future<void> _getWiFiAddress() async {
+    for (var interface in await NetworkInterface.list()) {
+      for (var addr in interface.addresses) {
+        if (addr.type == InternetAddressType.IPv4 && interface.name == 'Wi-Fi') {
+          ipAddress = addr.address.toString();
+        }
+      }
+    }
   }
 
   // Checks if the "Saved Quizzes" directory exists. If not, create it.

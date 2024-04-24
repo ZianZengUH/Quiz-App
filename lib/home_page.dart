@@ -58,55 +58,63 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
-        reverse: true, // Ensures that the view scrolls to the bottom when the keyboard is opened
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              // Display the question inside a container with padding and a border
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child:Text(
-                  'Question',
-                  style: textStyle,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.primary),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  _defaultQuestion,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Answer TextField
-              TextField(
-                controller: _answerController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter your answer here',
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-              ),
-              const SizedBox(height: 20),
-              // Align Submit Button to the right
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: _submitAnswer,
-                    child: const Text('Submit'),
+      body: DecoratedBox( 
+        decoration: const BoxDecoration( 
+          image: DecorationImage( 
+              image: AssetImage("assets/images/UH_Manoa_ICS_logo.png"),
+              opacity: 0.060,
+              fit: BoxFit.contain),
+        ),
+        child: SingleChildScrollView(
+          reverse: true, // Ensures that the view scrolls to the bottom when the keyboard is opened
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Display the question inside a container with padding and a border
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child:Text(
+                    'Question',
+                    style: textStyle,
                   ),
-                ],
-              ),
-            ],
+                ),
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).colorScheme.primary),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    _defaultQuestion,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Answer TextField
+                TextField(
+                  controller: _answerController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter your answer here',
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                ),
+                const SizedBox(height: 20),
+                // Align Submit Button to the right
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _submitAnswer,
+                      child: const Text('Submit'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
