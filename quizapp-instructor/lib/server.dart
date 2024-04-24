@@ -28,6 +28,11 @@ class Server extends ChangeNotifier {
           //print('Using interface: ${interface.name}, with IP: ${addr.address}');
           //print("______________\n");
           _server = await HttpServer.bind(addr.address, 3000);
+        } else if (addr.type == InternetAddressType.IPv4 && interface.name == 'en0') {
+          //print("______________");
+          //print('Using interface: ${interface.name}, with IP: ${addr.address}');
+          //print("______________\n");
+          _server = await HttpServer.bind(addr.address, 3000);
         }
       }
     }
@@ -87,7 +92,9 @@ class Server extends ChangeNotifier {
     // User canceled the directory selection
     //  return;
     //}
-
+    print(studentName);
+    print(email);
+    print(classSection);
     // Writes student data to installation directory.
     // <installation directory>/Student Quizzes
     Directory studentQuizzesDir = Directory('Student Quizzes');

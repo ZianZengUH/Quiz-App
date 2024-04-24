@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
     if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
       if (await _connectWebSocket()) {
-        //await _sendDataToServer(photo);
+        await _sendDataToServer(photo);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const MyHomePage(title: 'Quiz App'),
         ));
