@@ -92,9 +92,7 @@ class Server extends ChangeNotifier {
     // User canceled the directory selection
     //  return;
     //}
-    print(studentName);
-    print(email);
-    print(classSection);
+
     // Writes student data to installation directory.
     // <installation directory>/Student Quizzes
     Directory studentQuizzesDir = Directory('Student Quizzes');
