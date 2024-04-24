@@ -30,15 +30,15 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
+		<!--<string>UIInterfaceOrientationLandscapeLeft</string>-->
+		<!--<string>UIInterfaceOrientationLandscapeRight</string>-->
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
+		<!--<string>UIInterfaceOrientationPortraitUpsideDown</string>-->
+		<!--<string>UIInterfaceOrientationLandscapeLeft</string>-->
+		<!--<string>UIInterfaceOrientationLandscapeRight</string>-->
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
@@ -111,6 +111,12 @@
     <true/>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
-
+    
+    <!-- no multiple/split screen -->
+    <key>UIApplicationSupportsMultipleScenes</key>
+    <false/>
+    <!-- app only runs in full screen -->
+    <key>UIRequiresFullScreen</key>
+    <true/>
 </dict>
 </plist>
