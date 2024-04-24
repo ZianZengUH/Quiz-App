@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'websocket_manager.dart';
 
@@ -17,16 +18,33 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _answerController = TextEditingController();
+  String name = '';
+  String classSection = '';
+
   // Define the default question as a state variable
-  final String _defaultQuestion = 'What is the most efficient algorithm for finding a chosen number within 100?';
+  //final String _defaultQuestion = 'What is the most efficient algorithm for finding a chosen number within 100?';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    name = prefs.getString('userName') ?? '';
+    classSection = prefs.getString('userClassSection') ?? '';
+  }
 
   void _submitAnswer() {
     String answerText = _answerController.text.trim();
     if (answerText.isNotEmpty) {
-      WebSocketManager().sendMessage(jsonEncode({
-        'type': 'answer',
-        'content': answerText
-      }));
+      final Map<String, dynamic> userData = {
+        'name': name,
+        'classSection': classSection,
+        'answer': answerText,
+      };
+      WebSocketManager().sendMessage(json.encode(userData));
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -73,25 +91,25 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // Display the question inside a container with padding and a border
-                Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child:Text(
-                    'Question',
-                    style: textStyle,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    _defaultQuestion,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                const SizedBox(height: 20),
+                //Container(
+                  //margin: const EdgeInsets.only(bottom: 10),
+                  //child:Text(
+                    //'Question',
+                    //style: textStyle,
+                  //),
+                //),
+                //Container(
+                  //padding: const EdgeInsets.all(16.0),
+                  //decoration: BoxDecoration(
+                    //border: Border.all(color: Theme.of(context).colorScheme.primary),
+                    //borderRadius: BorderRadius.circular(8.0),
+                  //),
+                  //child: Text(
+                    //_defaultQuestion,
+                    //style: Theme.of(context).textTheme.titleMedium,
+                  //),
+                //),
+                //const SizedBox(height: 20),
                 // Answer TextField
                 TextField(
                   controller: _answerController,

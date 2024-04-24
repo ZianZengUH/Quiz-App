@@ -74,10 +74,12 @@ class Server extends ChangeNotifier {
         String email = userData['email'].toString();
         String classSection = userData['classSection'].toString();
         String? photo = userData['photo'] as String?;
-        manageStudentData(name, email, classSection, photo: photo);
-      } else if (userData.containsKey('type') && userData['type'] == 'answer') {
-        String answerText = userData['content'].toString();
-        manageStudentData('', '', '', answer: answerText);
+        String? answer = userData['answer'] as String?;
+        manageStudentData(name, email, classSection, photo: photo, answer: answer);
+
+      //} else if (userData.containsKey('type') && userData['type'] == 'answer') {
+        //String? answerText = userData['content'].toString();
+        //manageStudentData('', '', '', answer: answerText);
       } else {
         print("Error: Received data is not as expected.");
       }
@@ -110,32 +112,41 @@ class Server extends ChangeNotifier {
     // <installation directory>/Student Quizzes/<today's date>/Section Numbers
     Directory sectionDir = Directory('Student Quizzes/$dateFormat/$classSection');
     if (!await sectionDir.exists()) {
-      await sectionDir.create(recursive: true);
+      //await sectionDir.create(recursive: true);
+      await sectionDir.create();
     }
 
     // <installation directory>/Student Quizzes/<today's date>/Section Numbers/<Student's Names>
     Directory studentDir = Directory('Student Quizzes/$dateFormat/$classSection/$studentName');
+    print(studentDir.path);
     File infoFile = File('${studentDir.path}/student info.txt');
+    print(infoFile.path);
     File answerFile = File('${studentDir.path}/answer.txt');
+    print(answerFile.path);
 
     if (!await studentDir.exists()) {
-      await studentDir.create(recursive: true);
+      await studentDir.create();
     }
 
     if (!await infoFile.exists()) {
       await infoFile.create();
+      // Write student's info file.
+      String currentDate =
+      DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      String studentInfo = 
+        'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
     }
 
-    // Write student's info file.
-    String currentDate =
-      DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    String studentInfo = 
-      'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
-    await infoFile.writeAsString(studentInfo, mode: FileMode.append);
-
     // Write student's answer.
+    //if (!await answerFile.exists()) {
+      //await answerFile.create();
+    //}
+    print(answer);
     if (answer != null) {
-      await answerFile.writeAsString(answer);
+        print('answer is good');
+        await answerFile.writeAsString(answer, mode: FileMode.append);
+        print('done');
     }
 
     // Write student's photo.
