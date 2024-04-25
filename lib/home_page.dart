@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'websocket_manager.dart';
 
 //########################## Home Page ##########################
@@ -16,17 +14,15 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final TextEditingController _answerController = TextEditingController();
   String name = '';
   String classSection = '';
 
-  // Define the default question as a state variable
-  //final String _defaultQuestion = 'What is the most efficient algorithm for finding a chosen number within 100?';
-
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadUserInfo();
   }
 
@@ -62,16 +58,27 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
 
-  
+    // Do nothing if inactive or detached.
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+      return;
+    }
+
+    if (state == AppLifecycleState.paused) {
+      final Map<String, dynamic> userData = {
+        'name': name,
+        'classSection': classSection,
+        'answer': '!!!!! APP MINIMIZED !!!!!',
+      };
+      WebSocketManager().sendMessage(json.encode(userData));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = const TextStyle(
-      fontSize: 18, 
-      fontWeight: FontWeight.bold, // Use FontWeight.bold for bold text
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -90,26 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Display the question inside a container with padding and a border
-                //Container(
-                  //margin: const EdgeInsets.only(bottom: 10),
-                  //child:Text(
-                    //'Question',
-                    //style: textStyle,
-                  //),
-                //),
-                //Container(
-                  //padding: const EdgeInsets.all(16.0),
-                  //decoration: BoxDecoration(
-                    //border: Border.all(color: Theme.of(context).colorScheme.primary),
-                    //borderRadius: BorderRadius.circular(8.0),
-                  //),
-                  //child: Text(
-                    //_defaultQuestion,
-                    //style: Theme.of(context).textTheme.titleMedium,
-                  //),
-                //),
-                //const SizedBox(height: 20),
                 // Answer TextField
                 TextField(
                   controller: _answerController,
@@ -142,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _answerController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }

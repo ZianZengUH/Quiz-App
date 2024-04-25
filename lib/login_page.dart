@@ -1,12 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'home_page.dart';
 import 'websocket_manager.dart';
 
@@ -16,7 +12,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -30,12 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _classSectionFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
-
-  final NetworkInfo _networkInfo = NetworkInfo();
-  WebSocket? _socket;  
-  
-  String? _serverIP;
-  int serverPort = 3000;  // Default port, configure as needed
   
   @override
   void initState() {
@@ -45,7 +35,6 @@ class _LoginPageState extends State<LoginPage> {
     _nameFocusNode.addListener(() => _scrollToFocusedField(_nameFocusNode));
     _emailFocusNode.addListener(() => _scrollToFocusedField(_emailFocusNode));
     _classSectionFocusNode.addListener(() => _scrollToFocusedField(_classSectionFocusNode));
-    _fetchNetworkDetails();
   }
 
   Future<void> requestLocationPermission() async {
@@ -76,12 +65,6 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
-
-  Future<void> _fetchNetworkDetails() async {
-    _serverIP = await _networkInfo.getWifiIP();
-    setState(() {});
-  }
-
 
   Future<void> _loadUserInfo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -131,9 +114,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> _connectWebSocket() async {
     String serverUri = 'ws://${_serverIPController.text}:3000';
-    print("##########################");
-    print("serverUri" + serverUri);
-    print("##########################");
     return await WebSocketManager().connect(serverUri);
   }
 

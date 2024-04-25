@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 
 class Server extends ChangeNotifier {
@@ -76,10 +74,6 @@ class Server extends ChangeNotifier {
         String? photo = userData['photo'] as String?;
         String? answer = userData['answer'] as String?;
         manageStudentData(name, email, classSection, photo: photo, answer: answer);
-
-      //} else if (userData.containsKey('type') && userData['type'] == 'answer') {
-        //String? answerText = userData['content'].toString();
-        //manageStudentData('', '', '', answer: answerText);
       } else {
         print("Error: Received data is not as expected.");
       }
@@ -89,12 +83,6 @@ class Server extends ChangeNotifier {
   }
 
   Future<void> manageStudentData(String studentName, String email, String classSection, {String? answer, String? photo}) async {
-    //String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    //if (selectedDirectory == null) {
-    // User canceled the directory selection
-    //  return;
-    //}
-
     // Writes student data to installation directory.
     // <installation directory>/Student Quizzes
     Directory studentQuizzesDir = Directory('Student Quizzes');
@@ -118,42 +106,29 @@ class Server extends ChangeNotifier {
 
     // <installation directory>/Student Quizzes/<today's date>/Section Numbers/<Student's Names>
     Directory studentDir = Directory('Student Quizzes/$dateFormat/$classSection/$studentName');
-    print(studentDir.path);
-    File infoFile = File('${studentDir.path}/student info.txt');
-    print(infoFile.path);
-    File answerFile = File('${studentDir.path}/answer.txt');
-    print(answerFile.path);
-
     if (!await studentDir.exists()) {
       await studentDir.create();
     }
 
-    if (!await infoFile.exists()) {
-      await infoFile.create();
-      // Write student's info file.
-      String currentDate =
-      DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-      String studentInfo = 
-        'Date/Time: $currentDate\nName: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
-      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
-    }
-
-    // Write student's answer.
-    //if (!await answerFile.exists()) {
-      //await answerFile.create();
-    //}
-    print(answer);
-    if (answer != null) {
-        print('answer is good');
-        await answerFile.writeAsString(answer, mode: FileMode.append);
-        print('done');
-    }
-
-    // Write student's photo.
+    // Write photo and student info on connection.
     if (photo != null) {
-      File photoFile = File('${studentDir.path}/profile picture.png');
+      // Timestamped photo
+      String timestamp = DateFormat('HH_mm_ss').format(DateTime.now());
+      File photoFile = File('${studentDir.path}/picture_$timestamp.png');
       final photoBytes = base64Decode(photo);
       await photoFile.writeAsBytes(photoBytes);
+
+      // Timestamped student info file.
+      File infoFile = File('${studentDir.path}/student_info_$timestamp.txt');
+      String studentInfo = 'Name: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+    }
+    
+    // Write timestamped answers on student answer submission.
+    if (answer != null) {
+      String timestamp = DateFormat('HH_mm_ss').format(DateTime.now());
+      File answerFile = File('${studentDir.path}/answer_$timestamp.txt');
+      await answerFile.writeAsString(answer, mode: FileMode.append);
     }
   }
 
