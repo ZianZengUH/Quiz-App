@@ -131,9 +131,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> _connectWebSocket() async {
     String serverUri = 'ws://${_serverIPController.text}:3000';
-    print("##########################");
-    print("serverUri" + serverUri);
-    print("##########################");
     return await WebSocketManager().connect(serverUri);
   }
 
