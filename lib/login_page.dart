@@ -204,14 +204,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                TextField(
-                  focusNode: _emailFocusNode,
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your email',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
+                Row(
+                  children: <Widget>[
+                    Expanded (
+                      child: TextField(
+                        focusNode: _emailFocusNode,
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Enter your email',
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      '@hawaii.edu',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ]
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -223,7 +234,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // if (_serverIP != null) Text('Server IP: $_serverIP'),
                 ElevatedButton(
                   onPressed: _takePictureAndLogin,
                   child: const Text('Take Picture & Login'),

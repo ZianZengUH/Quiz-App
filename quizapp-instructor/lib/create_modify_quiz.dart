@@ -52,74 +52,74 @@ class CreateQuizPage extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top:5, bottom: 20),
-                      child: TextFormField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    'Duration in Minutes (if left blank, set to 15 min)',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:5, bottom: 20),
+                    child: TextFormField(
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      controller: durationController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    'Font Size (if left blank, set to 20)',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:5, bottom: 20),
+                    child: TextFormField(
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      controller: fontSizeController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),    
+                  const Text('Question',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:5, bottom: 20),
+                    child: TextField(
+                      maxLines: null,
+                      controller: questionController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: const BeveledRectangleBorder(),
+                        ),
+                        onPressed: () {
+                          updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text('Save Quiz to Memory Only'),
                         ),
                       ),
-                    ),
-                    const Text(
-                      'Duration in Minutes (if left blank, set to 15 min)',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top:5, bottom: 20),
-                      child: TextFormField(
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        controller: durationController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    const Text(
-                      'Font Size (if left blank, set to 20)',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top:5, bottom: 20),
-                      child: TextFormField(
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        controller: fontSizeController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),    
-                    const Text('Question',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top:5, bottom: 20),
-                      child: TextField(
-                        maxLines: null,
-                        controller: questionController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const BeveledRectangleBorder(),
-                          ),
-                          onPressed: () {
-                            updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text('Save Quiz to Memory Only'),
-                          ),
-                        ),
                       const Spacer(),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -131,7 +131,7 @@ class CreateQuizPage extends StatelessWidget {
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: Text('Save Quiz to Memory and Disk'),
+                        child: Text('Save Quiz to Memory and Disk'),
                         ),
                       ),
                     ],
