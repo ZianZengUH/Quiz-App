@@ -17,8 +17,8 @@ void main() async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(900, 600),
-    minimumSize: Size(900, 600),
+    size: Size(1550, 835),
+    minimumSize: Size(1550, 835),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -89,6 +89,15 @@ class _AppLayoutState extends State<AppLayout> {
       //const ConnectedDevicesPage(),
     ];
 
+    List<NavigationRailDestination> destinations = [
+      _buildDestination(0, Icons.question_mark, 'How To Use This Program'),
+      _buildDestination(1, Icons.new_label, 'Create/Modify Quiz'),
+      _buildDestination(2, Icons.file_open, 'Load Quiz'),
+      _buildDestination(3, Icons.screen_share, 'Display Quiz'),
+      _buildDestination(4, Icons.save_as, 'Export Quiz Answers'),
+      // Add other destinations here
+    ];
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -134,33 +143,7 @@ class _AppLayoutState extends State<AppLayout> {
                       const Text("")
                     ],
                   ),
-
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.question_mark),
-                      label: Text('How To Use This Program'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.new_label),
-                      label: Text('Create/Modify Quiz'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.file_open),
-                      label: Text('Load Quiz'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.screen_share),
-                      label: Text('Display Quiz'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.save_as),
-                      label: Text('Export Quiz Answers'),
-                    ),
-                    //NavigationRailDestination(
-                      //icon: Icon(Icons.bluetooth),
-                      //label: Text('Connected Devices'),
-                    //),
-                  ],
+                  destinations: destinations,
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (index) {
                     setState(() {
@@ -187,6 +170,44 @@ class _AppLayoutState extends State<AppLayout> {
       },
     );
   }
+
+  NavigationRailDestination _buildDestination(int index, IconData icon, String label) {
+    bool isSelected = selectedIndex == index;
+
+    // A custom widget for the destination to have better control over the layout.
+    Widget destinationWidget = Padding(
+      padding: EdgeInsets.all(0), // No additional padding around the icon
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white.withOpacity(0.5) : Colors.transparent, // Make it more white
+          borderRadius: BorderRadius.circular(8), // Adjust for shape
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0), // Add horizontal padding inside the box
+          child: SizedBox(
+            height: 40, // Adjust the height to match the icon's selection shape
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.black : Colors.white70,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return NavigationRailDestination(
+      icon: Icon(icon, color: isSelected ? Colors.transparent : Colors.white70), // Hide icon when selected
+      selectedIcon: Icon(icon, color: Colors.black), // Show icon when selected
+      label: destinationWidget,
+    );
+  }
+
 
   Future<void> _getWiFiAddress() async {
     for (var interface in await NetworkInterface.list()) {
