@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'home_page.dart';
 import 'websocket_manager.dart';
 
@@ -26,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _classSectionFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
-  
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +37,8 @@ class _LoginPageState extends State<LoginPage> {
     _loadUserInfo();
     _nameFocusNode.addListener(() => _scrollToFocusedField(_nameFocusNode));
     _emailFocusNode.addListener(() => _scrollToFocusedField(_emailFocusNode));
-    _classSectionFocusNode.addListener(() => _scrollToFocusedField(_classSectionFocusNode));
+    _classSectionFocusNode
+        .addListener(() => _scrollToFocusedField(_classSectionFocusNode));
   }
 
   Future<void> requestLocationPermission() async {
@@ -52,7 +56,8 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: Text("Permission Denied"),
-          content: Text("This app needs location permission to function correctly."),
+          content:
+              Text("This app needs location permission to function correctly."),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -85,7 +90,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void _scrollToFocusedField(FocusNode focusNode) {
     if (focusNode.hasFocus) {
-      final widgetPosition = focusNode.context?.findRenderObject()?.paintBounds.top;
+      final widgetPosition =
+          focusNode.context?.findRenderObject()?.paintBounds.top;
       _scrollController.animateTo(
         widgetPosition ?? 0,
         duration: const Duration(milliseconds: 300),
@@ -95,8 +101,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _takePictureAndLogin() async {
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    if (photo != null && _nameController.text.trim().isNotEmpty && _emailController.text.trim().isNotEmpty && _classSectionController.text.trim().isNotEmpty) {
+    final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    if (photo != null &&
+        _nameController.text.trim().isNotEmpty &&
+        _emailController.text.trim().isNotEmpty &&
+        _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
       if (await _connectWebSocket()) {
         await _sendDataToServer(photo);
@@ -114,17 +124,41 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<bool> _connectWebSocket() async {
     String serverUri = 'ws://${_serverIPController.text}:3000';
-    return await WebSocketManager().connect(serverUri);
+    try {
+      return await WebSocketManager().connect(serverUri);
+    } catch (e) {
+      _showError('Invalid IP address. Please enter a valid IP address.');
+      return false;
+    }
+  }
+
+  Future<String?> _getPhoneIPAddress() async {
+    try {
+      for (var interface in await NetworkInterface.list()) {
+        for (var addr in interface.addresses) {
+          if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
+            print('Phone IP Address: ${addr.address}');
+            return addr.address;
+          }
+        }
+      }
+    } catch (e) {
+      print('Failed to get IP address: $e');
+    }
+    return null;
   }
 
   Future<void> _sendDataToServer(XFile? photo) async {
     if (photo != null && WebSocketManager().isConnected) {
+      String? phoneIPAddress = await _getPhoneIPAddress();
       final Map<String, dynamic> userData = {
         'name': _nameController.text,
         'email': _emailController.text,
         'classSection': _classSectionController.text,
-        'photo': base64Encode(await photo.readAsBytes())
+        'photo': base64Encode(await photo.readAsBytes()),
+        'phoneIPAddress': phoneIPAddress,
       };
+      print('Sending Phone IP Address: $phoneIPAddress');
       WebSocketManager().sendMessage(json.encode(userData));
       print('Data sent to the server');
     } else if (photo == null) {
@@ -151,21 +185,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _showConnectionError() {
-    _showError('Cannot connect to the server. Please check your network settings.');
+    _showError(
+        'Cannot connect to the server. Please check your Wi-Fi connection and IP address are correct.');
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login / Attendance'),
       ),
-      body: DecoratedBox( 
-        decoration: const BoxDecoration( 
-          image: DecorationImage( 
-            image: AssetImage("assets/images/UH_Manoa_ICS_logo.png"),
-            opacity: 0.060,
-            fit: BoxFit.contain),
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/UH_Manoa_ICS_logo.png"),
+              opacity: 0.060,
+              fit: BoxFit.contain),
         ),
         child: SingleChildScrollView(
           controller: _scrollController,
@@ -176,14 +211,13 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(7.5),
-                  child: Image.asset(
-                    'assets/images/quiz_app_logo.png',
-                    height: 100,
-                    width: 100
-                  ),
+                  child: Image.asset('assets/images/quiz_app_logo.png',
+                      height: 100, width: 100),
                 ),
                 const SizedBox(height: 20),
-                const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const Text('Welcome to Quiz App',
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _serverIPController,
@@ -192,7 +226,8 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Enter Server IP',
                     hintText: 'e.g., 192.168.0.100',
                   ),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -204,26 +239,24 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: <Widget>[
-                    Expanded (
-                      child: TextField(
-                        focusNode: _emailFocusNode,
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter your email',
-                        ),
+                Row(children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      focusNode: _emailFocusNode,
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Enter your email',
                       ),
                     ),
-                    const Text(
-                      '@hawaii.edu',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
+                  ),
+                  const Text(
+                    '@hawaii.edu',
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                  ]
-                ),
+                  ),
+                ]),
                 const SizedBox(height: 20),
                 TextField(
                   focusNode: _classSectionFocusNode,
@@ -246,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
- @override
+  @override
   void dispose() {
     _serverIPController.dispose();
     _nameController.dispose();
