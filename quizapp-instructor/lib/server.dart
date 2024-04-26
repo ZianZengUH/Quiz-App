@@ -1,6 +1,7 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Server extends ChangeNotifier {
@@ -18,15 +19,17 @@ class Server extends ChangeNotifier {
     //print(
     //    'Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
     //print("@@@@@@@@@\n");
-    
+
     for (var interface in await NetworkInterface.list()) {
       for (var addr in interface.addresses) {
-        if (addr.type == InternetAddressType.IPv4 && interface.name == 'Wi-Fi') {
+        if (addr.type == InternetAddressType.IPv4 &&
+            interface.name == 'Wi-Fi') {
           //print("______________");
           //print('Using interface: ${interface.name}, with IP: ${addr.address}');
           //print("______________\n");
           _server = await HttpServer.bind(addr.address, 3000);
-        } else if (addr.type == InternetAddressType.IPv4 && interface.name == 'en0') {
+        } else if (addr.type == InternetAddressType.IPv4 &&
+            interface.name == 'en0') {
           //print("______________");
           //print('Using interface: ${interface.name}, with IP: ${addr.address}');
           //print("______________\n");
@@ -70,10 +73,13 @@ class Server extends ChangeNotifier {
       if (userData is Map<String, dynamic> && userData.containsKey('name')) {
         String name = userData['name'].toString();
         String email = userData['email'].toString();
+        String phoneIPAddress = userData['phoneIPAddress'].toString();
         String classSection = userData['classSection'].toString();
         String? photo = userData['photo'] as String?;
         String? answer = userData['answer'] as String?;
-        manageStudentData(name, email, classSection, photo: photo, answer: answer);
+        print('Received Phone IP Address: $phoneIPAddress');
+        manageStudentData(name, email, classSection, phoneIPAddress,
+            photo: photo, answer: answer);
       } else {
         print("Error: Received data is not as expected.");
       }
@@ -82,7 +88,9 @@ class Server extends ChangeNotifier {
     }
   }
 
-  Future<void> manageStudentData(String studentName, String email, String classSection, {String? answer, String? photo}) async {
+  Future<void> manageStudentData(
+      String studentName, String email, String classSection, String phoneIPAddress,
+      {String? answer, String? photo}) async {
     // Writes student data to installation directory.
     // <installation directory>/Student Quizzes
     Directory studentQuizzesDir = Directory('Student Quizzes');
@@ -98,14 +106,16 @@ class Server extends ChangeNotifier {
     }
 
     // <installation directory>/Student Quizzes/<today's date>/Section Numbers
-    Directory sectionDir = Directory('Student Quizzes/$dateFormat/$classSection');
+    Directory sectionDir =
+        Directory('Student Quizzes/$dateFormat/$classSection');
     if (!await sectionDir.exists()) {
       //await sectionDir.create(recursive: true);
       await sectionDir.create();
     }
 
     // <installation directory>/Student Quizzes/<today's date>/Section Numbers/<Student's Names>
-    Directory studentDir = Directory('Student Quizzes/$dateFormat/$classSection/$studentName');
+    Directory studentDir =
+        Directory('Student Quizzes/$dateFormat/$classSection/$studentName');
     if (!await studentDir.exists()) {
       await studentDir.create();
     }
@@ -120,10 +130,11 @@ class Server extends ChangeNotifier {
 
       // Timestamped student info file.
       File infoFile = File('${studentDir.path}/student_info_$timestamp.txt');
-      String studentInfo = 'Name: $studentName\nEmail: $email\nClass Section: $classSection\n\n';
+      String studentInfo =
+          'Name: $studentName\nEmail: $email@hawaii.edu\nClass Section: $classSection\nPhone IP Address: $phoneIPAddress\n\n';
       await infoFile.writeAsString(studentInfo, mode: FileMode.append);
     }
-    
+
     // Write timestamped answers on student answer submission.
     if (answer != null) {
       String timestamp = DateFormat('HH_mm_ss').format(DateTime.now());
@@ -153,6 +164,6 @@ class Server extends ChangeNotifier {
 
   //@override
   //void dispose() {
-    //super.dispose();
+  //super.dispose();
   //}
 }

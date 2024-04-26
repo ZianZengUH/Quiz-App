@@ -15,7 +15,7 @@ class WebSocketManager {
 
   Future<bool> connect(String uri) async {
     try {
-      _socket = await WebSocket.connect(uri);
+      _socket = await WebSocket.connect(uri).timeout(Duration(seconds: 5));
       _socket!.listen(
         (data) {
           // Handle incoming data
