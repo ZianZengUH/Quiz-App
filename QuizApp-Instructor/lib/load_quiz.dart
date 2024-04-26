@@ -15,8 +15,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    Directory currentDirectory = Directory.current;
-    String currentDirectoryString = currentDirectory.path;
+    String currentDirectory = Directory.current.path;
     Directory quizDirectory = Directory('Saved Quizzes');
     List dirContents = quizDirectory.listSync();
     Iterable<File> iterableFiles = dirContents.whereType<File>();
@@ -44,7 +43,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
             padding: const EdgeInsets.all(5.0),
             color: const Color.fromARGB(50, 6, 86, 6),
             child: Text(
-              'Searching for quizzes in:\n$currentDirectoryString\\Saved Quizzes',
+              'Searching for quizzes in:\n$currentDirectory\\Saved Quizzes',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,

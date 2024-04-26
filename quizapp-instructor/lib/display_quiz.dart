@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
-import 'package:quiz_app_instructor/server.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 
 // Countdown implemented with help from:
@@ -96,20 +95,6 @@ class _ShowQuizState extends State<ShowQuiz> {
                   style: TextStyle(fontSize: fontSize),
                 ),
               )
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Start server
-                Provider.of<Server>(context, listen: false);
-              },
-              child: const Text('Start Server'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Stop server
-                Provider.of<Server>(context, listen: false).stopServer();
-              },
-              child: const Text('Stop Server'),
             ),
           ],
         )

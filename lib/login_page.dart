@@ -174,7 +174,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/images/quiz_app_logo.png', width: 100, height: 100),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(7.5),
+                  child: Image.asset(
+                    'assets/images/quiz_app_logo.png',
+                    height: 100,
+                    width: 100
+                  ),
+                ),
                 const SizedBox(height: 20),
                 const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
@@ -185,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Enter Server IP',
                     hintText: 'e.g., 192.168.0.100',
                   ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -197,14 +204,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                TextField(
-                  focusNode: _emailFocusNode,
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your email',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
+                Row(
+                  children: <Widget>[
+                    Expanded (
+                      child: TextField(
+                        focusNode: _emailFocusNode,
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Enter your email',
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      '@hawaii.edu',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ]
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -216,7 +234,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // if (_serverIP != null) Text('Server IP: $_serverIP'),
                 ElevatedButton(
                   onPressed: _takePictureAndLogin,
                   child: const Text('Take Picture & Login'),
