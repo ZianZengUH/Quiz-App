@@ -97,20 +97,6 @@ class _ShowQuizState extends State<ShowQuiz> {
                 ),
               )
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Start server
-                Provider.of<Server>(context, listen: false);
-              },
-              child: const Text('Start Server'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Stop server
-                Provider.of<Server>(context, listen: false).stopServer();
-              },
-              child: const Text('Stop Server'),
-            ),
           ],
         )
       )

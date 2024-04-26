@@ -109,10 +109,16 @@ class InfoPage extends StatelessWidget {
                   const Text('\u2022 Student app will not work if they cannot reach your device.'),
                   const Text('    \u2022 They must be on the same Wi-fi network --OR--'),
                   const Text('    \u2022 Your device is reachable from the internet.'),
-                  const Text('\u2022 Click the "Start Server" button on the bottom left of the app.'),
+                  const Text('\u2022 Click the "Start Server" button on left of the app.'),
                   const Text('    \u2022 Students can now connect to your device to submit answers.'),
-                  const Text('\u2022 Click the "Stop Server" button on the bottom left of the app.'),
+                  const Text('\u2022 Click the "Stop Server" button on left of the app.'),
                   const Text('    \u2022 This stops the server and disconnects all connected students.'),
+                  const Text('    \u2022 IF YOU STOP THE SERVER, IT CANNOT BE RESTARTED',
+                    style: TextStyle(fontWeight: FontWeight.bold)
+                  ),
+                  const Text('        \u2022 APP MUST BE RESTARTED TO START SERVER AGAIN.',
+                    style: TextStyle(fontWeight: FontWeight.bold)
+                  ),
                   const Text(''),
 
                   const Text(

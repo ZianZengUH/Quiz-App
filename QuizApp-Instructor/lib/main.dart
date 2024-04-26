@@ -66,6 +66,7 @@ class AppLayout extends StatefulWidget {
 class _AppLayoutState extends State<AppLayout> {
   int selectedIndex = 0;
   String ipAddress = "N/A"; 
+  bool isServerRunning = false;
   
   @override 
   void initState() { 
@@ -82,7 +83,6 @@ class _AppLayoutState extends State<AppLayout> {
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      //const ConnectedDevicesPage(),
     ];
 
     return LayoutBuilder(
@@ -92,7 +92,6 @@ class _AppLayoutState extends State<AppLayout> {
             children: [
               SafeArea(
                 child: NavigationRail(
-                  //backgroundColor: Colors.green,
                   backgroundColor: const Color.fromARGB(255, 6, 86, 6),
                   unselectedLabelTextStyle: const TextStyle(
                     color: Colors.white70),
@@ -134,7 +133,27 @@ class _AppLayoutState extends State<AppLayout> {
                           width: 150
                         ),
                       ),
-                      const Text("")
+                      const Text(""),
+
+                      ElevatedButton(
+                        onPressed: () {
+                          if (!isServerRunning) {
+                            // Start server.
+                            Provider.of<Server>(context, listen: false); 
+                            setState(() {
+                              isServerRunning = true;
+                            });
+                          } else {
+                            // Stop server
+                            Provider.of<Server>(context, listen: false).stopServer();
+                            setState(() {
+                              isServerRunning = false;
+                            });
+                          }
+                        },
+                        child: 
+                        Text(isServerRunning? 'Stop Server':'Start Server'),
+                      ),
                     ],
                   ),
 
@@ -155,10 +174,6 @@ class _AppLayoutState extends State<AppLayout> {
                       icon: Icon(Icons.screen_share),
                       label: Text('Display Quiz'),
                     ),
-                    //NavigationRailDestination(
-                      //icon: Icon(Icons.bluetooth),
-                      //label: Text('Connected Devices'),
-                    //),
                   ],
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (index) {
