@@ -174,7 +174,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/images/quiz_app_logo.png', width: 100, height: 100),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(7.5),
+                  child: Image.asset(
+                    'assets/images/quiz_app_logo.png',
+                    height: 100,
+                    width: 100
+                  ),
+                ),
                 const SizedBox(height: 20),
                 const Text('Welcome to Quiz App', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
@@ -185,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Enter Server IP',
                     hintText: 'e.g., 192.168.0.100',
                   ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
                 const SizedBox(height: 20),
                 TextField(

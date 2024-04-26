@@ -151,8 +151,8 @@ class Server extends ChangeNotifier {
     _server?.close();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  //@override
+  //void dispose() {
+    //super.dispose();
+  //}
 }

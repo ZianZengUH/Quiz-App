@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
-
-//import 'package:quiz_app_instructor/connected_devices_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
@@ -67,7 +65,7 @@ class AppLayout extends StatefulWidget {
 
 class _AppLayoutState extends State<AppLayout> {
   int selectedIndex = 0;
-  String ipAddress = "WiFi IP address not found"; 
+  String ipAddress = "N/A"; 
   
   @override 
   void initState() { 
@@ -84,8 +82,6 @@ class _AppLayoutState extends State<AppLayout> {
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      //Placeholder for Export Quiz Answers - you'll need to implement this widget
-      const Placeholder(),
       //const ConnectedDevicesPage(),
     ];
 
@@ -130,7 +126,14 @@ class _AppLayoutState extends State<AppLayout> {
                         ),
                       ),
                       const Text(""),
-                      Image.asset("images/quiz_app_logo.png", height: 150, width: 150),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.asset(
+                          'images/quiz_app_logo.png',
+                          height: 150,
+                          width: 150
+                        ),
+                      ),
                       const Text("")
                     ],
                   ),
@@ -151,10 +154,6 @@ class _AppLayoutState extends State<AppLayout> {
                     NavigationRailDestination(
                       icon: Icon(Icons.screen_share),
                       label: Text('Display Quiz'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.save_as),
-                      label: Text('Export Quiz Answers'),
                     ),
                     //NavigationRailDestination(
                       //icon: Icon(Icons.bluetooth),
