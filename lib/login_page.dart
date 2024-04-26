@@ -55,15 +55,15 @@ class _LoginPageState extends State<LoginPage> {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text("Permission Denied"),
+          title: const Text("Permission Denied"),
           content:
-              Text("This app needs location permission to function correctly."),
+              const Text("This app needs location permission to function correctly."),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Close"),
+              child: const Text("Close"),
             )
           ],
         ),
@@ -193,7 +193,17 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login / Attendance'),
+        title: const Text(
+          'Login / Attendance',
+          style: TextStyle(color: Colors.white),
+        ),
+              bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1.0),
+        child: Container(
+          color: Colors.white,
+          height: 1.0,
+        ),
+      ),
       ),
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -209,22 +219,36 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(7.5),
+                ClipOval(
                   child: Image.asset('assets/images/quiz_app_logo.png',
-                      height: 100, width: 100),
+                      height: 100, width: 100, fit: BoxFit.cover),
                 ),
                 const SizedBox(height: 20),
                 const Text('Welcome to Quiz App',
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _serverIPController,
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter Server IP',
                     hintText: 'e.g., 192.168.0.100',
+                    labelStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(
+                        color: Colors.white70),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white),
+                    ),
                   ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
@@ -233,9 +257,19 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   focusNode: _nameFocusNode,
                   controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter your name',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -244,26 +278,48 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextField(
                       focusNode: _emailFocusNode,
                       controller: _emailController,
+                      style:
+                          const TextStyle(color: Colors.white),
+                          cursorColor: Colors.white,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Enter your email',
+                        labelStyle:
+                            TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
+                  const SizedBox(width: 15),
                   const Text(
                     '@hawaii.edu',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ]),
                 const SizedBox(height: 20),
                 TextField(
                   focusNode: _classSectionFocusNode,
                   controller: _classSectionController,
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter your class section',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
