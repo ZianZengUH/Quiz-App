@@ -38,62 +38,59 @@ class InfoPage extends StatelessWidget {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.only(top: 20, bottom: 20, left: 40, right: 40),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    const Text(
-                      '*** IMPORTANT ***',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold
-                      ),  
-                    ),
-                    const Text(''),
-                    const Text(
-                      'We recommend making shortcuts to the following locations for ease of access.',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
+                    Center(
+                      child: Column(
+                        children: [
+                          const Text(
+                            '***** IMPORTANT *****',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold
+                            ),  
+                          ),
+                          const Text(
+                            'We recommend making shortcuts to the following locations for ease of access.',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          const Text(''),
+                          const Text(
+                            'Saved Quizzes Location:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),  
+                          ),
+                          Text(
+                            savedQuizzesDir,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          const Text(''),
+                          const Text(
+                            'Student Answer Location:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),  
+                          ),
+                          Text(
+                            studentAnswersDir,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const Text(''),
-                    const Text(
-                      'Saved Quizzes Location:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      ),  
-                    ),
-                    Text(
-                      savedQuizzesDir,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    const Text(''),
-                    const Text(
-                      'Student Answer Location:',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      ),  
-                    ),
-                    Text(
-                      studentAnswersDir,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    const Text(''),
-                    const Text(
-                      '********************',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold
-                      ),  
                     ),
                     const Text(''),
                     const Text(
@@ -174,7 +171,7 @@ class InfoPage extends StatelessWidget {
                     ),
                     const Text('\u2022 This page is intended to be shown to your class via projector.'),
                     const Text('\u2022 Has a large timer at the top of the screen and the quiz question below it.'),
-                    const Text('\u2022 There are two buttons that allow you to start and pause the quiz timer'),
+                    const Text('\u2022 There are two buttons that allow you to start and pause the quiz timer.'),
                     const Text(''),
                   ]
                 )
