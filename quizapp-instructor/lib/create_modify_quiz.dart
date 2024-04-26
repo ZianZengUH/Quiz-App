@@ -28,7 +28,7 @@ class CreateQuizPage extends StatelessWidget {
         children: <Widget> [
           Container(
             padding: const EdgeInsets.all(5.0),
-            color: const Color.fromARGB(50, 6, 86, 6),
+            color: Color.fromARGB(48, 0, 255, 0),
             child: Text(
               'Quizzes will be saved in:\n$currentDirectoryString\\Saved Quizzes',
               textAlign: TextAlign.center,

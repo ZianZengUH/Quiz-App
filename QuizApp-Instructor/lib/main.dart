@@ -46,7 +46,11 @@ class MyApp extends StatelessWidget {
         title: 'Quiz App - Instructor Version',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          // colorScheme: ColorScheme.dark().copyWith(
+          //   primary: Color(0xFF0A3D62), // Dark green color
+          //   secondary: Color(0xFF52c234), // Neon green-yellow color
+          // ),
+          // colorScheme: ColorScheme.dark()
         ),
         home: const AppLayout(),
         debugShowCheckedModeBanner: false,
@@ -92,87 +96,105 @@ class _AppLayoutState extends State<AppLayout> {
       _buildDestination(3, Icons.screen_share, 'Display Quiz'),
       // Add other destinations here
     ];
-
+    
+    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+      primary: Colors.white, // Button background color
+      onPrimary: Color(0xFF52c234), // Button text color (green)
+    );
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
           body: Row(
             children: [
               SafeArea(
-                child: NavigationRail(
-                  backgroundColor: const Color.fromARGB(255, 6, 86, 6),
-                  unselectedLabelTextStyle: const TextStyle(
-                    color: Colors.white70),
-                  unselectedIconTheme: const IconThemeData(
-                    color: Colors.white70),
-                  selectedLabelTextStyle: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
-                  selectedIconTheme: const IconThemeData(
-                    color: Colors.black),
-                  extended: constraints.maxWidth >= 600,
-
-                  leading: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Connect to",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
-                        ),
-                      ),
-                      Text(
-                        ipAddress,
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
-                        ),
-                      ),
-                      const Text(""),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.asset(
-                          'images/quiz_app_logo.png',
-                          height: 150,
-                          width: 150
-                        ),
-                      ),
-                      const Text(""),
-
-                      ElevatedButton(
-                        onPressed: () {
-                          if (!isServerRunning) {
-                            // Start server.
-                            Provider.of<Server>(context, listen: false); 
-                            setState(() {
-                              isServerRunning = true;
-                            });
-                          } else {
-                            // Stop server
-                            Provider.of<Server>(context, listen: false).stopServer();
-                            setState(() {
-                              isServerRunning = false;
-                            });
-                          }
-                        },
-                        child: 
-                        Text(isServerRunning? 'Stop Server':'Start Server'),
-                      ),
-                    ],
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color.fromARGB(255, 71, 148, 56), // Light green
+                        Color(0xFF004D40), // Dark green color
+                      ],
+                      stops: [0.2, 0.9],
+                    ),
                   ),
-                  destinations: destinations,
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (index) {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
+                  child: NavigationRail(
+                    backgroundColor: Colors.transparent,
+                    unselectedLabelTextStyle: const TextStyle(
+                      color: Colors.white),
+                    unselectedIconTheme: const IconThemeData(
+                      color: Colors.white),
+                    selectedLabelTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                    selectedIconTheme: const IconThemeData(
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                    extended: constraints.maxWidth >= 600,
+
+                    leading: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Connect to",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                          ),
+                        ),
+                        Text(
+                          ipAddress,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                          ),
+                        ),
+                        const Text(""),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(30.0),
+                          child: Image.asset(
+                            'images/quiz_app_logo.png',
+                            height: 150,
+                            width: 150
+                          ),
+                        ),
+                        const Text(""),
+
+                        ElevatedButton(
+                          onPressed: () {
+                            if (!isServerRunning) {
+                              // Start server.
+                              Provider.of<Server>(context, listen: false); 
+                              setState(() {
+                                isServerRunning = true;
+                              });
+                            } else {
+                              // Stop server
+                              Provider.of<Server>(context, listen: false).stopServer();
+                              setState(() {
+                                isServerRunning = false;
+                              });
+                            }
+                          },
+                          child: 
+                          Text(isServerRunning? 'Stop Server':'Start Server'),
+                        ),
+                      ],
+                    ),
+                    destinations: destinations,
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (index) {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                  ),
                 ),
               ),
+
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -180,7 +202,27 @@ class _AppLayoutState extends State<AppLayout> {
                       image: AssetImage("images/UH_Manoa_ICS_Logo.png"),
                       opacity: 0.060,
                       fit: BoxFit.contain,
-                      )
+                      ),
+                    // gradient: LinearGradient(
+                    //   begin: Alignment.topCenter,
+                    //   end: Alignment.bottomCenter,
+                    //   colors: [
+                    //     // Color.fromARGB(240, 217, 43, 8),                    
+                    //     // Color.fromARGB(255, 0, 0, 0), 
+                    //     Color.fromARGB(255, 71, 148, 56), // Light green
+                    //     Color(0xFF004D40), // Dark green color
+                    //   ],
+                    //   stops: [0.2, 0.9],
+                    // ),
+                  //   gradient: RadialGradient(
+                  //     center: Alignment(0, -0.5), // top center
+                  //     radius: 0.5, // radius of the gradient, as a fraction of the shortest side of the widget
+                  //     colors: [
+                  //       Color.fromARGB(255, 20, 90, 0), // Neon green-yellow color
+                  //       Color.fromARGB(255, 0, 0, 0), // Dark green color
+                  //     ],
+                  //     stops: [0.3, 1.0], // Adjust the stops to fine-tune the gradient effect
+                  //   ),
                   ),
                   child: pages[selectedIndex],
                 ),
@@ -200,7 +242,7 @@ class _AppLayoutState extends State<AppLayout> {
       padding: EdgeInsets.all(0), // No additional padding around the icon
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withOpacity(0.5) : Colors.transparent, // Make it more white
+          color: isSelected ? Colors.white.withOpacity(0.9) : Colors.transparent, // Make it more white
           borderRadius: BorderRadius.circular(8), // Adjust for shape
         ),
         child: Padding(
@@ -208,11 +250,11 @@ class _AppLayoutState extends State<AppLayout> {
           child: SizedBox(
             height: 40, // Adjust the height to match the icon's selection shape
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.center,
               child: Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.black : Colors.white70,
+                  color: isSelected ? Color.fromARGB(255, 0, 0, 0) : Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),

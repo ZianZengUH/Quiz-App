@@ -41,7 +41,7 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
         children: <Widget> [
           Container(
             padding: const EdgeInsets.all(5.0),
-            color: const Color.fromARGB(50, 6, 86, 6),
+            color: Color.fromARGB(49, 26, 190, 254),
             child: Text(
               'Searching for quizzes in:\n$currentDirectory\\Saved Quizzes',
               textAlign: TextAlign.center,
