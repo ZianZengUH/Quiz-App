@@ -83,9 +83,6 @@ class _AppLayoutState extends State<AppLayout> {
       const CreateQuizPage(),
       const LoadQuizPage(),
       const ShowQuiz(),
-      //Placeholder for Export Quiz Answers - you'll need to implement this widget
-      const Placeholder(),
-      //const ConnectedDevicesPage(),
     ];
 
     List<NavigationRailDestination> destinations = [
@@ -93,7 +90,6 @@ class _AppLayoutState extends State<AppLayout> {
       _buildDestination(1, Icons.new_label, 'Create/Modify Quiz'),
       _buildDestination(2, Icons.file_open, 'Load Quiz'),
       _buildDestination(3, Icons.screen_share, 'Display Quiz'),
-      _buildDestination(4, Icons.save_as, 'Export Quiz Answers'),
       // Add other destinations here
     ];
 
