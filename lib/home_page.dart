@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'websocket_manager.dart';
 
 //########################## Home Page ##########################
@@ -63,7 +65,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     // Do nothing if inactive or detached.
-    if (state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
       return;
     }
 
@@ -79,46 +82,72 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromARGB(255, 71, 148, 56),
+            Color(0xFF004D40),
+          ],
+        ),
       ),
-      body: DecoratedBox( 
-        decoration: const BoxDecoration( 
-          image: DecorationImage( 
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.title,
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        backgroundColor: Colors.transparent,
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
               image: AssetImage("assets/images/UH_Manoa_ICS_logo.png"),
               opacity: 0.060,
-              fit: BoxFit.contain),
-        ),
-        child: SingleChildScrollView(
-          reverse: true, // Ensures that the view scrolls to the bottom when the keyboard is opened
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // Answer TextField
-                TextField(
-                  controller: _answerController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your answer here',
-                  ),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                ),
-                const SizedBox(height: 20),
-                // Align Submit Button to the right
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _submitAnswer,
-                      child: const Text('Submit'),
+              fit: BoxFit.contain,
+            ),
+          ),
+          child: SingleChildScrollView(
+            reverse: true,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  TextField(
+                    controller: _answerController,
+                    style: const TextStyle(color: Colors.white),
+                    cursorColor: Colors.white,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your answer here',
+                      hintStyle: TextStyle(color: Colors.white70),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
-                  ],
-                ),
-              ],
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _submitAnswer,
+                        child: const Text('Submit'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
