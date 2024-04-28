@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       final Map<String, dynamic> userData = {
         'name': name,
         'classSection': classSection,
-        'answer': '!!!!! APP MINIMIZED !!!!!',
+        'answer': '(!!!!! APP MINIMIZED !!!!!)',
       };
       WebSocketManager().sendMessage(json.encode(userData));
     }

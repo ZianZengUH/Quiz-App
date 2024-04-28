@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _classSectionController = TextEditingController();
   final TextEditingController _serverIPController = TextEditingController();
+  String? _selectedDepartment = '';
 
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
@@ -56,8 +57,8 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Permission Denied"),
-          content:
-              const Text("This app needs location permission to function correctly."),
+          content: const Text(
+              "This app needs location permission to function correctly."),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -76,6 +77,10 @@ class _LoginPageState extends State<LoginPage> {
     String name = prefs.getString('userName') ?? '';
     String email = prefs.getString('userEmail') ?? '';
     String classSection = prefs.getString('userClassSection') ?? '';
+    String department = prefs.getString('userDepartment') ?? '';
+    setState(() {
+      _selectedDepartment = department;
+    });
     _nameController.text = name;
     _emailController.text = email;
     _classSectionController.text = classSection;
@@ -85,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userName', _nameController.text);
     await prefs.setString('userEmail', _emailController.text);
+    await prefs.setString('userDepartment', _selectedDepartment ?? '');
     await prefs.setString('userClassSection', _classSectionController.text);
   }
 
@@ -154,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
       final Map<String, dynamic> userData = {
         'name': _nameController.text,
         'email': _emailController.text,
+        'department': _selectedDepartment,
         'classSection': _classSectionController.text,
         'photo': base64Encode(await photo.readAsBytes()),
         'phoneIPAddress': phoneIPAddress,
@@ -197,13 +204,13 @@ class _LoginPageState extends State<LoginPage> {
           'Login / Attendance',
           style: TextStyle(color: Colors.white),
         ),
-              bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1.0),
-        child: Container(
-          color: Colors.white,
-          height: 1.0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.white,
+            height: 1.0,
+          ),
         ),
-      ),
       ),
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -240,14 +247,12 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Enter Server IP',
                     hintText: 'e.g., 192.168.0.100',
                     labelStyle: TextStyle(color: Colors.white),
-                    hintStyle: TextStyle(
-                        color: Colors.white70),
+                    hintStyle: TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white),
+                      borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
                   keyboardType:
@@ -267,8 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white),
+                      borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
                 ),
@@ -278,21 +282,17 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextField(
                       focusNode: _emailFocusNode,
                       controller: _emailController,
-                      style:
-                          const TextStyle(color: Colors.white),
-                          cursorColor: Colors.white,
+                      style: const TextStyle(color: Colors.white),
+                      cursorColor: Colors.white,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Enter your email',
-                        labelStyle:
-                            TextStyle(color: Colors.white),
+                        labelStyle: TextStyle(color: Colors.white),
                         enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white),
+                          borderSide: BorderSide(color: Colors.white),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white),
+                          borderSide: BorderSide(color: Colors.white),
                         ),
                       ),
                     ),
@@ -304,24 +304,68 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ]),
                 const SizedBox(height: 20),
-                TextField(
-                  focusNode: _classSectionFocusNode,
-                  controller: _classSectionController,
-                  style: const TextStyle(color: Colors.white),
-                  cursorColor: Colors.white,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your class section',
-                    labelStyle: TextStyle(color: Colors.white),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white),
-                    ),
-                  ),
-                ),
+Row(
+  children: [
+    Flexible(
+      flex: 1,
+      child: DropdownButtonFormField<String>(
+        value: _selectedDepartment,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedDepartment = newValue;
+          });
+        },
+        dropdownColor: Color.fromARGB(255, 0, 77, 32),
+        style: const TextStyle(color: Colors.white),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Department',
+          labelStyle: TextStyle(color: Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ),
+        items: <String>['', 'ICS', 'CHEM', 'MATH', 'EE'].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value, style: const TextStyle(color: Colors.white)),
+          );
+        }).toList(),
+      ),
+    ),
+    const SizedBox(width: 10),
+    Flexible(
+      flex: 2,
+      child: TextFormField(
+        focusNode: _classSectionFocusNode,
+        controller: _classSectionController,
+        style: const TextStyle(color: Colors.white),
+        cursorColor: Colors.white,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Class Section',
+          labelStyle: TextStyle(color: Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter the class section';
+          }
+          return null;
+        },
+      ),
+    ),
+  ],
+),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _takePictureAndLogin,

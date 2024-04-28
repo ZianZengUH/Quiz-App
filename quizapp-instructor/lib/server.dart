@@ -75,11 +75,12 @@ class Server extends ChangeNotifier {
         String email = userData['email'].toString();
         String phoneIPAddress = userData['phoneIPAddress'].toString();
         String classSection = userData['classSection'].toString();
+        String? department = userData['department']as String?;
         String? photo = userData['photo'] as String?;
         String? answer = userData['answer'] as String?;
         print('Received Phone IP Address: $phoneIPAddress');
         manageStudentData(name, email, classSection, phoneIPAddress,
-            photo: photo, answer: answer);
+            photo: photo, answer: answer, department: department);
       } else {
         print("Error: Received data is not as expected.");
       }
@@ -90,7 +91,7 @@ class Server extends ChangeNotifier {
 
   Future<void> manageStudentData(
       String studentName, String email, String classSection, String phoneIPAddress,
-      {String? answer, String? photo}) async {
+      {String? answer, String? photo, String? department}) async {
     // Writes student data to installation directory.
     // <installation directory>/Student Quizzes
     Directory studentQuizzesDir = Directory('Student Quizzes');
@@ -98,47 +99,46 @@ class Server extends ChangeNotifier {
       await studentQuizzesDir.create();
     }
 
-    // <installation directory>/Student Quizzes/<today's date>
-    String dateFormat = DateFormat('MMMM dd, yyyy').format(DateTime.now());
-    Directory dateDir = Directory('Student Quizzes/$dateFormat');
-    if (!await dateDir.exists()) {
-      await dateDir.create();
-    }
-
-    // <installation directory>/Student Quizzes/<today's date>/Section Numbers
+    // <installation directory>/Student Quizzes/Section Numbers
     Directory sectionDir =
-        Directory('Student Quizzes/$dateFormat/$classSection');
+        Directory('Student Quizzes/$department $classSection');
     if (!await sectionDir.exists()) {
       //await sectionDir.create(recursive: true);
       await sectionDir.create();
     }
 
-    // <installation directory>/Student Quizzes/<today's date>/Section Numbers/<Student's Names>
+        // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>
     Directory studentDir =
-        Directory('Student Quizzes/$dateFormat/$classSection/$studentName');
+        Directory('Student Quizzes/$department $classSection/$studentName');
     if (!await studentDir.exists()) {
       await studentDir.create();
+    }
+
+    // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>/<today's date>
+    String dateFormat = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    Directory dateDir = Directory('Student Quizzes/$department $classSection/$studentName/$dateFormat');
+    if (!await dateDir.exists()) {
+      await dateDir.create();
     }
 
     // Write photo and student info on connection.
     if (photo != null) {
       // Timestamped photo
       String timestamp = DateFormat('HH_mm_ss').format(DateTime.now());
-      File photoFile = File('${studentDir.path}/picture_$timestamp.png');
+      File photoFile = File('${dateDir.path}/Picture_$timestamp.png');
       final photoBytes = base64Decode(photo);
       await photoFile.writeAsBytes(photoBytes);
 
       // Timestamped student info file.
-      File infoFile = File('${studentDir.path}/student_info_$timestamp.txt');
+      File infoFile = File('${dateDir.path}/Student_info.txt');
       String studentInfo =
-          'Name: $studentName\nEmail: $email@hawaii.edu\nClass Section: $classSection\nPhone IP Address: $phoneIPAddress\n\n';
+          'Name: $studentName\nEmail: $email@hawaii.edu\nClass Section: $department $classSection\nPhone IP Address: $phoneIPAddress\n';
       await infoFile.writeAsString(studentInfo, mode: FileMode.append);
     }
 
     // Write timestamped answers on student answer submission.
     if (answer != null) {
-      String timestamp = DateFormat('HH_mm_ss').format(DateTime.now());
-      File answerFile = File('${studentDir.path}/answer_$timestamp.txt');
+      File answerFile = File('${dateDir.path}/Answer.txt');
       await answerFile.writeAsString(answer, mode: FileMode.append);
     }
   }
