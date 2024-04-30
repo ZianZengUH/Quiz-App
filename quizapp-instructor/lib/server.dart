@@ -122,11 +122,11 @@ class Server extends ChangeNotifier {
     // }
 
     // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>/<Pictures>
-  Directory pictureDir = Directory(
-      'Student Quizzes/$department $classSection/$studentName/Pictures');
-  if (!await pictureDir.exists()) {
-    await pictureDir.create(recursive: true);
-  }
+    Directory pictureDir = Directory(
+        'Student Quizzes/$department $classSection/$studentName/Pictures');
+    if (!await pictureDir.exists()) {
+      await pictureDir.create(recursive: true);
+    }
 
     // Write timestamped answers on student answer submission.
     if (answer != null) {
@@ -135,19 +135,27 @@ class Server extends ChangeNotifier {
     }
 
     // Write photo and student info on connection.
-  if (photo != null) {
-    // Timestamped student info file.
-    String dateFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    File infoFile = File('${studentDir.path}/Student_info.csv');
-    String studentInfo =
-        '$studentName,$dateFormat,$phoneIPAddress,$email@hawaii.edu\n';
-    await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+    if (photo != null) {
+      // Timestamped student info file.
+      String dateFormat =
+          DateFormat('yyyy-MM-dd').format(DateTime.now());
+            String timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
-    // DateFormat photo
-    String photoPath = '${pictureDir.path}/Picture_$dateFormat.png';
-    File photoFile = File(photoPath);
-    final photoBytes = base64Decode(photo);
-    await photoFile.writeAsBytes(photoBytes);
+      File infoFile = File('${studentDir.path}/Student_info.csv');
+      // If the file is empty, write the header row
+      if (!await infoFile.exists()) {
+        String header = 'Date and Time,Student Name,Phone IP Address,Email,Class Section\n';
+        await infoFile.writeAsString(header);
+      }
+      String studentInfo =
+          '$timestamp,$studentName,$phoneIPAddress,$email@hawaii.edu,$department $classSection\n';
+      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+
+      // DateFormat photo
+      String photoPath = '${pictureDir.path}/Picture_$dateFormat.png';
+      File photoFile = File(photoPath);
+      final photoBytes = base64Decode(photo);
+      await photoFile.writeAsBytes(photoBytes);
     }
   }
 
