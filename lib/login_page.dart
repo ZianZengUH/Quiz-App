@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -109,12 +110,30 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _takePictureAndLogin() async {
     final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera, 
+        preferredCameraDevice: CameraDevice.front
+    );
+
     if (photo != null &&
         _nameController.text.trim().isNotEmpty &&
         _emailController.text.trim().isNotEmpty &&
         _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
+
+      // Retrieve student's current location
+      Map<String, double> currentLocation = await getCurrentLocation(context);
+      Map<String, double>? classroomLocation = await WebSocketManager().getClassroomLocation();
+
+      if (classroomLocation == null) {
+        _showAlertDialog(context, "Classroom location not set.");
+        return;
+      }
+
+      if (!isWithinRange(currentLocation, classroomLocation, 50)) {
+        _showAlertDialog(context, "You are not within the required 50m radius.");
+        return;
+      }
+
       if (await _connectWebSocket()) {
         await _sendDataToServer(photo, context);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -201,6 +220,18 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
   }
+
+  bool isWithinRange(Map<String, double> current, Map<String, double> classroom, double radius) {
+    return calculateDistance(current['latitude']!, current['longitude']!, classroom['latitude']!, classroom['longitude']!) <= radius;
+  }
+
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    var p = 0.017453292519943295;
+    var a = 0.5 - cos((lat2 - lat1) * p)/2 +
+            cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a)); // Returns distance in meters
+  }
+
 
   Future<void> _sendDataToServer(XFile? photo, BuildContext context) async {
     if (photo != null && WebSocketManager().isConnected) {
