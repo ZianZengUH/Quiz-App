@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'home_page.dart';
 import 'websocket_manager.dart';
@@ -109,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
         _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
       if (await _connectWebSocket()) {
-        await _sendDataToServer(photo);
+        await _sendDataToServer(photo, context);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const MyHomePage(title: 'Quiz App'),
         ));
@@ -148,23 +149,77 @@ class _LoginPageState extends State<LoginPage> {
     return null;
   }
 
-  Future<void> _sendDataToServer(XFile? photo) async {
+  Future<Map<String, double>> getCurrentLocation(BuildContext context) async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showAlertDialog(context, "Location services are disabled.");
+      throw Exception("Location services are disabled.");
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showAlertDialog(context, "Location permissions are permanently denied. Enable them from the app's settings.");
+      throw Exception("Location permissions are permanently denied.");
+    }
+
+    if (permission == LocationPermission.denied) {
+      _showAlertDialog(context, "Location permissions are denied.");
+      throw Exception("Location permissions are denied.");
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    return {'latitude': position.latitude, 'longitude': position.longitude};
+  }
+
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _sendDataToServer(XFile? photo, BuildContext context) async {
     if (photo != null && WebSocketManager().isConnected) {
-      String? phoneIPAddress = await _getPhoneIPAddress();
-      final Map<String, dynamic> userData = {
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'classSection': _classSectionController.text,
-        'photo': base64Encode(await photo.readAsBytes()),
-        'phoneIPAddress': phoneIPAddress,
-      };
-      print('Sending Phone IP Address: $phoneIPAddress');
-      WebSocketManager().sendMessage(json.encode(userData));
-      print('Data sent to the server');
+      try {
+        Map<String, double> location = await getCurrentLocation(context);
+        String? phoneIPAddress = await _getPhoneIPAddress();
+
+        final Map<String, dynamic> userData = {
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'classSection': _classSectionController.text,
+          'photo': base64Encode(await photo.readAsBytes()),
+          'phoneIPAddress': phoneIPAddress,
+          'latitude': location['latitude'],
+          'longitude': location['longitude'],
+        };
+
+        WebSocketManager().sendMessage(json.encode(userData));
+      } catch (e) {
+        print("Error sending data: $e");
+      }
     } else if (photo == null) {
-      _showError('No photo was taken.');
+      _showAlertDialog(context, "No photo was taken.");
     } else {
-      _showError('Not connected to the server.');
+      _showAlertDialog(context, "Not connected to the server.");
     }
   }
 

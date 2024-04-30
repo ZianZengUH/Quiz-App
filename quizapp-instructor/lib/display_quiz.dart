@@ -55,7 +55,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                       color: Colors.white
                     ),
                     decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 6, 86, 6),
+                      color: Color.fromARGB(255, 99, 142, 30),
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                   ),

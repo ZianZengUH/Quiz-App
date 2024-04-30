@@ -158,7 +158,9 @@ class Server extends ChangeNotifier {
   }
 
   void stopServer() {
-    clients.forEach((client) => client.close());
+    for (var client in clients) {
+      client.close();
+    }
     _server?.close();
   }
 
