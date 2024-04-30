@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _classSectionController = TextEditingController();
   final TextEditingController _serverIPController = TextEditingController();
-  String? _selectedDepartment = '';
+  String? _selectedDepartment = 'ICS';
 
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userName', _nameController.text);
     await prefs.setString('userEmail', _emailController.text);
-    await prefs.setString('userDepartment', _selectedDepartment ?? '');
+    await prefs.setString('userDepartment', _selectedDepartment ?? 'ICS');
     await prefs.setString('userClassSection', _classSectionController.text);
   }
 

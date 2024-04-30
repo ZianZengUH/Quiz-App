@@ -75,7 +75,7 @@ class Server extends ChangeNotifier {
         String email = userData['email'].toString();
         String phoneIPAddress = userData['phoneIPAddress'].toString();
         String classSection = userData['classSection'].toString();
-        String? department = userData['department']as String?;
+        String department = userData['department'] as String;
         String? photo = userData['photo'] as String?;
         String? answer = userData['answer'] as String?;
         print('Received Phone IP Address: $phoneIPAddress');
@@ -89,8 +89,8 @@ class Server extends ChangeNotifier {
     }
   }
 
-  Future<void> manageStudentData(
-      String studentName, String email, String classSection, String phoneIPAddress,
+  Future<void> manageStudentData(String studentName, String email,
+      String classSection, String phoneIPAddress,
       {String? answer, String? photo, String? department}) async {
     // Writes student data to installation directory.
     // <installation directory>/Student Quizzes
@@ -107,39 +107,47 @@ class Server extends ChangeNotifier {
       await sectionDir.create();
     }
 
-        // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>
+    // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>
     Directory studentDir =
         Directory('Student Quizzes/$department $classSection/$studentName');
     if (!await studentDir.exists()) {
       await studentDir.create();
     }
 
-    // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>/<today's date>
-    String dateFormat = DateFormat('MMMM dd, yyyy').format(DateTime.now());
-    Directory dateDir = Directory('Student Quizzes/$department $classSection/$studentName/$dateFormat');
-    if (!await dateDir.exists()) {
-      await dateDir.create();
-    }
+    // // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>/<today's date>
+    // String dateFormat = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    // Directory dateDir = Directory('Student Quizzes/$department $classSection/$studentName/$dateFormat');
+    // if (!await dateDir.exists()) {
+    //   await dateDir.create();
+    // }
 
-    // Write photo and student info on connection.
-    if (photo != null) {
-      // Timestamped photo
-      String timestamp = DateFormat('HH_mm_ss').format(DateTime.now());
-      File photoFile = File('${dateDir.path}/Picture_$timestamp.png');
-      final photoBytes = base64Decode(photo);
-      await photoFile.writeAsBytes(photoBytes);
-
-      // Timestamped student info file.
-      File infoFile = File('${dateDir.path}/Student_info.txt');
-      String studentInfo =
-          'Name: $studentName\nEmail: $email@hawaii.edu\nClass Section: $department $classSection\nPhone IP Address: $phoneIPAddress\n';
-      await infoFile.writeAsString(studentInfo, mode: FileMode.append);
-    }
+    // <installation directory>/Student Quizzes/Section Numbers/<Student's Names>/<Pictures>
+  Directory pictureDir = Directory(
+      'Student Quizzes/$department $classSection/$studentName/Pictures');
+  if (!await pictureDir.exists()) {
+    await pictureDir.create(recursive: true);
+  }
 
     // Write timestamped answers on student answer submission.
     if (answer != null) {
-      File answerFile = File('${dateDir.path}/Answer.txt');
+      File answerFile = File('${studentDir.path}/Answer.txt');
       await answerFile.writeAsString(answer, mode: FileMode.append);
+    }
+
+    // Write photo and student info on connection.
+  if (photo != null) {
+    // Timestamped student info file.
+    String dateFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    File infoFile = File('${studentDir.path}/Student_info.csv');
+    String studentInfo =
+        '$studentName,$dateFormat,$phoneIPAddress,$email@hawaii.edu\n';
+    await infoFile.writeAsString(studentInfo, mode: FileMode.append);
+
+    // DateFormat photo
+    String photoPath = '${pictureDir.path}/Picture_$dateFormat.png';
+    File photoFile = File(photoPath);
+    final photoBytes = base64Decode(photo);
+    await photoFile.writeAsBytes(photoBytes);
     }
   }
 

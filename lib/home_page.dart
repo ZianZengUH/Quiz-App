@@ -20,6 +20,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final TextEditingController _answerController = TextEditingController();
   String name = '';
   String classSection = '';
+  String? department = 'ICS';
 
   @override
   void initState() {
@@ -32,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     name = prefs.getString('userName') ?? '';
     classSection = prefs.getString('userClassSection') ?? '';
+    department = prefs.getString('userDepartment') ?? '';
   }
 
   void _submitAnswer() {
@@ -41,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         'name': name,
         'classSection': classSection,
         'answer': answerText,
+        'department': department,
       };
       WebSocketManager().sendMessage(json.encode(userData));
       showDialog(
