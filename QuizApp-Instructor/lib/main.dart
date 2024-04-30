@@ -1,7 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
 import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
@@ -9,6 +13,72 @@ import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
 import 'package:quiz_app_instructor/server.dart';
 
+
+
+class ClassroomLocationManager {
+  static Future<void> setClassroomLocation(double latitude, double longitude) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('classroomLatitude', latitude);
+    await prefs.setDouble('classroomLongitude', longitude);
+  }
+
+  static Future<Map<String, double>?> getClassroomLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? latitude = prefs.getDouble('classroomLatitude');
+    double? longitude = prefs.getDouble('classroomLongitude');
+    if (latitude != null && longitude != null) {
+      return {'latitude': latitude, 'longitude': longitude};
+    }
+    return null;
+  }
+
+  static Future<void> retrieveAndStoreLocation(BuildContext context) async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showAlertDialog(context, "Location services are disabled.");
+      throw Exception("Location services are disabled.");
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showAlertDialog(context, "Location permissions are permanently denied. Enable them from the app's settings.");
+      throw Exception("Location permissions are permanently denied.");
+    }
+
+    if (permission == LocationPermission.denied) {
+      _showAlertDialog(context, "Location permissions are denied.");
+      throw Exception("Location permissions are denied.");
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    await setClassroomLocation(position.latitude, position.longitude);
+  }
+
+  static void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,6 +146,15 @@ class _AppLayoutState extends State<AppLayout> {
   void initState() { 
     super.initState(); 
     _getWiFiAddress(); 
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        await ClassroomLocationManager.retrieveAndStoreLocation(context); // Retrieve and store location
+      } catch (e) {
+        print("Location error: $e");
+      }
+    });
+  
   } 
 
   @override
@@ -98,8 +177,7 @@ class _AppLayoutState extends State<AppLayout> {
     ];
     
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      primary: Colors.white, // Button background color
-      onPrimary: Color(0xFF52c234), // Button text color (green)
+      foregroundColor: const Color(0xFF52c234), backgroundColor: Colors.white, // Button text color (green)
     );
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -239,7 +317,7 @@ class _AppLayoutState extends State<AppLayout> {
 
     // A custom widget for the destination to have better control over the layout.
     Widget destinationWidget = Padding(
-      padding: EdgeInsets.all(0), // No additional padding around the icon
+      padding: const EdgeInsets.all(0), // No additional padding around the icon
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: isSelected ? Colors.white.withOpacity(0.9) : Colors.transparent, // Make it more white
@@ -254,7 +332,7 @@ class _AppLayoutState extends State<AppLayout> {
               child: Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Color.fromARGB(255, 0, 0, 0) : Colors.white,
+                  color: isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),

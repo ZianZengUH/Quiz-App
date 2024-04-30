@@ -106,7 +106,7 @@ class InfoPage extends StatelessWidget {
                     const Text(''),
                     Padding(
                       padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 5),
-                      child: Column(
+                      child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                     Text(
