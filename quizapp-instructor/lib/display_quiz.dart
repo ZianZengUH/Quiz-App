@@ -18,7 +18,7 @@ class ShowQuiz extends StatefulWidget {
 
 class _ShowQuizState extends State<ShowQuiz> {
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     int duration = Provider.of<QuizData>(context).duration;
     String question = Provider.of<QuizData>(context).question;
     double fontSize = Provider.of<QuizData>(context).fontSize.toDouble();
@@ -33,7 +33,6 @@ class _ShowQuizState extends State<ShowQuiz> {
         ),
       ),
     );
-
     return SizedBox(
       child: Padding(
         padding: const EdgeInsets.all(20),

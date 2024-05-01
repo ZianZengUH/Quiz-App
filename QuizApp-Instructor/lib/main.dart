@@ -1,17 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:provider/provider.dart';
+import 'package:quiz_app_instructor/connected_student_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
-import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
 import 'package:quiz_app_instructor/server.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
 
 
 
@@ -174,11 +173,11 @@ class _AppLayoutState extends State<AppLayout> {
       const InfoPage(),
       const CreateQuizPage(),
       const LoadQuizPage(),
-      const ShowQuiz(),
+      ConnectedStudentsPage(ipAddress: ipAddress),
     ];
 
     List<NavigationRailDestination> destinations = [
-      _buildDestination(0, Icons.question_mark, 'How To Use This Program'),
+      _buildDestination(0, Icons.question_mark, 'Introduction'),
       _buildDestination(1, Icons.new_label, 'Create/Modify Quiz'),
       _buildDestination(2, Icons.file_open, 'Load Quiz'),
       _buildDestination(3, Icons.screen_share, 'Display Quiz'),
@@ -225,22 +224,23 @@ class _AppLayoutState extends State<AppLayout> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Connect to",
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                          ),
-                        ),
-                        Text(
-                          ipAddress,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                          ),
-                        ),
+                        // const Text(
+                        //   "Connect to",
+                        //   style: TextStyle(
+                        //     fontSize: 30,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: Colors.white
+                        //   ),
+                        // ),
+                        // Text(
+                        //   ipAddress,
+                        //   style: const TextStyle(
+                        //     fontSize: 30,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: Colors.white
+                        //   ),
+                        // ),
+
                         const Text(""),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(30.0),
@@ -269,7 +269,7 @@ class _AppLayoutState extends State<AppLayout> {
                               });
                             }
                           },
-                          child: 
+                          child:
                           Text(isServerRunning? 'Stop Server':'Start Server'),
                         ),
                       ],

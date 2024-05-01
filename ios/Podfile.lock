@@ -2,6 +2,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_isolate (0.0.1):
     - Flutter
+  - geolocator_apple (1.2.0):
+    - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
   - network_info_plus (0.0.1):
@@ -15,6 +17,7 @@ PODS:
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_isolate (from `.symlinks/plugins/flutter_isolate/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -25,6 +28,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_isolate:
     :path: ".symlinks/plugins/flutter_isolate/ios"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   network_info_plus:
@@ -37,6 +42,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_isolate: 0edf5081826d071adf21759d1eb10ff5c24503b5
+  geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
   image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18
   network_info_plus: 9d930145451916919786087c4173226363616071
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
