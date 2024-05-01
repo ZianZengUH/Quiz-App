@@ -55,7 +55,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                       color: Colors.white
                     ),
                     decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 99, 142, 30),
+                      color: Color.fromARGB(255, 38, 140, 1),
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                   ),
@@ -67,6 +67,10 @@ class _ShowQuizState extends State<ShowQuiz> {
                         Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Color.fromARGB(255, 25, 148, 0), // Button text color (green)
+                              backgroundColor: Colors.white, 
+                            ),
                             onPressed: () {
                               quizDuration.play();
                             },
@@ -76,6 +80,10 @@ class _ShowQuizState extends State<ShowQuiz> {
                         Padding(
                           padding: const EdgeInsets.only(left: 5, right: 5),
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Color.fromARGB(255, 25, 148, 0), // Button text color (green)
+                              backgroundColor: Colors.white, 
+                            ),
                             onPressed: () {
                               quizDuration.pause();
                             },

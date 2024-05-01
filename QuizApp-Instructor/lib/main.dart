@@ -16,6 +16,7 @@ import 'package:quiz_app_instructor/server.dart';
 
 
 class ClassroomLocationManager {
+
   static Future<void> setClassroomLocation(double latitude, double longitude) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('classroomLatitude', latitude);
@@ -65,13 +66,21 @@ class ClassroomLocationManager {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Error"),
+        return AlertDialog( 
+          title: Text(
+            "Error",
+            style: TextStyle(color: Colors.red), // Set the title text color to red),
+          ),  
           content: Text(message),
+          backgroundColor: Colors.white, // Set the background color to white
           actions: [
             TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)), 
+              ),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("OK"),
+              child: Text("OK"),
             ),
           ],
         );
@@ -177,8 +186,10 @@ class _AppLayoutState extends State<AppLayout> {
     ];
     
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      foregroundColor: const Color(0xFF52c234), backgroundColor: Colors.white, // Button text color (green)
+      foregroundColor: const Color.fromARGB(255, 25, 148, 0), // Button text color (green)
+      backgroundColor: Colors.white, 
     );
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -242,6 +253,7 @@ class _AppLayoutState extends State<AppLayout> {
                         const Text(""),
 
                         ElevatedButton(
+                          style: buttonStyle,
                           onPressed: () {
                             if (!isServerRunning) {
                               // Start server.
