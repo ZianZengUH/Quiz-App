@@ -16,7 +16,7 @@ class InfoPage extends StatelessWidget {
       studentAnswersDir = '$currentDirectory/Student Quizzes';
     } else {
       savedQuizzesDir = '$currentDirectory\\Saved Quizzes';
-      studentAnswersDir = '$currentDirectory\\Student Data';
+      studentAnswersDir = '$currentDirectory\\Student Quizzes';
     }
 
     return SizedBox(

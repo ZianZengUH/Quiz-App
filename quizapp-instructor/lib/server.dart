@@ -8,7 +8,6 @@ import 'package:quiz_app_instructor/main.dart';
 class Server extends ChangeNotifier {
   HttpServer? _server;
   List<WebSocket> clients = [];
-  List<Map<String, dynamic>> _connectedStudentsData = [];
 
   Server() {
     startServer();
@@ -23,9 +22,7 @@ class Server extends ChangeNotifier {
     //print("@@@@@@@@@\n");
 
     var classroomLocation = await ClassroomLocationManager.getClassroomLocation();
-
-    print(classroomLocation);
-    print("class room location");
+    
     for (var interface in await NetworkInterface.list()) {
       for (var addr in interface.addresses) {
         if (addr.type == InternetAddressType.IPv4 &&
@@ -79,8 +76,6 @@ class Server extends ChangeNotifier {
     try {
       final userData = jsonDecode(data);
       if (userData is Map<String, dynamic> && userData.containsKey('name')) {
-        _connectedStudentsData.add(userData);
-        notifyListeners();
         String name = userData['name'].toString();
         String email = userData['email'].toString();
         String phoneIPAddress = userData['phoneIPAddress'].toString();
@@ -91,8 +86,6 @@ class Server extends ChangeNotifier {
         double studentLat = userData['latitude'];
         double studentLong = userData['longitude'];
         print('Received Phone IP Address: $phoneIPAddress');
-        print(studentLat);
-        print(studentLong);
         manageStudentData(name, email, classSection, phoneIPAddress,
             photo: photo, answer: answer, department: department);
       } else {
@@ -102,7 +95,6 @@ class Server extends ChangeNotifier {
       print('Error parsing JSON data: $e');
     }
   }
-  List<Map<String, dynamic>> get connectedStudentsData => _connectedStudentsData; // 添加公共 getter 方法
 
   Future<void> manageStudentData(String studentName, String email,
       String classSection, String phoneIPAddress,

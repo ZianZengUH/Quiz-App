@@ -49,17 +49,9 @@ class _LoginPageState extends State<LoginPage> {
     if (!status.isGranted) {
       await Permission.location.request();
     }
-    if (Platform.isIOS) {
-      // Request temporary full accuracy authorization on iOS
-      await Geolocator.requestTemporaryFullAccuracy(purposeKey: "uhm");
-    }
 
     // After requesting, check again
     if (await Permission.location.isGranted) {
-      if (Platform.isIOS) {
-        // Request temporary full accuracy authorization on iOS
-        await Geolocator.requestTemporaryFullAccuracy(purposeKey: "uhm");
-      }
       // Permission is granted; you can fetch network info here or set a flag
     } else {
       // Handle the scenario where permission is denied
@@ -118,7 +110,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _takePictureAndLogin() async {
     final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera, 
+        preferredCameraDevice: CameraDevice.front
+    );
 
     if (photo != null &&
         _nameController.text.trim().isNotEmpty &&
@@ -127,23 +121,18 @@ class _LoginPageState extends State<LoginPage> {
       await _saveUserInfo();
 
       // Retrieve student's current location
-      // Map<String, double> currentLocation = await getCurrentLocation(context);
-      // Map<String, double>? classroomLocation =
-      //     await WebSocketManager().getClassroomLocation();
-      // print(currentLocation);
-      // print("currentLocation print succefully");
-      // print(classroomLocation);
-      // print("classroomLocation print succefully");
-      // if (classroomLocation == null) {
-      //   _showAlertDialog(context, "Classroom location not set.");
-      //   return;
-      // }
+      Map<String, double> currentLocation = await getCurrentLocation(context);
+      Map<String, double>? classroomLocation = await WebSocketManager().getClassroomLocation();
 
-      // if (!isWithinRange(currentLocation, classroomLocation, 50)) {
-      //   _showAlertDialog(
-      //       context, "You are not within the required 50m radius.");
-      //   return;
-      // }
+      if (classroomLocation == null) {
+        _showAlertDialog(context, "Classroom location not set.");
+        return;
+      }
+
+      if (!isWithinRange(currentLocation, classroomLocation, 50)) {
+        _showAlertDialog(context, "You are not within the required 50m radius.");
+        return;
+      }
 
       if (await _connectWebSocket()) {
         await _sendDataToServer(photo, context);
@@ -198,8 +187,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      _showAlertDialog(context,
-          "Location permissions are permanently denied. Enable them from the app's settings.");
+      _showAlertDialog(context, "Location permissions are permanently denied. Enable them from the app's settings.");
       throw Exception("Location permissions are permanently denied.");
     }
 
@@ -211,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
-    print(position);
+
     return {'latitude': position.latitude, 'longitude': position.longitude};
   }
 
@@ -222,17 +210,15 @@ class _LoginPageState extends State<LoginPage> {
         return AlertDialog(
           title: const Text(
             "Error",
-            style: TextStyle(
-                color: Colors.red), // Set the title text color to red),
-          ),
+            style: TextStyle(color: Colors.red), // Set the title text color to red),
+          ),  
           content: Text(message),
           backgroundColor: Colors.white,
           actions: [
             TextButton(
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all(Colors.white),
-                backgroundColor:
-                    MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)),
+                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)), 
               ),
               onPressed: () => Navigator.of(context).pop(),
               child: const Text("OK"),
@@ -243,20 +229,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  bool isWithinRange(Map<String, double> current, Map<String, double> classroom,
-      double radius) {
-    return calculateDistance(current['latitude']!, current['longitude']!,
-            classroom['latitude']!, classroom['longitude']!) <=
-        radius;
+  bool isWithinRange(Map<String, double> current, Map<String, double> classroom, double radius) {
+    return calculateDistance(current['latitude']!, current['longitude']!, classroom['latitude']!, classroom['longitude']!) <= radius;
   }
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
-    var a = 0.5 -
-        cos((lat2 - lat1) * p) / 2 +
-        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
+    var a = 0.5 - cos((lat2 - lat1) * p)/2 +
+            cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p))/2;
     return 12742 * asin(sqrt(a)); // Returns distance in meters
   }
+
 
   Future<void> _sendDataToServer(XFile? photo, BuildContext context) async {
     if (photo != null && WebSocketManager().isConnected) {
@@ -291,18 +274,16 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(
-          "Error",
-          style:
-              TextStyle(color: Colors.red), // Set the title text color to red),
-        ),
+            "Error",
+            style: TextStyle(color: Colors.red), // Set the title text color to red),
+        ),  
         content: Text(message),
         backgroundColor: Colors.white, // Set the background color to white
         actions: [
           TextButton(
             style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all(Colors.white),
-              backgroundColor:
-                  MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)), 
             ),
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('OK'),
@@ -425,70 +406,68 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ]),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedDepartment,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedDepartment = newValue;
-                          });
-                        },
-                        dropdownColor: Color.fromARGB(255, 0, 77, 32),
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Department',
-                          labelStyle: TextStyle(color: Colors.white),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
-                        items: <String>['', 'ICS', 'CHEM', 'MATH', 'EE']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value,
-                                style: const TextStyle(color: Colors.white)),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      flex: 2,
-                      child: TextFormField(
-                        focusNode: _classSectionFocusNode,
-                        controller: _classSectionController,
-                        style: const TextStyle(color: Colors.white),
-                        cursorColor: Colors.white,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Class Section',
-                          labelStyle: TextStyle(color: Colors.white),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the class section';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+Row(
+  children: [
+    Flexible(
+      flex: 1,
+      child: DropdownButtonFormField<String>(
+        value: _selectedDepartment,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedDepartment = newValue;
+          });
+        },
+        dropdownColor: Color.fromARGB(255, 0, 77, 32),
+        style: const TextStyle(color: Colors.white),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Department',
+          labelStyle: TextStyle(color: Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ),
+        items: <String>['', 'ICS', 'CHEM', 'MATH', 'EE'].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value, style: const TextStyle(color: Colors.white)),
+          );
+        }).toList(),
+      ),
+    ),
+    const SizedBox(width: 10),
+    Flexible(
+      flex: 2,
+      child: TextFormField(
+        focusNode: _classSectionFocusNode,
+        controller: _classSectionController,
+        style: const TextStyle(color: Colors.white),
+        cursorColor: Colors.white,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Class Section',
+          labelStyle: TextStyle(color: Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter the class section';
+          }
+          return null;
+        },
+      ),
+    ),
+  ],
+),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _takePictureAndLogin,

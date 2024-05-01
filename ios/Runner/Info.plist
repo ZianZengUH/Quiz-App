@@ -2,8 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
+	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -24,73 +23,100 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Music!</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>bluetooth</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>bluetooth</string>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Calendar full access</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Calendars</string>
-	<key>NSCameraUsageDescription</key>
-	<string>camera</string>
-	<key>NSContactsUsageDescription</key>
-	<string>contacts</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use!</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I have location always?</string>
-	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
-	<dict>
-		<key>uhm</key>
-		<string>The example App requires temporary access to the device's precise location.</string>
-	</dict>
-	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need location when in use</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>microphone</string>
-	<key>NSMotionUsageDescription</key>
-	<string>motion</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>photos</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>reminders</string>
-	<key>NSSiriUsageDescription</key>
-	<string>The example app would like access to Siri Kit to demonstrate requesting
-            authorization.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>speech</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>appTrackingTransparency</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UIApplicationSupportsMultipleScenes</key>
-	<false/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UIRequiresFullScreen</key>
-	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<!--<string>UIInterfaceOrientationLandscapeLeft</string>-->
+		<!--<string>UIInterfaceOrientationLandscapeRight</string>-->
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<!--<string>UIInterfaceOrientationPortraitUpsideDown</string>-->
+		<!--<string>UIInterfaceOrientationLandscapeLeft</string>-->
+		<!--<string>UIInterfaceOrientationLandscapeRight</string>-->
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>kTCCServiceMediaLibrary</key>
-	<string>media</string>
+
+	<!-- Permission options for the `location` group -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Need location when in use</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Always and when in use!</string>
+    <key>NSLocationUsageDescription</key>
+    <string>Older devices need location.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Can I have location always?</string>
+
+    <!-- Permission options for the `mediaLibrary` group -->
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Music!</string>
+    <key>kTCCServiceMediaLibrary</key>
+    <string>media</string>
+
+    <!-- Permission options for the `calendar` group -->
+    <key>NSCalendarsUsageDescription</key>
+    <string>Calendars</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>Calendar full access</string>
+
+    <!-- Permission options for the `camera` group -->
+    <key>NSCameraUsageDescription</key>
+    <string>camera</string>
+
+    <!-- Permission options for the `contacts` group -->
+    <key>NSContactsUsageDescription</key>
+    <string>contacts</string>
+
+    <!-- Permission options for the `microphone` group -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>microphone</string>
+
+    <!-- Permission options for the `speech` group -->
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>speech</string>
+
+    <!-- Permission options for the `sensors` group -->
+    <key>NSMotionUsageDescription</key>
+    <string>motion</string>
+
+    <!-- Permission options for the `photos` group -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>photos</string>
+
+    <!-- Permission options for the `reminder` group -->
+    <key>NSRemindersUsageDescription</key>
+    <string>reminders</string>
+
+    <!-- Permission options for the `bluetooth` -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>bluetooth</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>bluetooth</string>
+
+    <!-- Permission options for the `appTrackingTransparency` -->
+    <key>NSUserTrackingUsageDescription</key>
+    <string>appTrackingTransparency</string>
+
+    <!-- Permission options for the `assistant` group -->
+    <key>NSSiriUsageDescription</key>
+    <string>The example app would like access to Siri Kit to demonstrate requesting authorization.</string>
+
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    
+    <!-- no multiple/split screen -->
+    <key>UIApplicationSupportsMultipleScenes</key>
+    <false/>
+    <!-- app only runs in full screen -->
+    <key>UIRequiresFullScreen</key>
+    <true/>
 </dict>
 </plist>
