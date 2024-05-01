@@ -7,7 +7,7 @@ When instructors have large class sizes, it is very difficult for them to mainta
 
 
 ### Our Solution:
-Quiz App is a cross-platform app that uses singleton WebSocket + GPS verification via LAN for connection and real-time data transfer which help to track attendance and dissuade cheating while students take quizzes for ICS and other departments at the University of Hawaii at Manoa
+Quiz App is a cross-platform app that consists a desktop version for the instructor and a mobile version for the students. It uses singleton WebSocket + GPS verification via LAN for connection and real-time data transfer which help to track attendance and dissuade cheating while students take quizzes for ICS and other departments at the University of Hawaii at Manoa
 
 **_Design and Developed by Zian Zeng, Feiyi Chen, Galen Chang_**
 
@@ -17,7 +17,7 @@ Quiz App is a cross-platform app that uses singleton WebSocket + GPS verificatio
 ```
 flutter build apk --release
 ```
-The release.apk is under ...\build\app\outputs\flutter-apk
+The released .apk can be found in ...\build\app\outputs\flutter-apk
 
 ### Build MacOS App
 ```
@@ -26,7 +26,7 @@ cd QuizApp-Instructor
 ```
 flutter build macos
 ```
-open macos/Runner.xcworkspace
+The MacOS app can be found in macos/Runner.xcworkspace
 
 ### Build Windows App
 ```
@@ -35,7 +35,7 @@ cd QuizApp-Instructor
 ```
 flutter build windows
 ```
-The build .exe file can be found on ...\projectName\build\windows\runner\Release\
+The released .exe file can be found in ...\projectName\build\windows\runner\Release\
 
 ### Important Notes:
 Make sure location service is turn on for both mobile and desktop sides.
