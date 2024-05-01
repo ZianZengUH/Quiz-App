@@ -66,7 +66,7 @@ class ClassroomLocationManager {
       context: context,
       builder: (context) {
         return AlertDialog( 
-          title: Text(
+          title: const Text(
             "Error",
             style: TextStyle(color: Colors.red), // Set the title text color to red),
           ),  
@@ -324,40 +324,68 @@ class _AppLayoutState extends State<AppLayout> {
     );
   }
 
+  // NavigationRailDestination _buildDestination(int index, IconData icon, String label) {
+  //   bool isSelected = selectedIndex == index;
+
+  //   // A custom widget for the destination to have better control over the layout.
+  //   Widget destinationWidget = Padding(
+  //     padding: const EdgeInsets.all(0), // No additional padding around the icon
+  //     child: DecoratedBox(
+  //       decoration: BoxDecoration(
+  //         color: isSelected ? Colors.white.withOpacity(0.9) : Colors.transparent, // Make it more white
+  //         borderRadius: BorderRadius.circular(8), // Adjust for shape
+  //       ),
+  //       child: Padding(
+  //         padding: const EdgeInsets.symmetric(horizontal: 20.0), // Add horizontal padding inside the box
+  //         child: SizedBox(
+  //           height: 40, // Adjust the height to match the icon's selection shape
+  //           child: Align(
+  //             alignment: Alignment.center,
+  //             child: Text(
+  //               label,
+  //               style: TextStyle(
+  //                 color: isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+
+  //   return NavigationRailDestination(
+  //     icon: Icon(icon, color: isSelected ? Colors.transparent : Colors.white70), // Hide icon when selected
+  //     selectedIcon: Icon(icon, color: Colors.black), // Show icon when selected
+  //     label: destinationWidget,
+  //   );
+  // }
+  
   NavigationRailDestination _buildDestination(int index, IconData icon, String label) {
     bool isSelected = selectedIndex == index;
 
-    // A custom widget for the destination to have better control over the layout.
-    Widget destinationWidget = Padding(
-      padding: const EdgeInsets.all(0), // No additional padding around the icon
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withOpacity(0.9) : Colors.transparent, // Make it more white
-          borderRadius: BorderRadius.circular(8), // Adjust for shape
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0), // Add horizontal padding inside the box
-          child: SizedBox(
-            height: 40, // Adjust the height to match the icon's selection shape
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+    // Create a label widget with the transparent background and text
+    Widget labelWidget = DecoratedBox(
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.white.withOpacity(0.9) : Colors.transparent, // Transparent shape on selection
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 7.0), // Space inside the box
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.white, // Text color changes
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, // Text weight changes
           ),
         ),
       ),
     );
 
     return NavigationRailDestination(
-      icon: Icon(icon, color: isSelected ? Colors.transparent : Colors.white70), // Hide icon when selected
+      icon: Icon(icon, color: isSelected ? Colors.transparent : Colors.white), // Hide icon when selected
       selectedIcon: Icon(icon, color: Colors.black), // Show icon when selected
-      label: destinationWidget,
+      label: labelWidget, // Use the label widget
     );
   }
 
