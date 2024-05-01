@@ -10,7 +10,8 @@ import 'package:slide_countdown/slide_countdown.dart';
 // By Farhan Fadila
 
 class ShowQuiz extends StatefulWidget {
-  const ShowQuiz({super.key});
+  final VoidCallback onBackPage;
+  const ShowQuiz({Key? key, required this.onBackPage}) : super(key: key);
 
   @override
   State<ShowQuiz> createState() => _ShowQuizState();
@@ -34,78 +35,83 @@ class _ShowQuizState extends State<ShowQuiz> {
       ),
     );
     return SizedBox(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Center(
-              child: Column(
-                children: <Widget>[
-                  SlideCountdown(
-                    streamDuration: quizDuration,
-                    
-                    separatorStyle: const TextStyle(
-                      fontSize: 75,
-                      color: Colors.white
-                    ),
-                    style: const TextStyle(
-                      fontSize: 75,
-                      color: Colors.white
-                    ),
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 38, 140, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 5),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Color.fromARGB(255, 25, 148, 0), // Button text color (green)
-                              backgroundColor: Colors.white, 
-                            ),
-                            onPressed: () {
-                              quizDuration.play();
-                            },
-                            child: const Text('Start'),
-                          ),
+        child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Center(
+                  child: Column(
+                    children: <Widget>[
+                      SlideCountdown(
+                        streamDuration: quizDuration,
+                        separatorStyle:
+                            const TextStyle(fontSize: 75, color: Colors.white),
+                        style:
+                            const TextStyle(fontSize: 75, color: Colors.white),
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 38, 140, 1),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Color.fromARGB(255, 25, 148, 0), // Button text color (green)
-                              backgroundColor: Colors.white, 
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Color.fromARGB(255, 25, 148,
+                                      0), // Button text color (green)
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () {
+                                  quizDuration.play();
+                                },
+                                child: const Text('Start'),
+                              ),
                             ),
-                            onPressed: () {
-                              quizDuration.pause();
-                            },
-                            child: const Text('Pause'),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Color.fromARGB(255, 25, 148,
+                                      0), // Button text color (green)
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () {
+                                  quizDuration.pause();
+                                },
+                                child: const Text('Pause'),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Color.fromARGB(255, 25, 148,
+                                    0), // Button text color (green)
+                                backgroundColor: Colors.white,
+                              ),
+                              onPressed: () {
+                                widget.onBackPage();
+                              },
+                              child: const Text('Attendance'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(
-                  question,
-                  style: TextStyle(fontSize: fontSize),
                 ),
-              )
-            ),
-          ],
-        )
-      )
-    );
+                Expanded(
+                    child: SingleChildScrollView(
+                  child: Text(
+                    question,
+                    style: TextStyle(fontSize: fontSize),
+                  ),
+                )),
+              ],
+            )));
   }
 }

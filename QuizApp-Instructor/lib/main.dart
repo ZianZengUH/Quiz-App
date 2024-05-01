@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app_instructor/connected_student_page.dart';
 import 'package:quiz_app_instructor/create_modify_quiz.dart';
+import 'package:quiz_app_instructor/display_quiz.dart';
 import 'package:quiz_app_instructor/info_page.dart';
 import 'package:quiz_app_instructor/load_quiz.dart';
 import 'package:quiz_app_instructor/quiz_data.dart';
@@ -12,11 +13,9 @@ import 'package:quiz_app_instructor/server.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
-
-
 class ClassroomLocationManager {
-
-  static Future<void> setClassroomLocation(double latitude, double longitude) async {
+  static Future<void> setClassroomLocation(
+      double latitude, double longitude) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('classroomLatitude', latitude);
     await prefs.setDouble('classroomLongitude', longitude);
@@ -45,7 +44,8 @@ class ClassroomLocationManager {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      _showAlertDialog(context, "Location permissions are permanently denied. Enable them from the app's settings.");
+      _showAlertDialog(context,
+          "Location permissions are permanently denied. Enable them from the app's settings.");
       throw Exception("Location permissions are permanently denied.");
     }
 
@@ -65,18 +65,20 @@ class ClassroomLocationManager {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog( 
+        return AlertDialog(
           title: const Text(
             "Error",
-            style: TextStyle(color: Colors.red), // Set the title text color to red),
-          ),  
+            style: TextStyle(
+                color: Colors.red), // Set the title text color to red),
+          ),
           content: Text(message),
           backgroundColor: Colors.white, // Set the background color to white
           actions: [
             TextButton(
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all(Colors.white),
-                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)), 
+                backgroundColor:
+                    MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)),
               ),
               onPressed: () => Navigator.of(context).pop(),
               child: Text("OK"),
@@ -147,23 +149,24 @@ class AppLayout extends StatefulWidget {
 
 class _AppLayoutState extends State<AppLayout> {
   int selectedIndex = 0;
-  String ipAddress = "N/A"; 
+  String ipAddress = "N/A";
   bool isServerRunning = false;
-  
-  @override 
-  void initState() { 
-    super.initState(); 
-    _getWiFiAddress(); 
+  int _currentPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _getWiFiAddress();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        await ClassroomLocationManager.retrieveAndStoreLocation(context); // Retrieve and store location
+        await ClassroomLocationManager.retrieveAndStoreLocation(
+            context); // Retrieve and store location
       } catch (e) {
         print("Location error: $e");
       }
     });
-  
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +176,33 @@ class _AppLayoutState extends State<AppLayout> {
       const InfoPage(),
       const CreateQuizPage(),
       const LoadQuizPage(),
-      ConnectedStudentsPage(ipAddress: ipAddress),
+      Stack(
+        children: [
+          Visibility(
+            visible: _currentPageIndex == 0,
+            maintainState: true,
+            child: ConnectedStudentsPage(
+              ipAddress: ipAddress,
+              onNextPage: () {
+                setState(() {
+                  _currentPageIndex = 1;
+                });
+              },
+            ),
+          ),
+          Visibility(
+            visible: _currentPageIndex == 1,
+            maintainState: true,
+            child: ShowQuiz(
+              onBackPage: () {
+                setState(() {
+                  _currentPageIndex = 0;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
     ];
 
     List<NavigationRailDestination> destinations = [
@@ -183,10 +212,11 @@ class _AppLayoutState extends State<AppLayout> {
       _buildDestination(3, Icons.screen_share, 'Display Quiz'),
       // Add other destinations here
     ];
-    
+
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      foregroundColor: const Color.fromARGB(255, 25, 148, 0), // Button text color (green)
-      backgroundColor: Colors.white, 
+      foregroundColor:
+          const Color.fromARGB(255, 25, 148, 0), // Button text color (green)
+      backgroundColor: Colors.white,
     );
 
     return LayoutBuilder(
@@ -209,17 +239,15 @@ class _AppLayoutState extends State<AppLayout> {
                   ),
                   child: NavigationRail(
                     backgroundColor: Colors.transparent,
-                    unselectedLabelTextStyle: const TextStyle(
-                      color: Colors.white),
-                    unselectedIconTheme: const IconThemeData(
-                      color: Colors.white),
+                    unselectedLabelTextStyle:
+                        const TextStyle(color: Colors.white),
+                    unselectedIconTheme:
+                        const IconThemeData(color: Colors.white),
                     selectedLabelTextStyle: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                        color: Colors.white, fontWeight: FontWeight.bold),
                     selectedIconTheme: const IconThemeData(
-                      color: Color.fromARGB(255, 255, 255, 255)),
+                        color: Color.fromARGB(255, 255, 255, 255)),
                     extended: constraints.maxWidth >= 600,
-
                     leading: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -241,37 +269,36 @@ class _AppLayoutState extends State<AppLayout> {
                         //   ),
                         // ),
 
-                        const Text(""),
+                        const SizedBox(height: 40),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(30.0),
-                          child: Image.asset(
-                            'images/quiz_app_logo.png',
-                            height: 150,
-                            width: 150
-                          ),
+                          child: Image.asset('images/quiz_app_logo.png',
+                              height: 150, width: 150),
                         ),
-                        const Text(""),
+                        const SizedBox(height: 40),
 
                         ElevatedButton(
                           style: buttonStyle,
                           onPressed: () {
                             if (!isServerRunning) {
                               // Start server.
-                              Provider.of<Server>(context, listen: false); 
+                              Provider.of<Server>(context, listen: false);
                               setState(() {
                                 isServerRunning = true;
                               });
                             } else {
                               // Stop server
-                              Provider.of<Server>(context, listen: false).stopServer();
+                              Provider.of<Server>(context, listen: false)
+                                  .stopServer();
                               setState(() {
                                 isServerRunning = false;
                               });
                             }
                           },
-                          child:
-                          Text(isServerRunning? 'Stop Server':'Start Server'),
+                          child: Text(
+                              isServerRunning ? 'Stop Server' : 'Start Server'),
                         ),
+                        const SizedBox(height: 40),
                       ],
                     ),
                     destinations: destinations,
@@ -284,7 +311,6 @@ class _AppLayoutState extends State<AppLayout> {
                   ),
                 ),
               ),
-
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -292,27 +318,27 @@ class _AppLayoutState extends State<AppLayout> {
                       image: AssetImage("images/UH_Manoa_ICS_Logo.png"),
                       opacity: 0.060,
                       fit: BoxFit.contain,
-                      ),
+                    ),
                     // gradient: LinearGradient(
                     //   begin: Alignment.topCenter,
                     //   end: Alignment.bottomCenter,
                     //   colors: [
-                    //     // Color.fromARGB(240, 217, 43, 8),                    
-                    //     // Color.fromARGB(255, 0, 0, 0), 
+                    //     // Color.fromARGB(240, 217, 43, 8),
+                    //     // Color.fromARGB(255, 0, 0, 0),
                     //     Color.fromARGB(255, 71, 148, 56), // Light green
                     //     Color(0xFF004D40), // Dark green color
                     //   ],
                     //   stops: [0.2, 0.9],
                     // ),
-                  //   gradient: RadialGradient(
-                  //     center: Alignment(0, -0.5), // top center
-                  //     radius: 0.5, // radius of the gradient, as a fraction of the shortest side of the widget
-                  //     colors: [
-                  //       Color.fromARGB(255, 20, 90, 0), // Neon green-yellow color
-                  //       Color.fromARGB(255, 0, 0, 0), // Dark green color
-                  //     ],
-                  //     stops: [0.3, 1.0], // Adjust the stops to fine-tune the gradient effect
-                  //   ),
+                    //   gradient: RadialGradient(
+                    //     center: Alignment(0, -0.5), // top center
+                    //     radius: 0.5, // radius of the gradient, as a fraction of the shortest side of the widget
+                    //     colors: [
+                    //       Color.fromARGB(255, 20, 90, 0), // Neon green-yellow color
+                    //       Color.fromARGB(255, 0, 0, 0), // Dark green color
+                    //     ],
+                    //     stops: [0.3, 1.0], // Adjust the stops to fine-tune the gradient effect
+                    //   ),
                   ),
                   child: pages[selectedIndex],
                 ),
@@ -360,42 +386,54 @@ class _AppLayoutState extends State<AppLayout> {
   //     label: destinationWidget,
   //   );
   // }
-  
-  NavigationRailDestination _buildDestination(int index, IconData icon, String label) {
+
+  NavigationRailDestination _buildDestination(
+      int index, IconData icon, String label) {
     bool isSelected = selectedIndex == index;
 
     // Create a label widget with the transparent background and text
     Widget labelWidget = DecoratedBox(
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white.withOpacity(0.9) : Colors.transparent, // Transparent shape on selection
+        color: isSelected
+            ? Colors.white.withOpacity(0.9)
+            : Colors.transparent, // Transparent shape on selection
         borderRadius: BorderRadius.circular(8), // Rounded corners
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 7.0), // Space inside the box
+        padding: const EdgeInsets.symmetric(
+            horizontal: 10.0, vertical: 7.0), // Space inside the box
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.white, // Text color changes
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, // Text weight changes
+            color: isSelected
+                ? const Color.fromARGB(255, 0, 0, 0)
+                : Colors.white, // Text color changes
+            fontWeight: isSelected
+                ? FontWeight.bold
+                : FontWeight.normal, // Text weight changes
           ),
         ),
       ),
     );
 
     return NavigationRailDestination(
-      icon: Icon(icon, color: isSelected ? Colors.transparent : Colors.white), // Hide icon when selected
+      icon: Icon(icon,
+          color: isSelected
+              ? Colors.transparent
+              : Colors.white), // Hide icon when selected
       selectedIcon: Icon(icon, color: Colors.black), // Show icon when selected
       label: labelWidget, // Use the label widget
     );
   }
 
-
   Future<void> _getWiFiAddress() async {
     for (var interface in await NetworkInterface.list()) {
       for (var addr in interface.addresses) {
-        if (addr.type == InternetAddressType.IPv4 && interface.name == 'Wi-Fi') {
+        if (addr.type == InternetAddressType.IPv4 &&
+            interface.name == 'Wi-Fi') {
           ipAddress = addr.address.toString();
-        } else if (addr.type == InternetAddressType.IPv4 && interface.name == 'en0') {
+        } else if (addr.type == InternetAddressType.IPv4 &&
+            interface.name == 'en0') {
           ipAddress = addr.address.toString();
         }
       }

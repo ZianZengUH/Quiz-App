@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     String answerText = _answerController.text.trim();
     if (answerText.isNotEmpty) {
       final Map<String, dynamic> userData = {
+        'type': 'answer',
         'name': name,
         'classSection': classSection,
         'answer': answerText,

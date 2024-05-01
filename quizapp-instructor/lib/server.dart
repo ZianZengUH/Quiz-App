@@ -8,7 +8,7 @@ import 'package:quiz_app_instructor/main.dart';
 class Server extends ChangeNotifier {
   HttpServer? _server;
   List<WebSocket> clients = [];
-  List<Map<String, dynamic>> _connectedStudentsData = [];
+  Set<Map<String, dynamic>> _connectedStudentsData = {};
 
   Server() {
     startServer();
@@ -22,7 +22,8 @@ class Server extends ChangeNotifier {
     //    'Server running on IP: ${_server!.address.address}, Port: ${_server!.port}');
     //print("@@@@@@@@@\n");
 
-    var classroomLocation = await ClassroomLocationManager.getClassroomLocation();
+    var classroomLocation =
+        await ClassroomLocationManager.getClassroomLocation();
 
     print(classroomLocation);
     print("class room location");
@@ -78,23 +79,38 @@ class Server extends ChangeNotifier {
     print('Message received: $data');
     try {
       final userData = jsonDecode(data);
-      if (userData is Map<String, dynamic> && userData.containsKey('name')) {
-        _connectedStudentsData.add(userData);
-        notifyListeners();
-        String name = userData['name'].toString();
-        String email = userData['email'].toString();
-        String phoneIPAddress = userData['phoneIPAddress'].toString();
-        String classSection = userData['classSection'].toString();
-        String department = userData['department'] as String;
-        String? photo = userData['photo'] as String?;
-        String? answer = userData['answer'] as String?;
-        double studentLat = userData['latitude'];
-        double studentLong = userData['longitude'];
-        print('Received Phone IP Address: $phoneIPAddress');
-        print(studentLat);
-        print(studentLong);
-        manageStudentData(name, email, classSection, phoneIPAddress,
-            photo: photo, answer: answer, department: department);
+      if (userData is Map<String, dynamic> && userData.containsKey('type')) {
+        String type = userData['type'].toString();
+        if (type == 'connect') {
+          String name = userData['name'].toString();
+          String email = userData['email'].toString();
+          String phoneIPAddress = userData['phoneIPAddress'].toString();
+          String classSection = userData['classSection'].toString();
+          String department = userData['department'] as String;
+          String? photo = userData['photo'] as String?;
+          // String? answer = userData['answer'] as String?;
+          double studentLat = userData['latitude'];
+          double studentLong = userData['longitude'];
+          print('Received Phone IP Address: $phoneIPAddress');
+          print(studentLat);
+          print(studentLong);
+
+          bool studentExists =
+              _connectedStudentsData.any((student) => student['name'] == name);
+          if (!studentExists) {
+            _connectedStudentsData.add(userData);
+            notifyListeners();
+          }
+          manageStudentData(name, email, classSection, phoneIPAddress,
+              photo: photo, department: department);
+        } else if (type == 'answer') {
+          String name = userData['name'].toString();
+          String classSection = userData['classSection'].toString();
+          String answer = userData['answer'].toString();
+          String department = userData['department'] as String;
+          manageStudentData(name, '', classSection, '',
+              answer: answer, department: department);
+        }
       } else {
         print("Error: Received data is not as expected.");
       }
@@ -102,7 +118,8 @@ class Server extends ChangeNotifier {
       print('Error parsing JSON data: $e');
     }
   }
-  List<Map<String, dynamic>> get connectedStudentsData => _connectedStudentsData; // 添加公共 getter 方法
+
+  Set<Map<String, dynamic>> get connectedStudentsData => _connectedStudentsData;
 
   Future<void> manageStudentData(String studentName, String email,
       String classSection, String phoneIPAddress,
@@ -152,14 +169,15 @@ class Server extends ChangeNotifier {
     // Write photo and student info on connection.
     if (photo != null) {
       // Timestamped student info file.
-      String dateFormat =
-          DateFormat('yyyy-MM-dd').format(DateTime.now());
-            String timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      String dateFormat = DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now());
+      String timestamp =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
       File infoFile = File('${studentDir.path}/Student_info.csv');
       // If the file is empty, write the header row
       if (!await infoFile.exists()) {
-        String header = 'Date and Time,Student Name,Phone IP Address,Email,Class Section\n';
+        String header =
+            'Date and Time,Student Name,Phone IP Address,Email,Class Section\n';
         await infoFile.writeAsString(header);
       }
       String studentInfo =

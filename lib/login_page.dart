@@ -126,14 +126,17 @@ class _LoginPageState extends State<LoginPage> {
         _classSectionController.text.trim().isNotEmpty) {
       await _saveUserInfo();
 
+      // Delay or retry mechanism to ensure classroom location is set 
+      await Future.delayed(const Duration(seconds: 2)); // Adjust as needed
       // Retrieve student's current location
-      // Map<String, double> currentLocation = await getCurrentLocation(context);
-      // Map<String, double>? classroomLocation =
-      //     await WebSocketManager().getClassroomLocation();
-      // print(currentLocation);
-      // print("currentLocation print succefully");
+      Map<String, double> currentLocation = await getCurrentLocation(context);
+      print(currentLocation);
+      print("currentLocation print succefully");
+      // Map<String, double>? classroomLocation = await WebSocketManager().getClassroomLocation();
       // print(classroomLocation);
       // print("classroomLocation print succefully");
+      // Map<String, double> currentLocation = {"Latitude": 21.2970, "Longitude": -157.8170};
+      // Map<String, double>? classroomLocation = {"Latitude": 21.2970, "Longitude": -157.8170};
       // if (classroomLocation == null) {
       //   _showAlertDialog(context, "Classroom location not set.");
       //   return;
@@ -264,6 +267,7 @@ class _LoginPageState extends State<LoginPage> {
         Map<String, double> location = await getCurrentLocation(context);
         String? phoneIPAddress = await _getPhoneIPAddress();
         final Map<String, dynamic> userData = {
+          'type': 'connect',
           'name': _nameController.text,
           'email': _emailController.text,
           'department': _selectedDepartment,

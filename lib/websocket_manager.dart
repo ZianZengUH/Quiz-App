@@ -20,13 +20,15 @@ class WebSocketManager {
 
   Future<bool> connect(String uri) async {
     try {
-      _socket = await WebSocket.connect(uri).timeout(const Duration(seconds: 180));
+      _socket = await WebSocket.connect(uri).timeout(const Duration(seconds: 5));
       _socket!.listen(
         (data) {
           // Handle incoming data
           var message = jsonDecode(data);
           if (message['type'] == 'location') {
             var classroomLocation = message['data'];
+            print(classroomLocation);
+                        print('classroomLocation location');
             _storeClassroomLocation(classroomLocation); // Store it in shared preferences
           } else {
               // Handle other messages
@@ -69,6 +71,10 @@ class WebSocketManager {
 
   Future<Map<String, double>> getClassroomLocation() async {
     final prefs = await SharedPreferences.getInstance();
+    print(prefs.getDouble('classroomLatitude')!);
+    print('print classroomLatitude');
+    print(prefs.getDouble('classroomLongitude')!);
+    print('print classroomLongitude');
     return {
       'latitude': prefs.getDouble('classroomLatitude')!,
       'longitude': prefs.getDouble('classroomLongitude')!,
