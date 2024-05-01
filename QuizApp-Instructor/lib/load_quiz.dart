@@ -29,8 +29,14 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
       filesAsString.add(file.toString());
     }
 
+
     for (String file in filesAsString) {
-      filePostSplitSlash = file.split('\\');
+      if (Platform.isMacOS | Platform.isLinux) {
+        filePostSplitSlash = file.split('/');
+      } 
+      else {
+        filePostSplitSlash = file.split('\\');
+      }
       filePostSplitApostrophe = filePostSplitSlash[1].split('\'');
       files.add(filePostSplitApostrophe[0]);
     }
@@ -57,8 +63,9 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
               'Searching for quizzes in:\n$currentDirectory\\Saved Quizzes',
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 255, 255, 255),
               ),  
             ),
           ),
@@ -102,6 +109,8 @@ class _LoadQuizPageState extends State<LoadQuizPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: const BeveledRectangleBorder(),
+                        foregroundColor: Colors.white, 
+                        backgroundColor: Color.fromARGB(255, 25, 148, 0), // Button color (green)
                       ),
                       onPressed: () {
                         List<String> quizName = _selectedOption.split('\\');

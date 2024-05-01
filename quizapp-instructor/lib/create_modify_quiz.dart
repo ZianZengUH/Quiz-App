@@ -44,8 +44,9 @@ class CreateQuizPage extends StatelessWidget {
               'Quizzes will be saved in:\n$currentDirectoryString\\Saved Quizzes',
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 255, 255, 255),
               ),  
             ),
           ),
@@ -122,6 +123,8 @@ class CreateQuizPage extends StatelessWidget {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: const BeveledRectangleBorder(),
+                          foregroundColor: Colors.white, 
+                          backgroundColor: Color.fromARGB(255, 25, 148, 0), // Button color (green)
                         ),
                         onPressed: () {
                           updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
@@ -135,6 +138,8 @@ class CreateQuizPage extends StatelessWidget {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: const BeveledRectangleBorder(),
+                          foregroundColor: Colors.white, 
+                          backgroundColor: Color.fromARGB(255, 25, 148, 0), // Button color (green)
                         ),
                         onPressed: () {
                           updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);

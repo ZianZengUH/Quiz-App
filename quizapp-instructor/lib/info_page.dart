@@ -14,7 +14,7 @@ class InfoPage extends StatelessWidget {
     if (Platform.isMacOS | Platform.isLinux) {
       savedQuizzesDir = '$currentDirectory/Saved Quizzes';
       studentAnswersDir = '$currentDirectory/Student Quizzes';
-    } else if (Platform.isWindows) {
+    } else {
       savedQuizzesDir = '$currentDirectory\\Saved Quizzes';
       studentAnswersDir = '$currentDirectory\\Student Quizzes';
     }

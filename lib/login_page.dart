@@ -202,10 +202,18 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Error"),
+          title: const Text(
+            "Error",
+            style: TextStyle(color: Colors.red), // Set the title text color to red),
+          ),  
           content: Text(message),
+          backgroundColor: Colors.white,
           actions: [
             TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)), 
+              ),
               onPressed: () => Navigator.of(context).pop(),
               child: const Text("OK"),
             ),
@@ -258,10 +266,18 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error'),
+        title: const Text(
+            "Error",
+            style: TextStyle(color: Colors.red), // Set the title text color to red),
+        ),  
         content: Text(message),
+        backgroundColor: Colors.white, // Set the background color to white
         actions: [
           TextButton(
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)), 
+            ),
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('OK'),
           ),
