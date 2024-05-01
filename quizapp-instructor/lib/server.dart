@@ -157,7 +157,6 @@ class Server extends ChangeNotifier {
     socket.close();
   }
 
-  // NOT NEEDED?
   // To send a message to all connected clients
   void broadcastMessage(String message) {
     for (WebSocket client in clients) {

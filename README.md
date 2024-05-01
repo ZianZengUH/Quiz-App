@@ -1,12 +1,57 @@
 # Quiz-App
+<img src="QuizApp-Instructor\images\quiz_app_logo_round.png" width="300" height="300"/>
 
-A quiz app is a multi-hop BLE cross-platform app for ICS and other departments at the University of Hawaii at Manoa to track attendance and participate in class activities.
+## Introduction
+### Problem:
+When instructors have large class sizes, it is very difficult for them to maintain the integrity of their classroom during quizzes.  Our Quiz App intends to help alleviate this issue by utilizing the instructor’s and student’s Wi-fi connection to the same network, pictures taken by the student in class, IP logging, and other technologies to prevent students from taking the quiz at home or attempting to cheat.
 
-Design and Developed by Zian Zeng, Feiyi Chen, Galen Chang
+
+### Our Solution:
+Quiz App is a cross-platform app that uses singleton WebSocket + GPS verification via LAN for connection and real-time data transfer which help to track attendance and dissuade cheating while students take quizzes for ICS and other departments at the University of Hawaii at Manoa
+
+**_Design and Developed by Zian Zeng, Feiyi Chen, Galen Chang_**
 
 ## Getting Started
 
-After downloaded the project, make sure in pubspaec.yaml, quick_blue: ^0.5.0-dev.2, instead of being downgradded to 0.3 by VSCode due to the lastest version of other packages conflict with quick_blue
+### Build Android App
+```
+flutter build apk --release
+```
+The release.apk is under ...\build\app\outputs\flutter-apk
 
-For building Windows app, Nuget.exe is required. If running with VSCode, open VSCode with Admin.
+### Build MacOS App
+```
+cd QuizApp-Instructor
+```
+```
+flutter build macos
+```
+open macos/Runner.xcworkspace
+
+### Build Windows App
+```
+cd QuizApp-Instructor
+```
+```
+flutter build windows
+```
+The build .exe file can be found on ...\projectName\build\windows\runner\Release\
+
+### Important Notes:
+Make sure location service is turn on for both mobile and desktop sides.
+
+#### Windows may run in network issue:
+##### Allowing Apps Through the Firewall:
+1. Press Win + R to open the Run dialog.
+2. Type control and press Enter to open the Control Panel.
+3. Go to System and Security.
+4. Click on Windows Defender Firewall.
+5. On the left side, click on Allow an app or feature through Windows Defender Firewall.
+<img src="QuizApp-Instructor\images\quiz_app_winddows_defender_firewall_1.png"/>
+6. In the new window, click on Change settings to enable modifying the list.
+7. Check the boxes for both Private and Public next to your app's name. If the app is not listed, click Allow another app..., browse for it, and add it manually.
+<img src="QuizApp-Instructor\images\quiz_app_winddows_defender_firewall_2.png"/>
+8. Click OK to save changes.
+
+
 
