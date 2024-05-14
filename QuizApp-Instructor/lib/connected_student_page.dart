@@ -7,8 +7,7 @@ class ConnectedStudentsPage extends StatefulWidget {
   final VoidCallback onNextPage;
 
   const ConnectedStudentsPage(
-      {Key? key, required this.ipAddress, required this.onNextPage})
-      : super(key: key);
+      {super.key, required this.ipAddress, required this.onNextPage});
 
   @override
   _ConnectedStudentsPageState createState() => _ConnectedStudentsPageState();
@@ -52,7 +51,7 @@ class _ConnectedStudentsPageState extends State<ConnectedStudentsPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Color.fromARGB(
+                  foregroundColor: const Color.fromARGB(
                       255, 25, 148, 0), // Button text color (green)
                   backgroundColor: Colors.white,
                 ),

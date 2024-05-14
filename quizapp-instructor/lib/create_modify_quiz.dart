@@ -124,7 +124,7 @@ class CreateQuizPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           shape: const BeveledRectangleBorder(),
                           foregroundColor: Colors.white, 
-                          backgroundColor: Color.fromARGB(255, 25, 148, 0), // Button color (green)
+                          backgroundColor: const Color.fromARGB(255, 25, 148, 0), // Button color (green)
                         ),
                         onPressed: () {
                           updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);
@@ -139,7 +139,7 @@ class CreateQuizPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           shape: const BeveledRectangleBorder(),
                           foregroundColor: Colors.white, 
-                          backgroundColor: Color.fromARGB(255, 25, 148, 0), // Button color (green)
+                          backgroundColor: const Color.fromARGB(255, 25, 148, 0), // Button color (green)
                         ),
                         onPressed: () {
                           updateQuiz(context, name, duration, question, fontSize, nameController, durationController, questionController, fontSizeController);

@@ -11,7 +11,7 @@ import 'package:slide_countdown/slide_countdown.dart';
 
 class ShowQuiz extends StatefulWidget {
   final VoidCallback onBackPage;
-  const ShowQuiz({Key? key, required this.onBackPage}) : super(key: key);
+  const ShowQuiz({super.key, required this.onBackPage});
 
   @override
   State<ShowQuiz> createState() => _ShowQuizState();
@@ -63,7 +63,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                               padding: const EdgeInsets.only(right: 5),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  foregroundColor: Color.fromARGB(255, 25, 148,
+                                  foregroundColor: const Color.fromARGB(255, 25, 148,
                                       0), // Button text color (green)
                                   backgroundColor: Colors.white,
                                 ),
@@ -77,7 +77,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                               padding: const EdgeInsets.only(left: 5, right: 5),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  foregroundColor: Color.fromARGB(255, 25, 148,
+                                  foregroundColor: const Color.fromARGB(255, 25, 148,
                                       0), // Button text color (green)
                                   backgroundColor: Colors.white,
                                 ),
@@ -89,7 +89,7 @@ class _ShowQuizState extends State<ShowQuiz> {
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: Color.fromARGB(255, 25, 148,
+                                foregroundColor: const Color.fromARGB(255, 25, 148,
                                     0), // Button text color (green)
                                 backgroundColor: Colors.white,
                               ),

@@ -78,10 +78,10 @@ class ClassroomLocationManager {
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all(Colors.white),
                 backgroundColor:
-                    MaterialStateProperty.all(Color.fromARGB(255, 37, 130, 18)),
+                    MaterialStateProperty.all(const Color.fromARGB(255, 37, 130, 18)),
               ),
               onPressed: () => Navigator.of(context).pop(),
-              child: Text("OK"),
+              child: const Text("OK"),
             ),
           ],
         );
@@ -275,8 +275,17 @@ class _AppLayoutState extends State<AppLayout> {
                           child: Image.asset('images/quiz_app_logo.png',
                               height: 150, width: 150),
                         ),
-                        const SizedBox(height: 40),
-
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Quiz App - Instructor",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 15),
                         ElevatedButton(
                           style: buttonStyle,
                           onPressed: () {
@@ -298,7 +307,7 @@ class _AppLayoutState extends State<AppLayout> {
                           child: Text(
                               isServerRunning ? 'Stop Server' : 'Start Server'),
                         ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 30),
                       ],
                     ),
                     destinations: destinations,

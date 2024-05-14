@@ -8,7 +8,7 @@ import 'package:quiz_app_instructor/main.dart';
 class Server extends ChangeNotifier {
   HttpServer? _server;
   List<WebSocket> clients = [];
-  Set<Map<String, dynamic>> _connectedStudentsData = {};
+  final Set<Map<String, dynamic>> _connectedStudentsData = {};
 
   Server() {
     startServer();
