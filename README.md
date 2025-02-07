@@ -19,18 +19,18 @@ This app **ensures classroom integrity** by leveraging:
 - **Singleton WebSocket + GPS verification via LAN** for secure, real-time data transfer.
 - **IP Logging, Camera Access, and Location Services** to verify student presence.
 
-👨‍💻 **Developed by**: _Zian Zeng, Feiyi Chen, Galen Chang_  
-📌 **Project Sponsor**: _Edoardo Biagioni, UH Manoa ICS Department_  
+**Developed by**: _Zian Zeng, Feiyi Chen, Galen Chang_  
+**Project Sponsor**: _Edoardo Biagioni, UH Manoa ICS Department_  
 
 ---
 
 ## 📌 Key Features
-✨ **Cross-Platform Compatibility** – Runs on **Windows, macOS, and Android**  
-📡 **LAN-based WebSocket Connection** – Ensures **real-time data sync**  
-📍 **GPS & IP Verification** – Prevents remote quiz attempts  
-📷 **Camera-based Attendance Logging** – Students must **take a picture** when logging in  
-💾 **Instructor Tools** – **Create, modify, and export** quizzes with student submissions  
-🛡️ **Anti-Cheating Mechanisms**:
+- **Cross-Platform Compatibility** – Runs on **Windows, macOS, and Android**  
+- **LAN-based WebSocket Connection** – Ensures **real-time data sync**  
+- **GPS & IP Verification** – Prevents remote quiz attempts  
+- **Camera-based Attendance Logging** – Students must **take a picture** when logging in  
+- **Instructor Tools** – **Create, modify, and export** quizzes with student submissions  
+- **Anti-Cheating Mechanisms**:
    - 📵 **No split-screen, app minimization detection**
    - 📶 **Verifies connection via short-range Wi-Fi LAN**
    - 📍 **Blocks unauthorized remote logins**  
@@ -79,9 +79,9 @@ flutter build apk --release
 1. Press **Win + R**, type `control`, and hit Enter.
 2. Navigate to **System and Security > Windows Defender Firewall**.
 3. Click **Allow an app or feature through Windows Defender Firewall**.
-   <img src="QuizApp-Instructor/images/quiz_app_windows_defender_firewall_1.png" alt="Firewall Step 1"/>
+   <img src="QuizApp-Instructor\images\quiz_app_winddows_defender_firewall_1.png"/>
 4. Click **Change settings** and check both **Private** and **Public** boxes for the app.
-   <img src="QuizApp-Instructor/images/quiz_app_windows_defender_firewall_2.png" alt="Firewall Step 2"/>
+   <img src="QuizApp-Instructor\images\quiz_app_winddows_defender_firewall_2.png"/>
 5. Click **OK** to save changes.
 
 ---
