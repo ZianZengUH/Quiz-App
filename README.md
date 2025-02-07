@@ -12,7 +12,7 @@ When instructors have **large class sizes**, it becomes difficult to **maintain 
 ### ✅ Our Solution:
 **Quiz App** is a **cross-platform** tool designed to provide **secure and reliable** quiz-taking for classrooms at **the University of Hawaii at Manoa (UHM)**.  
 It consists of:
-- 🖥️ **Instructor Desktop App** – Create, manage, and monitor quizzes.
+- 🖥️**Instructor Desktop App** – Create, manage, and monitor quizzes.
 - 📱 **Student Mobile App** – Authenticate attendance and prevent cheating.
 
 This app **ensures classroom integrity** by leveraging:
