@@ -1,5 +1,5 @@
 # 🎯 Quiz-App
-<img src="QuizApp-Instructor/images/quiz_app_logo_round.png" width="250" height="250"/>
+<img src="QuizApp-Instructor/images/quiz_app_logo_round.png" width="300" height="300"/>
 
 ## 📝 Introduction
 
@@ -47,9 +47,9 @@ The **Quiz App** was built to meet the following **key requirements**:
 - 📝 **Instructor desktop app receives quiz answers** and **organizes them by section number**.
 
 ### 🏗️ Development Process:
-- ✅ **Scrum-based development** – Agile methodology with **weekly sprints**.
-- 🎯 **Bi-weekly meetings via Zoom** – Alternating between team-only and sponsor-included discussions.
-- 📌 **Project communication via Discord** – Preserving meeting notes and discussions.
+- **Scrum-based development** – Agile methodology with **weekly sprints**.
+- **Bi-weekly meetings via Zoom** – Alternating between team-only and sponsor-included discussions.
+- **Project communication via Discord** – Preserving meeting notes and discussions.
 - 🛠️ **Technology stack**:
   - **Flutter/Dart** – Enables cross-platform compatibility.
   - **GitHub** – Version control and team collaboration.
@@ -69,7 +69,7 @@ For additional **screenshots** and **detailed insights**, check out the full pos
 ### 📱 Build Android App
 ```bash
 flutter build apk --release
-
+```
 ## ⚠️ Important Notes:
 
 ### 📍 Enable Location Services
