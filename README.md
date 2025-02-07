@@ -12,8 +12,8 @@ When instructors have **large class sizes**, it becomes difficult to **maintain 
 ### ✅ Our Solution:
 **Quiz App** is a **cross-platform** tool designed to provide **secure and reliable** quiz-taking for classrooms at **the University of Hawaii at Manoa (UHM)**.  
 It consists of:
-- 🖥️**Instructor Desktop App** – Create, manage, and monitor quizzes.
-- 📱 **Student Mobile App** – Authenticate attendance and prevent cheating.
+- 🖥️ **Instructor Desktop App** – Create, manage, and monitor quizzes.
+- 📱  **Student Mobile App** – Authenticate attendance and prevent cheating.
 
 This app **ensures classroom integrity** by leveraging:
 - **Singleton WebSocket + GPS verification via LAN** for secure, real-time data transfer.
@@ -104,6 +104,7 @@ flutter build apk --release
 ## 📢 Summary
 
 Quiz App is a **powerful, cross-platform** solution developed using **Flutter/Dart** to enhance **classroom integrity** during quizzes.  
+
 With features like **real-time data transfer**, **GPS-based student verification**, and **anti-cheating mechanisms**, it ensures a **fair and secure assessment environment** for instructors and students.
 
 🔥 **Empowering instructors. Securing quizzes. Preventing cheating.**
